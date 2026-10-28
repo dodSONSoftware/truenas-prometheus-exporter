@@ -1,0 +1,11 @@
+{
+  "targets": [
+    {
+      "name": "memory-alpha",
+      "ws_url": "wss://memory-alpha.home.lab/api/current",
+      "username": "prometheus_exporter",
+      "api_key_file": "/run/secrets/memory-alpha-api-key",
+      "ca_cert_file": "/run/secrets/memory-alpha-caddy-root-ca.pem"
+    }
+  ]
+}

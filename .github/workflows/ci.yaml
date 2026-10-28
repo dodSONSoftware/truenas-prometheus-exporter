@@ -1,0 +1,39 @@
+name: Quality gates
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toolchain: ["1.88.0", stable]
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup toolchain install ${{ matrix.toolchain }} --profile minimal --component rustfmt --component clippy
+      - run: rustup default ${{ matrix.toolchain }}
+      - run: sh scripts/check.sh
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup toolchain install stable --profile minimal
+      - run: cargo +stable install cargo-audit --version 0.22.2 --locked
+      - run: cargo +stable audit --file application/Cargo.lock --deny warnings
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose -f deployment/compose.yaml config --quiet
+      - run: docker build --platform linux/amd64 -f deployment/Dockerfile -t truenas-exporter:test .
+      - name: Validate offline container runtime
+        run: python3 scripts/check-container.py --context default --image truenas-exporter:test
+      - name: Gate high and critical image vulnerabilities
+        uses: aquasecurity/trivy-action@8f28faec26515256b6d22074d1d2a8986f4cbd87
+        with:
+          version: v0.76.1
+          image-ref: truenas-exporter:test
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: "false"

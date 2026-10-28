@@ -1,0 +1,50 @@
+# Review artifact only. Merge into the existing project after deployment approval.
+# Use deployment/targets.example.json as the target-file starting point.
+services:
+  truenas-exporter:
+    image: local/truenas-rust-exporter:0.1.0
+    restart: unless-stopped
+    init: true
+    user: "10001:10001"
+    environment:
+      TRUENAS_TARGETS_FILE: /run/config/truenas-targets.json
+      EXPORTER_LISTEN: "0.0.0.0:9110"
+      RUST_LOG: "${RUST_LOG:-info}"
+    volumes:
+      - type: bind
+        source: "${TRUENAS_TARGETS_SOURCE:?Set the Docker-host target JSON path}"
+        target: /run/config/truenas-targets.json
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: "${MEMORY_ALPHA_API_KEY_SOURCE:?Set the dedicated key path}"
+        target: /run/secrets/memory-alpha-api-key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: "${CADDY_CA_SOURCE:?Set the verified public Caddy CA path}"
+        target: /run/secrets/memory-alpha-caddy-root-ca.pem
+        read_only: true
+        bind:
+          create_host_path: false
+    expose:
+      - "9110"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 128m
+    cpus: 0.5
+    pids_limit: 64
+    networks:
+      - observability
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+# Existing project must define its actual observability network.
+# Add each future target's key/CA mounts here and its entry in the JSON file.

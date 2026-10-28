@@ -1,0 +1,88 @@
+# TrueNAS SCALE Rust Prometheus exporter
+
+A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
+
+**Development status:** M1/M2 functionality is implemented with synthetic fixtures and loopback mock servers. No appliance compatibility or production readiness is claimed. System, CPU, memory, network, ARC and scan collectors are planned for M3; disks/services/alerts come later. The existing Graphite pipeline remains independent.
+
+## Build, test and run (Debian-based Linux)
+
+Run from the repository root. The final process is explicitly offline and binds loopback; it makes no TrueNAS connections. Rust dependencies are locked. MSRV is 1.88; container tooling is separately required for Docker checks.
+
+```sh
+sudo apt-get update
+sudo apt-get install -y build-essential ca-certificates curl pkg-config
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/truenas-rustup.sh
+sh /tmp/truenas-rustup.sh -y --profile minimal --default-toolchain 1.88.0
+. "$HOME/.cargo/env"
+rustup component add rustfmt clippy
+cargo build --locked --manifest-path application/Cargo.toml
+cargo fmt --manifest-path application/Cargo.toml --check
+cargo clippy --locked --manifest-path application/Cargo.toml --all-targets -- -D warnings
+cargo test --locked --manifest-path application/Cargo.toml
+# Keep running in this terminal; inspect http://127.0.0.1:9110/metrics locally.
+EXPORTER_MOCK=true EXPORTER_LISTEN=127.0.0.1:9110 cargo run --locked --manifest-path application/Cargo.toml
+```
+
+For offline development after dependencies have been fetched, add `--offline` to Cargo build/test commands. `cargo run --manifest-path application/Cargo.toml -- healthcheck` checks the local process without loading credentials. Ctrl-C or SIGTERM stops all background work.
+
+## Endpoints and behavior
+
+- `/metrics`: OpenMetrics text with HELP/TYPE, exporter status and unexpired measurements; never queries TrueNAS.
+- `/healthz`: process liveness; container healthcheck target.
+- `/readyz`: 200 while the required pool snapshot is fresh, otherwise 503. A failed attempt can leave readiness 200 during the finite cache grace period.
+
+Mock mode is labeled `truenas_exporter_mock_mode=1` and keeps `truenas_api_connected=0`. It publishes fictional data to exercise the process, not to simulate an authenticated NAS.
+
+Normal mode requires TRUENAS_WS_URL, TRUENAS_USERNAME and TRUENAS_API_KEY_FILE; WSS verification cannot be disabled. Do not run normal mode against MEMORY ALPHA without explicit operator authorization. Use docs/configuration.md for defaults and validation, not live credentials in shell history.
+
+## Containers
+
+With Docker installed: `docker compose -f deployment/compose.yaml config`, then `docker compose -f deployment/compose.yaml up --build`. The standalone file always uses mock mode, publishes no host port and builds with repository-root context. Its built-in liveness command is available through `docker compose -f deployment/compose.yaml exec truenas-exporter truenas-exporter healthcheck`.
+
+For an independent image build use `docker build --platform linux/amd64 -f deployment/Dockerfile -t local/truenas-rust-exporter:0.1.0 .`. Both base images are digest-pinned. The runtime is a signed, verified distroless cc-debian13 image with no shell or package manager. Local linux/amd64 runtime checks and the high/critical vulnerability gate pass; medium/low findings remain tracked in docs/security-validation.md. No production files are changed by these examples.
+
+## File inventory
+
+| Path | Responsibility |
+| --- | --- |
+| TrueNAS_Codex_Handoff.md | Authoritative brief, historical evidence and operating boundaries |
+| AGENTS.md | Concise repository-wide development instructions |
+| application/Cargo.toml, Cargo.lock | One package, dependencies and reproducible resolution |
+| application/src/main.rs | Process lifecycle, signals and local healthcheck command |
+| application/src/config.rs | Typed settings, secret-file input and trusted TLS configuration |
+| application/src/api/protocol.rs | Closed method allowlist, JSON-RPC and authentication decoding |
+| application/src/api/client.rs | Bounded connection actor, request correlation and reconnect |
+| application/src/collectors/pools.rs | Typed pool validation and explicit synthetic data |
+| application/src/state.rs | Atomic pool snapshot, monotonic expiry and metric encoding |
+| application/src/scheduler.rs | Periodic reads without overlapping collection attempts |
+| application/src/http.rs | Cached metrics, liveness and readiness routes |
+| fixtures/truenas-25.04.2.6/ | Captured sanitized API evidence; currently README only |
+| application/tests/ | Synthetic fixture, protocol, state, HTTP and loopback TLS tests |
+| deployment/ | Dockerfile, offline Compose, integration/scrape examples and test-only runtime probe |
+| docs/ | Architecture, protocol, compatibility, metrics, configuration and operations contracts |
+| scripts/check.sh | Local Rust quality gates |
+| scripts/check-container.py | Local-daemon-only container runtime and security checks |
+| .github/workflows/ci.yaml | Secret-free Rust checks and Docker build if hosted on GitHub |
+| dashboards/ | Reserved for future review artifacts; no live imports |
+| LICENSE | MIT license and project copyright |
+| CHANGELOG.md | Development changes |
+
+## Prioritized remaining work
+
+1. Provide genuine captured sanitized 25.04.2.6 fixtures. Rust 1.88, dependency auditing, distroless runtime checks and the high/critical image scan gate pass; see docs/security-validation.md.
+2. M3: exact system/version/uptime sources, runtime version gate, realtime subscriptions and per-group freshness.
+3. M3: CPU/memory/network/ARC mappings and general SCRUB/RESILVER metrics after schema validation.
+4. M4: measured resource budgets, long outage tests and operator-verified least privilege.
+5. P1 and dashboard migration artifacts after P0 validation; production rollout requires separate authorization.
+
+Licensed under the [MIT License](LICENSE). Copyright (c) 2026 dodson Software ( dodson labs ). See docs/implementation-plan.md and docs/validation.md for actual validation and remaining acceptance gates.
+
+For repeatable local container checks: `python3 scripts/check-container.py --context desktop-linux`. This uses the existing validation image, exports a test-only probe automatically, and removes its ephemeral test containers. Python 3 and OpenSSL are required on the host. No probe or diagnostic shell is shipped in the runtime. CI uses the same script against its local default context. Docker Desktop is installed on the development Mac; no remote Docker deployment is needed for these checks.
+
+Distroless troubleshooting uses exporter logs, metrics and the built-in healthcheck. `docker exec ... sh` is unavailable by design. Preserve UID/GID 10001 for real secret mounts. Base updates require deliberate digest refresh, signature verification and re-scanning.
+
+## Multiple servers and MEMORY ALPHA
+
+Use TRUENAS_TARGETS_FILE with deployment/targets.example.json to configure independent targets in one process. Add a second entry with its own name, URL, key file and optional CA file; no code change is required. Metrics include target="configured-name" and readiness requires all configured targets to be fresh. Legacy single-target environment settings remain supported.
+
+The new endpoint wss://memory-alpha.home.lab/api/current passes verified Rust WSS transport on the host and distroless container with an explicit, read-only Caddy CA file. The dedicated prometheus_exporter account/key are not provisioned yet; authenticated login and pool.query are not verified on the appliance. See docs/memory-alpha-integration.md for scope, evidence and operator steps. check-transport is a manual transport diagnostic, not an authentication test.

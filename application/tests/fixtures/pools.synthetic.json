@@ -1,0 +1,14 @@
+[
+  {
+    "name": "example-pool",
+    "status": "ONLINE",
+    "healthy": true,
+    "warning": true,
+    "status_code": "FEAT_DISABLED",
+    "size": 24000277250048,
+    "allocated": 12549572898816,
+    "free": 11450704351232,
+    "fragmentation": "13",
+    "scan": {"function": "SCRUB", "state": "FINISHED", "errors": 0}
+  }
+]

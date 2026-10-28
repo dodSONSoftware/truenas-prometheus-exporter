@@ -1,0 +1,31 @@
+# Local synthetic validation only. No NAS connection and no published LAN port.
+services:
+  truenas-exporter:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    image: local/truenas-rust-exporter:0.1.0-dev
+    environment:
+      EXPORTER_MOCK: "true"
+      EXPORTER_LISTEN: "0.0.0.0:9110"
+      RUST_LOG: info
+    expose:
+      - "9110"
+    init: true
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 128m
+    cpus: 0.5
+    pids_limit: 64
+    networks:
+      - exporter-dev
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+networks:
+  exporter-dev: {}

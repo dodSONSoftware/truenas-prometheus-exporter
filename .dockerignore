@@ -1,0 +1,14 @@
+.git
+**/target
+**/node_modules
+**/.venv
+**/__pycache__
+**/.env
+**/.env.*
+**/secrets
+**/*.pem
+**/*.key
+.DS_Store
+
+# Captured evidence is not needed in the image build context.
+fixtures/
