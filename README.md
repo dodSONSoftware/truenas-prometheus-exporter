@@ -1,6 +1,6 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Iron Ferret — version 0.0.16.
+**Release:** Zinc Ferret — version 0.1.0.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
@@ -72,7 +72,7 @@ For an independent image build use `docker build --platform linux/amd64 -f deplo
 ## Prioritized remaining work
 
 1. Pool compatibility is verified through authorized native and local Docker checks, with genuine sanitized captures and offline replay. Extend this evidence to the M3 methods/events as separately authorized. Rust 1.88 and the recorded security gates pass; see docs/security-validation.md.
-2. M3: exact system/version/uptime sources, runtime version gate, realtime subscriptions and per-group freshness.
+2. M3: validate the new explicit `check-system` preflight on an authorized appliance, then integrate runtime version gating, scheduled system data and per-group freshness. Source mappings and the offline-tested preflight are documented in docs/system-contract.md.
 3. M3: CPU/memory/network/ARC mappings and general SCRUB/RESILVER metrics after schema validation.
 4. M4: measured resource budgets, long outage tests and operator-verified least privilege.
 5. P1 and dashboard migration artifacts after P0 validation; production rollout requires separate authorization.

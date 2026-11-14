@@ -22,12 +22,16 @@ pub fn login(id: &str, credentials: &Credentials) -> Value {
 #[derive(Clone, Copy)]
 pub enum Method {
     PoolQuery,
+    SystemInfo,
 }
 impl Method {
     pub fn request(self, id: &str) -> Value {
         match self {
             Self::PoolQuery => {
                 json!({"jsonrpc":"2.0", "id":id, "method":"pool.query", "params":[]})
+            }
+            Self::SystemInfo => {
+                json!({"jsonrpc":"2.0", "id":id, "method":"system.info", "params":[]})
             }
         }
     }

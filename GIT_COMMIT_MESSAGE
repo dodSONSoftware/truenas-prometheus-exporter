@@ -1,13 +1,14 @@
-test: verify captured TrueNAS pool compatibility
+feat: add bounded system compatibility preflight
 
-[0.0.16] Iron Ferret
+[0.1.0] Zinc Ferret
 
-- Add sanitized full pool.query responses captured from native macOS and local Docker Desktop
-- Replay captured envelopes offline through the production TLS client and HTTP endpoints
-- Assert observed capacities, health, fragmentation, labels and readiness without changing the decoder
-- Record dedicated-account authorization, UID-10001 read-only secret handling and version provenance limits
-- Reconcile TN-02 acceptance and the remaining system/realtime scope
-- VERSION: Increment the patch release to 0.0.16
-- README.md: Update the Iron Ferret release information
+- Add explicit check-system using verified TLS, typed authentication and allowlisted system.info
+- Validate the supported version family, hostname, numeric uptime, optional memory and load without exposing raw data
+- Bound the entire one-shot check by the API timeout without changing normal pool collection
+- Add synthetic field, loopback TLS and actual CLI redaction and error tests
+- Pin system method registration and field mappings to the official 25.04.2.6 source
+- Document remaining live acceptance, automatic version gating and system/realtime collector milestones
+- VERSION: Increment the minor release to 0.1.0 for the new command
+- README.md: Update the Zinc Ferret release information
 
 developed by Randel Dodson and AI

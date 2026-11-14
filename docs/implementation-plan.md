@@ -42,7 +42,8 @@ Accepted findings: missing captured fixtures; pin API evidence; enumerate protoc
 - [x] Captured sanitized pool.query envelopes with operator-confirmed 25.04.2.6 provenance and offline replay.
 
 ## M3 and later
-- [ ] Exact system/version/uptime/memory sources and runtime compatibility gate.
+- [x] Exact system/version/uptime/memory/load sources and explicit M3-A compatibility preflight.
+- [ ] Automatic per-connection runtime compatibility gate and scheduled system collector.
 - [ ] Realtime wire fixtures, subscription recovery, per-group validation and silence expiry.
 - [ ] General scan metrics (SCRUB and RESILVER), verified callable schema.
 - [ ] Container outage/recovery, least privilege and runtime resource validation.
@@ -64,7 +65,7 @@ No implementation milestone is fully validated until its container checks pass. 
 
 ## Delivery status
 
-M1/M2 functional work and all fifteen review findings now have recorded evidence. TN-02 is resolved for the captured pool.query scope; M3 has not started. See validation.md for this milestone and security-validation.md for the preceding security refresh.
+M1/M2 functional work and all fifteen review findings now have recorded evidence. TN-02 is resolved for the captured pool.query scope; M3-A system preflight is implemented offline; live system checks and automatic collector integration remain open. See validation.md for this milestone and security-validation.md for the preceding security refresh.
 
 ## MEMORY ALPHA proxy integration and multiple targets
 
@@ -90,3 +91,14 @@ Offline operational continuation passed on the Mac and its local linux/amd64 Doc
 - [x] Offline TLS replay correlates the captured envelope through Client, validates collector values, encodes metrics and verifies readiness.
 
 The current gate for starting M3 is satisfied for pools. Broader live calls require additional authorization. Version provenance is operator-confirmed, not independently queried. Minimum account privileges, realtime compatibility and production deployment remain unverified.
+
+## M3-A — explicit system preflight
+
+- [x] Resolve system.info registration, role declaration and exact field/units mapping against pinned official 25.04.2.6 source.
+- [x] Implement typed version/hostname/uptime/memory/load validation and an explicit, bounded check-system command.
+- [x] Keep ordinary pool polling, metrics and readiness unchanged; test the new path only with synthetic fixtures and loopback TLS.
+- [ ] Obtain separate operator authorization and capture sanitized native/container system responses (M3-B).
+- [ ] Integrate per-connection runtime version gating and independent required system snapshot/TTL/readiness (M3-C).
+- [ ] Implement source-verified realtime CPU/memory/network/ARC groups and their independent freshness (M3-D).
+
+The detailed current source mapping, command behavior, acceptance limits and next slices are in system-contract.md. This milestone does not establish live system.info support or complete M3.

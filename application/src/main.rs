@@ -12,7 +12,7 @@ use tokio_util::sync::CancellationToken;
 use tracing::Instrument;
 use tracing_subscriber::{Layer, layer::SubscriberExt, util::SubscriberInitExt};
 use truenas_exporter::{
-    api::client::{Client, check_transport},
+    api::client::{Client, check_system, check_transport},
     config::{Config, TransportConfig, environment_value, listen_address},
     http, scheduler,
     state::State,
@@ -34,9 +34,27 @@ async fn main() -> Result<()> {
             );
             return Ok(());
         }
+        [arg] if arg == "check-system" => {
+            let mut config = Config::from_env()?;
+            if config.targets.len() != 1 || config.targets[0].api.is_none() {
+                bail!("check-system requires exactly one non-mock target");
+            }
+            let api = config
+                .targets
+                .remove(0)
+                .api
+                .context("missing API configuration")?;
+            check_system(api).await.map_err(|reason| {
+                anyhow::anyhow!("System preflight failed: {}", reason.as_str())
+            })?;
+            println!(
+                "Verified WSS authentication, selected system.info fields and 25.04.2.x compatibility passed; no pool query or subscription sent"
+            );
+            return Ok(());
+        }
         [arg] if arg == "--help" => {
             println!(
-                "truenas-exporter [healthcheck|check-transport|--help|--version]\nConfiguration: environment; see docs/configuration.md. EXPORTER_MOCK=true runs offline."
+                "truenas-exporter [healthcheck|check-transport|check-system|--help|--version]\nConfiguration: environment; see docs/configuration.md. EXPORTER_MOCK=true runs offline."
             );
             return Ok(());
         }

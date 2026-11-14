@@ -35,3 +35,7 @@ Legacy single-target environment configuration remains supported. Without TRUENA
 ## Transport diagnostic
 
 `truenas-exporter check-transport` reads only TRUENAS_WS_URL, optional TRUENAS_CA_CERT_FILE and the API timeout. It performs verified WSS upgrade and close without loading an API-key file, authenticating, or calling any API method. Certificate and hostname checks cannot be disabled. It intentionally does not load TRUENAS_TARGETS_FILE; select one URL/CA explicitly for this diagnostic. The integration record is in memory-alpha-integration.md.
+
+## System preflight
+
+`truenas-exporter check-system` uses normal configuration and requires exactly one non-mock target. It authenticates, issues only system.info with empty parameters, checks selected fields and 25.04.2.x compatibility, closes and exits. The configured API timeout bounds the whole operation. It reports fixed success text or a bounded failure reason, without emitting returned identity or raw data. It does not start HTTP, poll pools, subscribe, or change daemon readiness. See system-contract.md before authorizing any live invocation; existing pool-query authorization does not cover this method.

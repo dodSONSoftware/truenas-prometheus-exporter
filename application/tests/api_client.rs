@@ -21,6 +21,7 @@ use truenas_exporter::{
 
 type Socket = WebSocketStream<tokio_rustls::server::TlsStream<TcpStream>>;
 struct FixtureTls {
+    pem: String,
     server: Arc<rustls::ServerConfig>,
     client: Arc<rustls::ClientConfig>,
 }
@@ -39,6 +40,7 @@ fn fixture_tls() -> &'static FixtureTls {
             )
             .unwrap();
         FixtureTls {
+            pem: certificate.cert.pem(),
             server: Arc::new(server),
             client: Arc::new(
                 rustls::ClientConfig::builder()
@@ -1081,4 +1083,186 @@ async fn captured_appliance_pool_envelopes_replay_offline() {
             .unwrap();
         server.await.unwrap();
     }
+}
+
+#[tokio::test]
+async fn system_preflight_is_allowlisted_typed_and_isolated_from_pool_collection() {
+    for (result, expected) in [
+        (
+            json!({"result": serde_json::from_str::<Value>(include_str!("fixtures/system.synthetic.json")).unwrap()}),
+            None,
+        ),
+        (
+            json!({"result": {"version":"25.10.2", "hostname":"synthetic", "uptime_seconds":1}}),
+            Some(Reason::Unsupported),
+        ),
+        (
+            json!({"result": {"version":"25.04.2.6", "hostname":"synthetic", "uptime_seconds":"1"}}),
+            Some(Reason::Schema),
+        ),
+        (
+            json!({"error":{"code":-32001,"message":"synthetic-sensitive-error", "data":{"error":13}}}),
+            Some(Reason::Permission),
+        ),
+        (
+            json!({"error":{"code":-32601,"message":"synthetic-sensitive-error"}}),
+            Some(Reason::Unsupported),
+        ),
+    ] {
+        let (listener, url) = listen().await;
+        let server = tokio::spawn(async move {
+            let mut socket = login(&listener).await;
+            let request = text(&mut socket).await;
+            assert_eq!(
+                request,
+                json!({"jsonrpc":"2.0","id":"system","method":"system.info","params":[]})
+            );
+            let mut response = result;
+            response["jsonrpc"] = json!("2.0");
+            response["id"] = request["id"].clone();
+            socket
+                .send(Message::text(response.to_string()))
+                .await
+                .unwrap();
+            while let Some(Ok(message)) = socket.next().await {
+                assert!(
+                    !matches!(message, Message::Text(_)),
+                    "unexpected extra API call"
+                );
+            }
+        });
+        let outcome =
+            truenas_exporter::api::client::check_system(config(url, Duration::from_secs(2))).await;
+        assert_eq!(outcome.err(), expected);
+        timeout(Duration::from_secs(2), server)
+            .await
+            .unwrap()
+            .unwrap();
+    }
+}
+
+#[tokio::test]
+async fn system_preflight_times_out_without_retries_or_followup_calls() {
+    let (listener, url) = listen().await;
+    let server = tokio::spawn(async move {
+        let mut socket = login(&listener).await;
+        let request = text(&mut socket).await;
+        assert_eq!(request["method"], "system.info");
+        // Wrong IDs and unrelated notifications cannot satisfy or extend the deadline.
+        socket
+            .send(Message::text(
+                json!({"jsonrpc":"2.0","id":"other","result":{}}).to_string(),
+            ))
+            .await
+            .unwrap();
+        socket
+            .send(Message::text(
+                json!({"jsonrpc":"2.0","method":"collection_update","params":{}}).to_string(),
+            ))
+            .await
+            .unwrap();
+        while let Some(Ok(message)) = socket.next().await {
+            assert!(!matches!(message, Message::Text(_)));
+        }
+    });
+    let result = timeout(
+        Duration::from_secs(2),
+        truenas_exporter::api::client::check_system(config(url, Duration::from_millis(200))),
+    )
+    .await
+    .unwrap();
+    assert_eq!(result.err(), Some(Reason::Timeout));
+    timeout(Duration::from_secs(1), server)
+        .await
+        .unwrap()
+        .unwrap();
+}
+
+#[tokio::test]
+async fn system_preflight_cli_reports_only_bounded_results() {
+    for success in [true, false] {
+        let (listener, url) = listen().await;
+        let server = tokio::spawn(async move {
+            let mut socket = login(&listener).await;
+            let request = text(&mut socket).await;
+            assert_eq!(request["method"], "system.info");
+            let mut response = if success {
+                let mut info: Value =
+                    serde_json::from_str(include_str!("fixtures/system.synthetic.json")).unwrap();
+                info["hostname"] = json!("synthetic-private-host");
+                json!({"result": info})
+            } else {
+                json!({"error":{"code":-32001,"message":"synthetic-private-error","data":{"error":13,"reason":"synthetic-private-detail"}}})
+            };
+            response["id"] = request["id"].clone();
+            response["jsonrpc"] = json!("2.0");
+            socket
+                .send(Message::text(response.to_string()))
+                .await
+                .unwrap();
+            while let Some(Ok(message)) = socket.next().await {
+                assert!(!matches!(message, Message::Text(_)));
+            }
+        });
+        let temp = tempfile::tempdir().unwrap();
+        let key = temp.path().join("key");
+        let ca = temp.path().join("ca.pem");
+        std::fs::write(&key, "synthetic-key").unwrap();
+        std::fs::write(&ca, &fixture_tls().pem).unwrap();
+        let output = timeout(
+            Duration::from_secs(5),
+            tokio::process::Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+                .arg("check-system")
+                .env_clear()
+                .env("TRUENAS_WS_URL", url)
+                .env("TRUENAS_USERNAME", "test-user")
+                .env("TRUENAS_API_KEY_FILE", key)
+                .env("TRUENAS_CA_CERT_FILE", ca)
+                .env("TRUENAS_API_TIMEOUT_SECONDS", "2")
+                .env("RUST_LOG", "trace")
+                .kill_on_drop(true)
+                .output(),
+        )
+        .await
+        .unwrap()
+        .unwrap();
+        assert_eq!(output.status.success(), success);
+        let text = format!(
+            "{}{}",
+            String::from_utf8(output.stdout).unwrap(),
+            String::from_utf8(output.stderr).unwrap()
+        );
+        assert!(text.contains(if success {
+            "25.04.2.x compatibility passed"
+        } else {
+            "System preflight failed: permission"
+        }));
+        for marker in [
+            "synthetic-key",
+            "test-user",
+            "synthetic-private-host",
+            "synthetic-private-serial",
+            "synthetic-private-error",
+            "synthetic-private-detail",
+        ] {
+            assert!(!text.contains(marker), "leaked {marker}");
+        }
+        timeout(Duration::from_secs(2), server)
+            .await
+            .unwrap()
+            .unwrap();
+    }
+    let output = tokio::process::Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+        .arg("check-system")
+        .env_clear()
+        .env("EXPORTER_MOCK", "true")
+        .output()
+        .await
+        .unwrap();
+    assert!(!output.status.success());
+    assert!(
+        String::from_utf8(output.stderr)
+            .unwrap()
+            .contains("exactly one non-mock target")
+    );
 }

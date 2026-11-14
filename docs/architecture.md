@@ -35,3 +35,7 @@ All configured targets are required for readiness. A partial outage can therefor
 ## HTTP shutdown
 
 SIGINT/SIGTERM cancels collector and connection workers and starts a two-second HTTP drain. Reading clients may finish within that interval. When the interval expires, main stops waiting for HTTP, joins the cancelled workers, and exits the Tokio runtime, dropping remaining connection tasks. A redacted warning identifies the drain deadline. The two-second interval bounds the HTTP drain wait; worker completion and any already running blocking encoder also contribute to total process exit time.
+
+## M3-A preflight boundary
+
+The explicit check-system command uses the shared validated WSS/authentication helpers for one source-pinned system.info call. Its typed decoder and compatibility check are independent of the pool supervisor/scheduler and never refresh pool state. No system collector is registered for metrics or readiness in this slice. Live system permission/schema evidence and per-group state integration remain later acceptance gates; see system-contract.md.

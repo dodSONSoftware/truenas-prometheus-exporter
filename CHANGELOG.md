@@ -2,6 +2,8 @@
 
 ## Unreleased - 0.1.0 development
 
+- Add M3-A check-system: a one-shot verified-WSS authenticated system.info preflight with typed version/identity/uptime/memory/load validation, one overall timeout, fixed redacted output and offline TLS/CLI tests. Automatic system polling and daemon version gating remain pending.
+
 - Resolve TN-02 with operator-authorized native and UID-10001 Docker authentication/pool checks, sanitized full response captures, provenance and offline production-client/HTTP replay. Backend version remains operator-confirmed; other methods/events are unverified.
 
 - Adopt the MIT license, Copyright (c) 2026 dodson Software ( dodson labs ).

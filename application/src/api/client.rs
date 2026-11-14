@@ -1,5 +1,6 @@
 use super::protocol::{self, Incoming, Method};
 use crate::{
+    collectors::system::{self, SystemInfo},
     config::{ApiConfig, TransportConfig, validate_ws_url},
     state::{Reason, State},
 };
@@ -87,6 +88,40 @@ pub async fn check_transport(config: TransportConfig) -> Result<(), Reason> {
         .await
         .map_err(|_| Reason::Timeout)?
         .map_err(transport_reason)
+}
+
+/// Explicit, one-shot system preflight; never scheduled by normal pool collection.
+pub async fn check_system(config: ApiConfig) -> Result<SystemInfo, Reason> {
+    timeout(config.timeout, async {
+        let mut socket = open_authenticated(&config).await?;
+        socket
+            .send(Message::Text(
+                Method::SystemInfo.request("system").to_string().into(),
+            ))
+            .await
+            .map_err(transport_reason)?;
+        loop {
+            match socket.next().await {
+                Some(Ok(Message::Text(text))) => match protocol::decode(&text)? {
+                    Incoming::Response { id, result } if id == "system" => {
+                        let info = system::parse(result?)?;
+                        socket.close(None).await.map_err(transport_reason)?;
+                        return Ok(info);
+                    }
+                    _ => {}
+                },
+                Some(Ok(Message::Ping(bytes))) => socket
+                    .send(Message::Pong(bytes))
+                    .await
+                    .map_err(transport_reason)?,
+                Some(Ok(Message::Pong(_))) => {}
+                Some(Err(error)) => return Err(transport_reason(error)),
+                _ => return Err(Reason::Transport),
+            }
+        }
+    })
+    .await
+    .map_err(|_| Reason::Timeout)?
 }
 
 impl Client {

@@ -1,4 +1,4 @@
-# API protocol contract (M2 baseline)
+# API protocol contract (M2 baseline and M3-A preflight)
 
 Established before M2 implementation. Transport is JSON-RPC 2.0 on a persistent verified WSS connection; no legacy /websocket protocol. Normal mode rejects ws://, URL credentials, queries and fragments. A private CA extends Mozilla roots. Both connection entry points revalidate the same WSS URL constraints before opening a socket, including for directly constructed Rust configurations. Loopback protocol fixtures use synthetic certificates and explicit private trust roots.
 
@@ -10,7 +10,7 @@ Established before M2 implementation. Transport is JSON-RPC 2.0 on a persistent 
 | pool.query | Empty positional array; full list result required | M2 |
 | core.subscribe | Exactly reporting.realtime:{"interval":N}, integer N >= 2 | M3, denied until implemented |
 | core.unsubscribe | Subscription ID owned by this connection | M3, denied until implemented |
-| system identity/version/uptime methods | Exact versioned method and field mapping still required | M3, denied until documented |
+| system.info | Empty positional array; selected version/identity/uptime fields validated | M3-A explicit check-system only; not scheduled |
 
 Authentication is session establishment, not a NAS administrative write. Only typed method selection is exposed; no arbitrary method string or recursive discovery. Authentication never follows REDIRECT URLs. AUTH_ERR, EXPIRED, OTP_REQUIRED and REDIRECT are bounded error categories. JSON-RPC success alone does not authenticate a session.
 
@@ -27,3 +27,7 @@ Future subscription demultiplexing must parse method=collection_update with para
 The approved MEMORY ALPHA URL is now wss://memory-alpha.home.lab/api/current, through Caddy. The optional CA file extends trusted roots without disabling name checks. check-transport performs only verified WSS upgrade/close and does not send login or JSON-RPC method frames. Authenticated appliance tests remain gated on operator-provisioned read-only credentials. See memory-alpha-integration.md for actual outcomes.
 
 Multi-target mode gives each target its own client instance; the closed method allowlist is unchanged. No user-supplied method names, arbitrary API discovery, mutating operations or runtime HTTP target routing are exposed.
+
+## M3-A system preflight
+
+The closed SystemInfo variant is used only by check-system, through the same verified socket/authentication helpers. It validates the selected source fields and 25.04.2.x compatibility under one API-timeout budget, with no retries or subscriptions. Normal Client pool sessions retain their bounded pool-result decoder; no generic response decoding was introduced into that path. See system-contract.md for pinned source evidence, exact field rules, catalog omissions and the still-unimplemented automatic runtime gate. No live system.info call has been authorized or performed.

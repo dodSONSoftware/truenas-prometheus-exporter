@@ -214,3 +214,15 @@ Focused test `captured_appliance_pool_envelopes_replay_offline` passed. Each env
 `sh scripts/check.sh` passed formatting, strict Clippy, 46 regular Rust tests (one operational test explicitly ignored by default), and six Python tests. The production linux/amd64 image build passed as local/truenas-rust-exporter:captured-pools using existing cached build layers. The preceding operational and security runs were not repeated because no production implementation or dependencies changed. Hosted CI was not run.
 
 No additional appliance methods, infrastructure edits, live dashboard changes, pushes or deployment were performed. M3 can start offline; live system/version/realtime validation needs separately scoped authorization.
+
+## M3-A — system preflight, November 14, 2026
+
+Implemented an explicit check-system command backed by a closed system.info request and typed selected-field parsing. The source/role/units/registration mapping is pinned to official middleware tag TS-25.04.2.6, commit 244b717370fe35fb9eefc3096acfbc25f12b57b6. See system-contract.md. No live appliance call was made in this milestone; all new system fixtures and credentials are synthetic.
+
+Focused loopback TLS and actual CLI tests pass for valid 25.04.2.x data, other release families, malformed fields, permission/method errors, unknown correlation IDs/notifications and a stalled reply. The fixed-output CLI test also sets RUST_LOG=trace and checks that username, key, hostname, serial marker and sensitive remote error detail do not appear. Mock mode is rejected before network access. Field tests cover preserved fractional uptime, bytes and load averages, missing/null optional values, required-field omissions, numeric/string boundaries and invalid host/version lengths/formats.
+
+The first full sh scripts/check.sh run failed in the existing real_process_keeps_http_alive_redacts_trace_and_stops_on_sigterm test with exporter exited prematurely. No new preflight path is invoked by that test. An isolated rerun passed, followed by a clean full-suite rerun: formatting, strict Clippy, 52 regular Rust tests and six Python tests passed; the sustained operational test remains intentionally ignored by default. The initial early exit was not reproduced or diagnosed, so no unrelated implementation fix or definitive cause is claimed.
+
+Rust 1.88 strict Clippy across all targets and all six new system/preflight tests passed. The linux/amd64 production image local/truenas-rust-exporter:system-preflight built successfully on local Docker Desktop. The standard check-container.py hardening/synthetic-secret/multi-target/outage/SIGTERM validation passed on that image. A network-disabled container smoke check confirmed check-system is advertised in help and rejects mock configuration. Live Docker system.info permission and response compatibility remain unverified.
+
+No dependency/base-image changes were made, and prior security scans and sustained operational measurements were not rerun. Hosted CI was not run. Normal pool polling, cached metrics and readiness retain their existing behavior. Automatic runtime version gating and system metrics are not implemented by M3-A.
