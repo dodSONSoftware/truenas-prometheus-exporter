@@ -42,17 +42,7 @@ impl TransportConfig {
     pub fn from_values(values: &HashMap<String, String>) -> Result<Self> {
         let url = Url::parse(required(values, "TRUENAS_WS_URL")?)
             .map_err(|_| anyhow::anyhow!("TRUENAS_WS_URL must be a valid WSS URL"))?;
-        ensure!(
-            url.scheme() == "wss" && url.host_str().is_some(),
-            "TRUENAS_WS_URL requires wss and a host"
-        );
-        ensure!(
-            url.username().is_empty()
-                && url.password().is_none()
-                && url.query().is_none()
-                && url.fragment().is_none(),
-            "API URL must not contain credentials, query or fragment"
-        );
+        validate_ws_url(&url)?;
         Ok(Self {
             url,
             tls: tls_config(values.get("TRUENAS_CA_CERT_FILE").map(Path::new))?,
@@ -312,6 +302,21 @@ fn read_bounded(reader: impl Read, limit: usize, setting: &str) -> Result<Vec<u8
         .with_context(|| format!("cannot read {setting} file"))?;
     ensure!(bytes.len() <= limit, "{setting} file exceeds {limit} bytes");
     Ok(bytes)
+}
+
+pub(crate) fn validate_ws_url(url: &Url) -> Result<()> {
+    ensure!(
+        url.scheme() == "wss" && url.host_str().is_some(),
+        "TRUENAS_WS_URL requires wss and a host"
+    );
+    ensure!(
+        url.username().is_empty()
+            && url.password().is_none()
+            && url.query().is_none()
+            && url.fragment().is_none(),
+        "API URL must not contain credentials, query or fragment"
+    );
+    Ok(())
 }
 
 #[cfg(test)]

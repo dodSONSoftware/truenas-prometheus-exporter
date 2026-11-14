@@ -98,3 +98,9 @@ With eight clients delaying reads for 500 ms, the corrected run admitted one scr
 A real loopback HTTP regression uses the production metrics router with 16 targets, 256 pools each, and 128-byte pool names. The client advertises a 1 KiB receive buffer, reads only the first 256 response bytes, and leaves the response open. With the original drain implementation the server failed to return within the three-second test budget. With a two-second post-cancellation drain deadline, the same case returned in 2.002 seconds.
 
 A companion test reads a complete 4 MiB response while cancelling the server and verifies every body byte arrives. Formatting, strict Clippy and the full 35-test suite pass. Existing process-level tests independently exercise SIGTERM and worker/socket shutdown. The slow-reader regression cancels the production HTTP lifecycle function directly; it does not measure complete SIGTERM-to-process-exit time under maximum metrics load. Main joins cancelled workers after the drain and process runtime teardown releases remaining HTTP tasks. Already-running blocking encoding jobs may also contribute to total exit time.
+
+## TN-08 transport entry points (2026-11-13)
+
+Authenticated sessions and the credential-free transport diagnostic now use one socket-opening function. It reapplies the production URL policy before TCP connection, even when a Rust caller directly constructs the public configuration structs. Direct-entry tests reject plaintext, URL userinfo, query strings and fragments and verify the loopback listener receives no connection.
+
+Protocol fixtures now use verified WSS with a shared synthetic loopback certificate and explicit test trust roots. Independent TLS cases still reject an untrusted certificate or wrong hostname, and the diagnostic test observes a close frame as its first frame. Formatting, strict Clippy and all 36 Rust tests passed.

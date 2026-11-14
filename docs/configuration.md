@@ -13,7 +13,7 @@ No secret values belong in environment files, logs or Git. Config reads env once
 
 TRUENAS_HOST and TRUENAS_REALTIME_INTERVAL_SECONDS from the handoff are reserved for M3 and not consumed by M2. Do not claim realtime monitoring in this milestone.
 
-Normal mode accepts only wss URLs without embedded credentials, query or fragment. There is no insecure runtime flag. Mozilla trust roots plus optional private CA are used. A matching certificate DNS name or IP SAN is required. Unreadable/invalid local files fail startup; remote outages keep HTTP alive with readiness 503 after cache expiration.
+Normal mode and direct Rust transport entry points accept only wss URLs without embedded credentials, query or fragment. Authenticated collection and the diagnostic share the same validated socket-opening path. There is no insecure runtime flag. Mozilla trust roots plus optional private CA are used. A matching certificate DNS name or IP SAN is required. Unreadable/invalid local files fail startup; remote outages keep HTTP alive with readiness 503 after cache expiration.
 
 Healthcheck: `truenas-exporter healthcheck` sends a bounded local HTTP request to /healthz (wildcard listen addresses are translated to loopback). It does not load credentials or contact the NAS. SIGINT/SIGTERM cancel background tasks and gracefully stop HTTP.
 

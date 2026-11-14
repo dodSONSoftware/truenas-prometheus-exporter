@@ -1,6 +1,6 @@
 use super::protocol::{self, Incoming, Method};
 use crate::{
-    config::{ApiConfig, TransportConfig},
+    config::{ApiConfig, TransportConfig, validate_ws_url},
     state::{Reason, State},
 };
 use futures_util::{Sink, SinkExt, StreamExt};
@@ -82,21 +82,7 @@ pub struct Client {
 
 /// Establish verified WSS and close it without sending authentication or API frames.
 pub async fn check_transport(config: TransportConfig) -> Result<(), Reason> {
-    let ws_config = WebSocketConfig::default()
-        .max_message_size(Some(MAX_MESSAGE))
-        .max_frame_size(Some(MAX_MESSAGE));
-    let (mut socket, _) = timeout(
-        config.timeout,
-        connect_async_tls_with_config(
-            config.url.as_str(),
-            Some(ws_config),
-            true,
-            Some(Connector::Rustls(config.tls)),
-        ),
-    )
-    .await
-    .map_err(|_| Reason::Timeout)?
-    .map_err(transport_reason)?;
+    let mut socket = open_transport(&config.url, config.tls.clone(), config.timeout).await?;
     timeout(config.timeout, socket.close(None))
         .await
         .map_err(|_| Reason::Timeout)?
@@ -205,24 +191,34 @@ async fn connect_and_run(
 }
 
 async fn open_authenticated(config: &ApiConfig) -> Result<Socket, Reason> {
+    let mut socket = open_transport(&config.url, config.tls.clone(), config.timeout).await?;
+    timeout(config.timeout, authenticate(&mut socket, config))
+        .await
+        .map_err(|_| Reason::Timeout)??;
+    Ok(socket)
+}
+
+async fn open_transport(
+    url: &url::Url,
+    tls: Arc<rustls::ClientConfig>,
+    deadline: Duration,
+) -> Result<Socket, Reason> {
+    validate_ws_url(url).map_err(|_| Reason::Protocol)?;
     let ws_config = WebSocketConfig::default()
         .max_message_size(Some(MAX_MESSAGE))
         .max_frame_size(Some(MAX_MESSAGE));
-    let (mut socket, _) = timeout(
-        config.timeout,
+    let (socket, _) = timeout(
+        deadline,
         connect_async_tls_with_config(
-            config.url.as_str(),
+            url.as_str(),
             Some(ws_config),
             true,
-            Some(Connector::Rustls(config.tls.clone())),
+            Some(Connector::Rustls(tls)),
         ),
     )
     .await
     .map_err(|_| Reason::Timeout)?
     .map_err(transport_reason)?;
-    timeout(config.timeout, authenticate(&mut socket, config))
-        .await
-        .map_err(|_| Reason::Timeout)??;
     Ok(socket)
 }
 

@@ -1,7 +1,7 @@
 use futures_util::{SinkExt, StreamExt};
 use serde_json::{Value, json};
 use std::{
-    sync::{Arc, atomic::Ordering},
+    sync::{Arc, OnceLock, atomic::Ordering},
     time::Duration,
 };
 use tokio::{
@@ -19,7 +19,50 @@ use truenas_exporter::{
     state::{Reason, State},
 };
 
-type Socket = WebSocketStream<TcpStream>;
+type Socket = WebSocketStream<tokio_rustls::server::TlsStream<TcpStream>>;
+struct FixtureTls {
+    server: Arc<rustls::ServerConfig>,
+    client: Arc<rustls::ClientConfig>,
+}
+fn fixture_tls() -> &'static FixtureTls {
+    static TLS: OnceLock<FixtureTls> = OnceLock::new();
+    TLS.get_or_init(|| {
+        let certificate = rcgen::generate_simple_self_signed(vec!["127.0.0.1".into()]).unwrap();
+        let mut roots = rustls::RootCertStore::empty();
+        roots.add(certificate.cert.der().clone()).unwrap();
+        let server = rustls::ServerConfig::builder()
+            .with_no_client_auth()
+            .with_single_cert(
+                vec![certificate.cert.der().clone()],
+                rustls::pki_types::PrivatePkcs8KeyDer::from(certificate.key_pair.serialize_der())
+                    .into(),
+            )
+            .unwrap();
+        FixtureTls {
+            server: Arc::new(server),
+            client: Arc::new(
+                rustls::ClientConfig::builder()
+                    .with_root_certificates(roots)
+                    .with_no_client_auth(),
+            ),
+        }
+    })
+}
+struct FixtureListener(TcpListener);
+impl FixtureListener {
+    async fn accept(
+        &self,
+    ) -> std::io::Result<(
+        tokio_rustls::server::TlsStream<TcpStream>,
+        std::net::SocketAddr,
+    )> {
+        let (tcp, address) = self.0.accept().await?;
+        let tls = tokio_rustls::TlsAcceptor::from(fixture_tls().server.clone())
+            .accept(tcp)
+            .await?;
+        Ok((tls, address))
+    }
+}
 fn config(url: String, deadline: Duration) -> ApiConfig {
     ApiConfig {
         url: url.parse().unwrap(),
@@ -27,14 +70,14 @@ fn config(url: String, deadline: Duration) -> ApiConfig {
             username: "test-user".into(),
             key: "synthetic-key".into(),
         },
-        tls: tls_config(None).unwrap(),
+        tls: fixture_tls().client.clone(),
         timeout: deadline,
     }
 }
-async fn listen() -> (TcpListener, String) {
+async fn listen() -> (FixtureListener, String) {
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-    let url = format!("ws://{}/api/current", listener.local_addr().unwrap());
-    (listener, url)
+    let url = format!("wss://{}/api/current", listener.local_addr().unwrap());
+    (FixtureListener(listener), url)
 }
 async fn text(socket: &mut Socket) -> Value {
     loop {
@@ -45,7 +88,7 @@ async fn text(socket: &mut Socket) -> Value {
         }
     }
 }
-async fn login(listener: &TcpListener) -> Socket {
+async fn login(listener: &FixtureListener) -> Socket {
     let (stream, _) = listener.accept().await.unwrap();
     let mut socket = accept_async(stream).await.unwrap();
     let request = text(&mut socket).await;
@@ -779,4 +822,50 @@ async fn late_response_cannot_complete_the_next_query() {
     stop.cancel();
     task.await.unwrap();
     server.await.unwrap();
+}
+
+#[tokio::test]
+async fn direct_transport_entries_reject_unsafe_urls_before_connecting() {
+    use truenas_exporter::{api::client::check_transport, config::TransportConfig};
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let address = listener.local_addr().unwrap();
+    for url in [
+        format!("ws://{address}/api/current"),
+        format!("wss://user:secret@{address}/api/current"),
+        format!("wss://{address}/api/current?token=secret"),
+        format!("wss://{address}/api/current#fragment"),
+    ] {
+        let api = config(url.clone(), Duration::from_secs(1));
+        assert_eq!(
+            check_transport(TransportConfig {
+                url: api.url.clone(),
+                tls: api.tls.clone(),
+                timeout: api.timeout,
+            })
+            .await,
+            Err(Reason::Protocol)
+        );
+        let state = State::new(Duration::from_secs(180), false);
+        let stop = CancellationToken::new();
+        let (_client, task) = Client::spawn(api, state.clone(), stop.clone());
+        timeout(Duration::from_secs(1), async {
+            while !state
+                .metrics_at(tokio::time::Instant::now())
+                .unwrap()
+                .contains("reason=\"protocol\"")
+            {
+                tokio::task::yield_now().await;
+            }
+        })
+        .await
+        .unwrap();
+        assert!(!state.connected.load(Ordering::Relaxed));
+        stop.cancel();
+        task.await.unwrap();
+    }
+    assert!(
+        timeout(Duration::from_millis(50), listener.accept())
+            .await
+            .is_err()
+    );
 }
