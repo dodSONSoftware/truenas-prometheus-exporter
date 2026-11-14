@@ -32,11 +32,53 @@ fn fragmentation<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<f64>, 
     }
 }
 
+const MAX_POOLS: usize = 256;
+
+// Count borrowed element slices before allocating any pool objects. The envelope
+// decoder has already validated JSON syntax across the entire raw result.
+pub(crate) fn bounded_result(raw: &str) -> Result<Value, Reason> {
+    use serde::de::{SeqAccess, Visitor};
+    use serde_json::value::RawValue;
+
+    struct PoolList;
+    impl<'de> Visitor<'de> for PoolList {
+        type Value = Vec<&'de RawValue>;
+
+        fn expecting(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            f.write_str("an array of up to 256 pools")
+        }
+
+        fn visit_seq<A: SeqAccess<'de>>(self, mut seq: A) -> Result<Self::Value, A::Error> {
+            let mut entries = Vec::new();
+            while let Some(entry) = seq.next_element()? {
+                if entries.len() == MAX_POOLS {
+                    return Err(serde::de::Error::custom("too many pools"));
+                }
+                entries.push(entry);
+            }
+            Ok(entries)
+        }
+    }
+    let entries = serde::Deserializer::deserialize_seq(
+        &mut serde_json::Deserializer::from_str(raw),
+        PoolList,
+    )
+    .map_err(|_| Reason::Schema)?;
+    entries
+        .into_iter()
+        .map(|entry| serde_json::from_str(entry.get()).map_err(|_| Reason::Schema))
+        .collect::<Result<Vec<_>, _>>()
+        .map(Value::Array)
+}
+
 pub fn parse(value: Value) -> Result<Vec<Pool>, Reason> {
-    let pools: Vec<Pool> = serde_json::from_value(value).map_err(|_| Reason::Schema)?;
-    if pools.len() > 256 {
+    if !value
+        .as_array()
+        .is_some_and(|entries| entries.len() <= MAX_POOLS)
+    {
         return Err(Reason::Schema);
     }
+    let pools: Vec<Pool> = serde_json::from_value(value).map_err(|_| Reason::Schema)?;
     let mut names = HashSet::new();
     for pool in &pools {
         if pool.name.is_empty()

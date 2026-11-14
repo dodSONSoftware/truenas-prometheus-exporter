@@ -1,6 +1,7 @@
 use crate::{config::Credentials, state::Reason};
 use serde::Deserialize;
-use serde_json::{Value, json};
+use serde_json::{Value, json, value::RawValue};
+use std::collections::BTreeMap;
 
 pub enum Incoming {
     Response {
@@ -33,19 +34,39 @@ impl Method {
 }
 
 pub fn decode(text: &str) -> Result<Incoming, Reason> {
-    let value: Value = serde_json::from_str(text).map_err(|_| Reason::Protocol)?;
-    let object = value.as_object().ok_or(Reason::Protocol)?;
-    if object.get("jsonrpc").and_then(Value::as_str) != Some("2.0") {
+    decode_with(text, |raw| {
+        serde_json::from_str(raw).map_err(|_| Reason::Protocol)
+    })
+}
+
+// Pool replies are the only data responses admitted on an authenticated M2 session.
+pub(super) fn decode_pool_response(text: &str) -> Result<Incoming, Reason> {
+    decode_with(text, crate::collectors::pools::bounded_result)
+}
+
+fn decode_with(
+    text: &str,
+    result_decoder: impl FnOnce(&str) -> Result<Value, Reason>,
+) -> Result<Incoming, Reason> {
+    let object: BTreeMap<String, &RawValue> =
+        serde_json::from_str(text).map_err(|_| Reason::Protocol)?;
+    let string_field = |key: &str| {
+        object
+            .get(key)
+            .and_then(|raw| serde_json::from_str::<String>(raw.get()).ok())
+    };
+    if string_field("jsonrpc").as_deref() != Some("2.0") {
         return Err(Reason::Protocol);
     }
-    if let Some(id) = object.get("id") {
-        let id = id.as_str().ok_or(Reason::Protocol)?.to_owned();
+    if object.contains_key("id") {
+        let id = string_field("id").ok_or(Reason::Protocol)?;
         if object.contains_key("method")
             || object.contains_key("result") == object.contains_key("error")
         {
             return Err(Reason::Protocol);
         }
-        let result = if let Some(error) = object.get("error") {
+        let result = if let Some(raw) = object.get("error") {
+            let error: Value = serde_json::from_str(raw.get()).map_err(|_| Reason::Protocol)?;
             let code = error
                 .get("code")
                 .and_then(Value::as_i64)
@@ -60,10 +81,10 @@ pub fn decode(text: &str) -> Result<Incoming, Reason> {
                 _ => Reason::Api,
             })
         } else {
-            Ok(object.get("result").ok_or(Reason::Protocol)?.clone())
+            result_decoder(object.get("result").ok_or(Reason::Protocol)?.get())
         };
         Ok(Incoming::Response { id, result })
-    } else if object.get("method").and_then(Value::as_str).is_some()
+    } else if string_field("method").is_some()
         && !object.contains_key("result")
         && !object.contains_key("error")
     {

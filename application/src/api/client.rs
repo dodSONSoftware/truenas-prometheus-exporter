@@ -249,7 +249,7 @@ async fn run_session(
             message = stream.next() => {
                 last_received = Instant::now();
                 let result = match message {
-                    Some(Ok(Message::Text(text))) => match protocol::decode(&text) {
+                    Some(Ok(Message::Text(text))) => match protocol::decode_pool_response(&text) {
                         Ok(Incoming::Response { id, result }) => {
                             if let Some(request) = pending.remove(&id)
                                 && request.deadline > Instant::now()

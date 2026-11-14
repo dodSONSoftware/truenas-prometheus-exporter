@@ -681,3 +681,68 @@ async fn transport_check_closes_verified_websocket_without_authentication() {
     check_transport(transport).await.unwrap();
     server.await.unwrap();
 }
+
+#[tokio::test]
+async fn pool_count_limit_preserves_snapshot_and_session() {
+    let (listener, url) = listen().await;
+    let server = tokio::spawn(async move {
+        let mut ws = login(&listener).await;
+        for count in [0, 1, 256, 257, 75_000, 1] {
+            let request = text(&mut ws).await;
+            let entries = (0..count)
+                .map(|i| {
+                    if count == 75_000 {
+                        r#"{"name":"a"}"#.to_owned()
+                    } else {
+                        format!(r#"{{"name":"pool-{i}","size":42}}"#)
+                    }
+                })
+                .collect::<Vec<_>>()
+                .join(",");
+            let response = format!(
+                r#"{{"jsonrpc":"2.0","id":{},"result":[{entries}]}}"#,
+                request["id"]
+            );
+            assert!(response.len() < WIRE_LIMIT);
+            ws.send(Message::text(response)).await.unwrap();
+        }
+        while let Some(Ok(_)) = ws.next().await {}
+    });
+    let ttl = Duration::from_secs(10);
+    let state = State::new(ttl, false);
+    let stop = CancellationToken::new();
+    let (client, task) = Client::spawn(
+        config(url, Duration::from_secs(3)),
+        state.clone(),
+        stop.clone(),
+    );
+    ready(&state).await;
+    let start = tokio::time::Instant::now();
+    for (step, count) in [0, 1, 256, 257, 75_000, 1].into_iter().enumerate() {
+        let result = client
+            .pool_query()
+            .await
+            .and_then(truenas_exporter::collectors::pools::parse);
+        let now = start + Duration::from_secs(step as u64);
+        if count > 256 {
+            assert!(matches!(result, Err(Reason::Schema)));
+            state.complete(result, now, step as f64, Duration::ZERO);
+            let expiry = start + Duration::from_secs(2) + ttl;
+            assert!(state.ready_at(expiry - Duration::from_nanos(1)));
+            assert!(!state.ready_at(expiry));
+            let metrics = state.metrics_at(now).unwrap();
+            assert!(metrics.contains(
+                "truenas_exporter_last_success_timestamp_seconds{collector=\"pools\"} 2"
+            ));
+            assert!(metrics.contains("truenas_pool_size_bytes{pool=\"pool-255\"} 42"));
+        } else {
+            let pools = result.unwrap();
+            assert_eq!(pools.len(), count);
+            state.complete(Ok(pools), now, step as f64, Duration::ZERO);
+            assert!(state.ready_at(now));
+        }
+    }
+    stop.cancel();
+    task.await.unwrap();
+    server.await.unwrap();
+}

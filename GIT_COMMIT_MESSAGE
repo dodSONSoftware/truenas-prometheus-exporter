@@ -1,11 +1,12 @@
-test: verify WebSocket frame and message size limits
+perf: bound pool response allocation before decoding entries
 
-[0.0.1] Iron Ferret
+[0.0.2] Iron Ferret
 
-- tests: Exercise valid single-frame and fragmented responses around the 1 MiB boundary
-- tests: Verify oversized frame headers fail before their payload arrives
-- tests: Distinguish malformed JSON from a stalled response
-- VERSION: Increment the patch release to 0.0.1
+- protocol: Borrow the RPC result and eliminate its deep clone
+- pools: Reject more than 256 entries before materializing pool records
+- tests: Cover count boundaries, cache expiry and session recovery
+- validation: Record comparative decoder memory measurements
+- VERSION: Increment the patch release to 0.0.2
 - README.md: Update the Iron Ferret release information
 
 developed by Randel Dodson and AI

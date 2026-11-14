@@ -62,3 +62,16 @@ The final linux/amd64 distroless build is `sha256:2dc783768b04a75364f5efc84070b7
 Live tests authorized by the operator: verified Rust WSS upgrade (HTTP 101) through memory-alpha.home.lab on the host and the actual final container, using the public Caddy root exported from trusted macOS certificates. The container rejects the endpoint without the private CA. No authentication or JSON-RPC method frames were sent. The dedicated account/key do not exist yet; live auth.login_ex, pool.query, actual role permissions and captured appliance fixtures remain unverified. See memory-alpha-integration.md.
 
 Rebuilt image scan: 14 OS packages; 0 critical, 0 high, 23 medium and 8 low findings. Strict Rust dependency audit returns 0 vulnerabilities and 0 warnings. CI is updated but has not run on GitHub. No TrueNAS, Pi-hole, Caddy or production observability configuration was modified.
+
+## TN-03 pool response allocation (2026-11-13)
+
+A temporary Rust release harness called the session's envelope decoder followed by the pool collector. Each case ran in a separate network-disabled linux/amd64 container on Docker Desktop with 128 MiB memory, swap disabled and 0.5 CPU. Concurrent workers started at a barrier and shared the input string. These are single-run cgroup memory peaks for the decode workload including harness startup and input construction. Full exporter memory with separate sockets, snapshots and scrapes requires a separate measurement.
+
+| Workers | Pool entries per response | Baseline at 9b22c73 (bytes) | TN-03 (bytes) |
+| ---: | ---: | ---: | ---: |
+| 1 | 1 valid | 12,779,520 | 12,222,464 |
+| 1 | 256 valid | 12,218,368 | 10,694,656 |
+| 1 | 75,000 | 118,325,248 | 10,768,384 |
+| 16 | 75,000 | OOM kill, exit 137 confirmed by Docker | 13,402,112 |
+
+The oversized case used a 975,037-byte JSON-RPC response with 75,000 single-field pool objects. Each corrected worker returned a schema error. The loopback regression also exercises 0, 1, 256, 257 and 75,000 entries, retaining the previous snapshot until its exact monotonic TTL and successfully collecting again on the same connection. All 25 Rust tests, formatting, strict Clippy and the linux/amd64 runtime image build passed.
