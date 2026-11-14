@@ -10,7 +10,7 @@ Run `docker compose config` on the eventual merged configuration before rollout.
 
 Container is non-root, read-only, all capabilities dropped, no-new-privileges, with /healthz healthcheck. /readyz is not a restart trigger. Resource limits are illustrative until measured. TLS failures emit a safe category and trust/name guidance; keys, URLs, frames and remote errors are not logged. Repeated failures use bounded retries.
 
-License: MIT. See the root LICENSE. RustSec and local linux/amd64 build/runtime validation now pass. The distroless runtime passes the high/critical vulnerability gate; medium/low findings remain tracked and captured appliance fixtures are still outstanding; see security-validation.md and validation.md.
+License: MIT. See the root LICENSE. Local linux/amd64 runtime checks pass through TN-15. RustSec and image scan results are historical until refreshed; medium/low findings remain tracked and captured appliance fixtures are still outstanding; see security-validation.md and validation.md.
 
 The runtime has no shell or package manager. Use logs/metrics and `truenas-exporter healthcheck` for diagnosis; do not add tools to the deployed image. The runtime validation probe is exported and mounted only during local/CI tests. OpenSSL/Python are host-side test requirements, not runtime dependencies.
 

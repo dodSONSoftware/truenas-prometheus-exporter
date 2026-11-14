@@ -1,5 +1,29 @@
 # Local validation record
 
+## Current review status — November 13, 2026
+
+Fourteen findings have implementation fixes. TN-02 awaits a captured, sanitized appliance response. At b2e9919, 45 Rust tests, six Python tests, formatting, strict Clippy and local linux/amd64 container checks passed. Earlier results below retain their original scope. Credential provisioning needs operator confirmation.
+
+| Finding | Commit | Disposition |
+| --- | --- | --- |
+| TN-01 | 4be109e | Implemented and locally verified |
+| TN-02 | pending | Waiting for appliance evidence |
+| TN-03 | 0bfcab0 | Implemented and locally verified |
+| TN-04 | 82588c3 | Implemented; sustained process validation remains |
+| TN-05 | 4750a91 | Implemented and locally verified |
+| TN-06 | be2b94f | Implemented and locally verified |
+| TN-07 | 8009702 | Implemented; sustained process validation remains |
+| TN-08 | 9a0b534 | Implemented and locally verified |
+| TN-09 | b0ec1fe | Implemented and locally verified |
+| TN-10 | b8ae644 | Implemented and locally verified |
+| TN-11 | a036f4d | Implemented and locally verified |
+| TN-12 | 9073311 | Implemented and locally verified |
+| TN-13 | 9b22c73 | Implemented and locally verified |
+| TN-14 | a782c14 | Implemented and locally verified |
+| TN-15 | b2e9919 | Implemented and locally verified |
+
+Remaining offline work includes sustained collection with independent connections, full-process shutdown under backpressure, current-tree Rust 1.88 checks and refreshed dependency/image security scans. Hosted CI requires an authorized GitHub run. M3 remains gated on authenticated compatibility under the existing plan.
+
 Date: 2026-10-27 (America/Chicago). Host: macOS arm64. Toolchain: rustc 1.99.1 and cargo 1.99.1. The one Git root is truenas_metrics_project/; there are no nested repositories. Original handoff preserved.
 
 ## Passed
@@ -53,7 +77,7 @@ Initial offline validation did not contact MEMORY ALPHA. Subsequent explicitly a
 
 ## Multi-target and Caddy integration follow-up
 
-Latest offline suite: **22 tests passed**, 0 failed (10 API, 5 configuration, 1 multi-target process, 1 process/redaction, 5 state/HTTP tests). Both Rust 1.88 and installed stable strict Clippy checks pass; formatting includes the standalone runtime probe.
+Historical multi-target suite: **22 tests passed**, 0 failed (10 API, 5 configuration, 1 multi-target process, 1 process/redaction, 5 state/HTTP tests). Both Rust 1.88 and installed stable strict Clippy checks pass; formatting includes the standalone runtime probe.
 
 The new process test runs two local TLS mock servers with different CAs and credentials, identical pool names and different values. One target's later permission failures expire only its own measurements while the other continues updating. Readiness fails after the required target expires; liveness/metrics remain available. Trace logs exclude both credentials and account names. Descriptor/EOF uniqueness and config size/count/name/secret-field boundaries are tested.
 

@@ -1,12 +1,10 @@
-fix: reject port zero for the exporter listener
+docs: reconcile review milestones and validation status
 
-[0.0.13] Iron Ferret
+[0.0.14] Iron Ferret
 
-- config: Require a fixed nonzero port in the shared listen parser
-- tests: Verify normal startup and healthcheck reject IPv4 and IPv6 port zero
-- tests: Preserve default, fixed-port and wildcard-to-loopback healthcheck behavior
-- docs: Specify the supported listen port range
-- VERSION: Increment the patch release to 0.0.13
+- docs: Map findings to commits and remaining operational evidence
+- docs: Distinguish current checks from historical toolchain and security scans
+- VERSION: Increment the patch release to 0.0.14
 - README.md: Update the Iron Ferret release information
 
 developed by Randel Dodson and AI
