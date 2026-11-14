@@ -75,3 +75,20 @@ A temporary Rust release harness called the session's envelope decoder followed 
 | 16 | 75,000 | OOM kill, exit 137 confirmed by Docker | 13,402,112 |
 
 The oversized case used a 975,037-byte JSON-RPC response with 75,000 single-field pool objects. Each corrected worker returned a schema error. The loopback regression also exercises 0, 1, 256, 257 and 75,000 entries, retaining the previous snapshot until its exact monotonic TTL and successfully collecting again on the same connection. All 25 Rust tests, formatting, strict Clippy and the linux/amd64 runtime image build passed.
+
+## TN-04 concurrent scrapes (2026-11-13)
+
+A temporary release harness populated 16 targets with 256 pools each and all seven pool metric families, served the production router on loopback, and issued simultaneous HTTP scrapes. A synthetic collection-state updater ran every 5 ms. Each run used a separate linux/amd64 Docker Desktop container capped at 128 MiB, no swap and 0.5 CPU. The client and server shared the container; memory includes response buffers on both sides. These single-run measurements are workload observations with host scheduling variation.
+
+| Readers | Baseline successful scrapes | Corrected successful scrapes | Baseline peak bytes | Corrected peak bytes | Baseline health latency ms | Corrected health latency ms |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 1 | 1 | 19,791,872 | 22,855,680 | 19 | 31 |
+| 2 | 2 | 1 | 32,833,536 | 20,766,720 | 174 | 132 |
+| 4 | 4 | 1 | 39,243,776 | 19,271,680 | 462 | 56 |
+| 8 | 8 | 1 | 48,160,768 | 21,004,288 | 661 | 87 |
+
+Successful responses were about 2,032,280 bytes. Excess corrected requests received 503. At eight readers the baseline took 683 ms with 6 updater iterations; the corrected run took 136 ms with 9 iterations. This experiment measures collection-state progress, not authenticated polling throughput. Admission caps active encoding, including abandoned-request encoders. It does not cap open sockets or all completed bodies retained by slow readers.
+
+Formatting, strict Clippy and all 33 tests passed, including busy-encoder rejection, availability of health/readiness, recovery of encoder admission, and existing exact TTL and per-target expiry tests. The linux/amd64 runtime image build and container runtime checks passed.
+
+With eight clients delaying reads for 500 ms, the corrected run admitted one scrape, returned 503 to seven, completed in 512 ms, peaked at 22,192,128 bytes, served health in 30 ms and recorded 66 updater iterations. This finite delayed-read case does not establish a bound for indefinitely stalled clients or test shutdown under socket backpressure; TN-07 retains that investigation.

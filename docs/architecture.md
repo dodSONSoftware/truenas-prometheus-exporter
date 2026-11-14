@@ -1,6 +1,6 @@
 # Architecture and failure contract
 
-One executable and Cargo package. Config validates local inputs before starting. A connection task owns the WebSocket and bounded request map. The pool scheduler performs asynchronous reads. HTTP clones cached snapshots under a short lock and encodes outside the lock; it never calls TrueNAS.
+One executable and Cargo package. Config validates local inputs before starting. A connection task owns the WebSocket and bounded request map. The pool scheduler performs asynchronous reads. HTTP shares immutable pool data under a short lock and encodes outside the lock; it never calls TrueNAS.
 
 ## Deterministic state
 
@@ -17,7 +17,7 @@ TTL uses tokio monotonic time; exported epoch timestamps use wall time. HTTP com
 
 Malformed required pool identity invalidates the complete collection. Missing/null optional measurements are absent. Present invalid measurements invalidate the collection, preserving the last valid snapshot until expiry. This avoids publishing a mixed-time partial snapshot. Healthy and warning remain independent. Empty pools is valid and ready. No scan never means zero errors.
 
-/healthz always reports process liveness; /readyz reports 200 only while the required snapshot is fresh; /metrics always exposes exporter state. Responses contain no sensitive error detail. Liveness, never readiness, is the container restart check.
+/healthz always reports process liveness; /readyz reports 200 only while the required snapshot is fresh; /metrics exposes exporter state when admitted. One encoding job per router runs on the blocking pool. Overlapping requests during encoding receive HTTP 503 with "metrics encoder busy"; they do not queue encoding work. A disconnected request retains its admission slot until its encoder finishes. Health and readiness use independent routes. Completed response bodies and socket buffers have their own lifetimes. Responses contain no sensitive error detail. Liveness, never readiness, is the container restart check.
 
 Mock mode performs no network access and periodically publishes one synthetic pool snapshot. It keeps truenas_api_connected=0 because there is no authenticated API connection; readiness can still be true. It is explicitly labeled via truenas_exporter_mock_mode and is not deployment evidence.
 

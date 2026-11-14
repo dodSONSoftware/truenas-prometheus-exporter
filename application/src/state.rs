@@ -55,7 +55,7 @@ impl Reason {
 
 #[derive(Clone)]
 struct Snapshot {
-    pools: Vec<Pool>,
+    pools: Arc<Vec<Pool>>,
     at: Instant,
     epoch: f64,
 }
@@ -207,7 +207,7 @@ impl State {
         match result {
             Ok(pools) => {
                 c.snapshot = Some(Snapshot {
-                    pools,
+                    pools: Arc::new(pools),
                     at: now,
                     epoch: epoch + duration.as_secs_f64(),
                 });

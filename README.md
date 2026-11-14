@@ -1,6 +1,6 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Iron Ferret — version 0.0.4.
+**Release:** Iron Ferret — version 0.0.5.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
@@ -29,7 +29,7 @@ For offline development after dependencies have been fetched, add `--offline` to
 
 ## Endpoints and behavior
 
-- `/metrics`: OpenMetrics text with HELP/TYPE, exporter status and unexpired measurements; never queries TrueNAS.
+- `/metrics`: OpenMetrics text with HELP/TYPE, exporter status and unexpired measurements; never queries TrueNAS. Overlapping scrapes during encoding receive 503 with an encoder-busy response.
 - `/healthz`: process liveness; container healthcheck target.
 - `/readyz`: 200 while the required pool snapshot is fresh, otherwise 503. A failed attempt can leave readiness 200 during the finite cache grace period.
 

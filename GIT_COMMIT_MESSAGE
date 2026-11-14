@@ -1,13 +1,12 @@
-fix: bound startup configuration file reads
+perf: bound concurrent metric encoding
 
-[0.0.4] Iron Ferret
+[0.0.5] Iron Ferret
 
-- config: Enforce byte caps on a single opened regular file handle
-- config: Reject FIFOs without blocking and preserve regular file symlinks
-- config: Limit private CA bundles to 1 MiB and use libc for Unix open flags
-- tests: Cover exact caps, excess bytes, symlinks, growing input and FIFO startup
-- docs: Document file types and raw byte limits
-- VERSION: Increment the patch release to 0.0.4
+- state: Share immutable pool snapshots during scrapes
+- http: Admit one blocking encoder and reject overlapping work with HTTP 503
+- tests: Verify overload leaves health and readiness available and admits recovery
+- docs: Record scrape load measurements and encoder admission behavior
+- VERSION: Increment the patch release to 0.0.5
 - README.md: Update the Iron Ferret release information
 
 developed by Randel Dodson and AI
