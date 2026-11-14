@@ -1,0 +1,12 @@
+fix: verify the packaged license against the repository copy
+
+[0.0.0] Iron Ferret
+
+- validation: Compare the installed LICENSE bytes with a read-only source mount
+- license: Include the updated MIT license naming Randy Dodson
+- docs: Refer operators to the source license for current attribution
+- workflow: Include the repository milestone commit instructions
+- VERSION: Initialize the repository release at 0.0.0
+- README.md: Record the Iron Ferret release
+
+developed by Randel Dodson and AI

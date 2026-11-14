@@ -61,10 +61,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             "unnecessary runtime tool is present",
         )?;
     }
-    let license = fs::read_to_string("/usr/share/doc/truenas-exporter/LICENSE")?;
+    let license = fs::read("/usr/share/doc/truenas-exporter/LICENSE")
+        .map_err(|error| format!("cannot read packaged LICENSE: {error}"))?;
     require(
-        license.contains("Copyright (c) 2026 dodson Software ( dodson labs )"),
-        "missing license",
+        license == fs::read("/validation/LICENSE")?,
+        "packaged LICENSE differs from repository LICENSE",
     )?;
     require(
         fs::metadata("/etc/ssl/certs/ca-certificates.crt")?.len() > 0,

@@ -1,5 +1,7 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
+**Release:** Iron Ferret — version 0.0.0.
+
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
 **Development status:** M1/M2 functionality is implemented with synthetic fixtures and loopback mock servers. No appliance compatibility or production readiness is claimed. System, CPU, memory, network, ARC and scan collectors are planned for M3; disks/services/alerts come later. The existing Graphite pipeline remains independent.
@@ -75,7 +77,7 @@ For an independent image build use `docker build --platform linux/amd64 -f deplo
 4. M4: measured resource budgets, long outage tests and operator-verified least privilege.
 5. P1 and dashboard migration artifacts after P0 validation; production rollout requires separate authorization.
 
-Licensed under the [MIT License](LICENSE). Copyright (c) 2026 dodson Software ( dodson labs ). See docs/implementation-plan.md and docs/validation.md for actual validation and remaining acceptance gates.
+Licensed under the [MIT License](LICENSE). See docs/implementation-plan.md and docs/validation.md for actual validation and remaining acceptance gates.
 
 For repeatable local container checks: `python3 scripts/check-container.py --context desktop-linux`. This uses the existing validation image, exports a test-only probe automatically, and removes its ephemeral test containers. Python 3 and OpenSSL are required on the host. No probe or diagnostic shell is shipped in the runtime. CI uses the same script against its local default context. Docker Desktop is installed on the development Mac; no remote Docker deployment is needed for these checks.
 

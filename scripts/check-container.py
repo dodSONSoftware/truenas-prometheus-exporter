@@ -72,7 +72,8 @@ def main():
             options = ["run", "--detach", "--name", name, "--platform", "linux/amd64",
                        "--read-only", "--cap-drop", "ALL", "--security-opt", "no-new-privileges:true",
                        "--health-interval", "1s", "--health-start-period", "1s"]
-            for source, target in [(probe, PROBE), (key, KEY), (ca, CA), (targets, TARGETS)]:
+            for source, target in [(probe, PROBE), (key, KEY), (ca, CA), (targets, TARGETS),
+                                   (root / "LICENSE", "/validation/LICENSE")]:
                 options += ["--mount", f"type=bind,src={source},dst={target},readonly"]
             for name_, value in environment.items():
                 options += ["--env", name_ + "=" + value]
