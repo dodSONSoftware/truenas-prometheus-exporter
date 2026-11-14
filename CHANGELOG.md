@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1 - 2026-11-14
+
+- Reverify captured CPU, memory, network and ARC conversions against pinned source and specify bounded live comparison windows.
+- Include the operator copyright correction and updated commit workflow.
+
+
 Entries below describe their milestone at the time, including then-pending work. For current disposition see [project-status.md](docs/project-status.md).
 
 ## Development history

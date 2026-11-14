@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Analyze the repository and Git history to determine what has changed, update the version, create or update `README.md`, generate `GIT_COMMIT_MESSAGE`, stage the intended repository changes, and **execute the Git commit** using that message.
+Analyze the repository and Git history to determine what has changed, update the version, create or update `README.md` and `CHANGELOG.md`, generate `GIT_COMMIT_MESSAGE`, stage the intended repository changes, and **execute the Git commit** using that message.
 
 These instructions are language-agnostic and apply to any Git repository.
 
@@ -27,7 +27,7 @@ Base conclusions on actual changes, not merely filenames or commit messages.
 
 Do not modify existing source code or unrelated files.
 
-Ignore any existing `GIT_COMMIT_MESSAGE`, the prior release line in `README.md`, and previous automatic `VERSION` edits when classifying functional changes. These files are maintained by this workflow; they must not be mistaken for new functionality.
+Ignore any existing `GIT_COMMIT_MESSAGE`, automatically maintained changelog entries, the prior release line in `README.md`, and previous automatic `VERSION` edits when classifying functional changes. These files are maintained by this workflow; they must not be mistaken for new functionality.
 
 Inspect the scope of changes before staging. Include intentional additions, modifications, renames, and deletions. Do not silently stage secrets, credentials, local environment files, or unrelated generated artifacts. If the intended commit scope is ambiguous or includes sensitive files, stop and report the issue rather than committing unsafe content.
 
@@ -258,11 +258,19 @@ Requirements:
 
 The version must match the final value in `VERSION`.
 
-## 5. Generate GIT_COMMIT_MESSAGE
+## 5. Create or Update CHANGELOG.md
+
+Maintain `CHANGELOG.md` in the repository root alongside `README.md` and `LICENSE`. Create it with the heading `# Changelog` if missing.
+
+Add a dated entry for the final version in `VERSION`. Follow the existing release format, or use `## X.Y.Z - YYYY-MM-DD` with the newest release first. Update an existing entry for that version in place. Move applicable unreleased notes into the entry and preserve earlier releases and pending notes.
+
+Summarize the actual changes and their impact in concise bullets. Include migration guidance for breaking changes when applicable. For a version-only commit, record that only release metadata changed.
+
+## 6. Generate GIT_COMMIT_MESSAGE
 
 Create or overwrite the file `GIT_COMMIT_MESSAGE` in the repository root.
 
-The message must describe the actual changes identified during repository analysis, including changes made to `VERSION` and `README.md`.
+The message must describe the actual changes identified during repository analysis, including changes made to `VERSION`, `README.md`, and `CHANGELOG.md`.
 
 ### Commit Message Format
 
@@ -303,7 +311,7 @@ The first line follows Conventional Commits syntax. The second paragraph identif
 4. The second paragraph must contain the final version and calculated codename, formatted exactly as `[X.Y.Z] <Material> <Predator>`.
 5. Separate the header, release identification, change descriptions, and attribution with one blank line.
 6. Include one-line bullet descriptions for significant files or groups of changes.
-7. Include `VERSION` and `README.md` changes when applicable.
+7. Include `VERSION`, `README.md`, and `CHANGELOG.md` changes when applicable.
 8. For breaking changes, add a `BREAKING CHANGE:` footer with migration notes before the attribution.
 9. End with the exact line `developed by Randel Dodson and AI`.
 10. Do not append `Co-Authored-By` or other attribution footers.
@@ -375,7 +383,7 @@ chore: advance project release version
 developed by Randel Dodson and AI
 ```
 
-## 6. Validate Before Committing
+## 7. Validate Before Committing
 
 Before staging:
 
@@ -384,16 +392,16 @@ Before staging:
 3. Verify the version increment matches the change classification, including a PATCH fallback for version-only commits.
 4. Verify the release codename matches MAJOR and MINOR.
 5. Verify `README.md` exists, contains an H1 project title, and has exactly one release line matching `VERSION`.
-6. Verify unrelated README documentation was preserved.
+6. Verify `CHANGELOG.md` contains one accurate entry for the final version. Verify prior release entries and unrelated README documentation were preserved.
 7. Verify `GIT_COMMIT_MESSAGE` exists, has the correct Conventional Commit header, release line, factual change summary, and exact attribution as its final line.
-8. Verify the intended staging set contains the real project changes and the three maintained files, without sensitive or unrelated files.
+8. Verify the intended staging set contains the real project changes and the four maintained files, without sensitive or unrelated files.
 9. Stop and report errors instead of committing invalid or unsafe content.
 
-## 7. Stage and Commit
+## 8. Stage and Commit
 
 **You must actually execute these operations.** The task is not complete after writing `GIT_COMMIT_MESSAGE`.
 
-1. Stage the intended repository changes, including new, modified, and deleted files, plus `VERSION`, `README.md`, and `GIT_COMMIT_MESSAGE`. When the complete repository change set is appropriate, execute:
+1. Stage the intended repository changes, including new, modified, and deleted files, plus `VERSION`, `README.md`, `CHANGELOG.md`, and `GIT_COMMIT_MESSAGE`. When the complete repository change set is appropriate, execute:
 
    ```bash
    git add -A
@@ -409,7 +417,7 @@ Before staging:
    git diff --cached --check
    ```
 
-   Confirm the staged changes match the analysis, including additions, deletions, `VERSION`, `README.md`, and `GIT_COMMIT_MESSAGE`.
+   Confirm the staged changes match the analysis, including additions, deletions, `VERSION`, `README.md`, `CHANGELOG.md`, and `GIT_COMMIT_MESSAGE`.
 
 3. Execute the commit using the exact message stored in the root file:
 
@@ -430,7 +438,7 @@ Before staging:
 
 Do not run `git push`, create tags, deploy, amend commits, or rewrite history.
 
-## 8. Report
+## 9. Report
 
 After completion, report:
 
@@ -448,9 +456,10 @@ This workflow is permitted to **create or modify** only these maintained files:
 ```text
 VERSION
 README.md
+CHANGELOG.md
 GIT_COMMIT_MESSAGE
 ```
 
-It must **stage and commit the existing project changes** identified in the repository as well as those three files. Leave pre-existing source changes intact; do not rewrite source code as part of commit preparation.
+It must **stage and commit the existing project changes** identified in the repository as well as those four files. Leave pre-existing source changes intact; do not rewrite source code as part of commit preparation.
 
 **A successful run ends with an actual Git commit. Do not push, tag, or deploy.**

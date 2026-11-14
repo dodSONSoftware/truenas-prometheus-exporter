@@ -67,3 +67,27 @@ See [capture provenance](../fixtures/truenas-25.04.2.6/README.md) for values/tim
 | utils/memory.py | a2509e9a922392f0bf9710a7ef57a9868f2455d3 |
 
 These bind inspected files to the pinned tree, not appliance-installed files or a separate release attestation.
+
+## Reverification on November 14, 2026
+
+Pinned public files were freshly downloaded for this review. Existing production-worker replay asserts all four captured aggregate CPU values, available/ARC bytes, rates, link speed and ARC ratios. The following values are copied from the saved frames and converted using the reviewed exporter arithmetic.
+
+| Frame | CPU ratio | Available bytes | ARC bytes | RX bytes/s | TX bytes/s | Link bits/s |
+| --- | --- | --- | --- | --- | --- | --- |
+| host 1 | 0 | 16179863552 | 41230199528 | 1142 | 0 | 1000000000 |
+| host 2 | 0 | 16184553472 | 41230199528 | 1932 | 2665 | 1000000000 |
+| container 1 | 0.09 | 16051470336 | 41246923128 | 3537 | 2071 | 1000000000 |
+| container 2 | 0.08 | 15659859968 | 41246973704 | 1654 | 2077 | 1000000000 |
+
+Total memory is 63,093,960,704 bytes in every frame. All 52 CPU entries satisfy the 0..100 percent contract. All available values lie within total physical memory. Both exported ARC hit ratios are explicit zero in all frames. Host frame 2 reports data hits/accesses 782/782 and metadata 31/31 per second while both percentages are zero. These processed rate fields cannot reconstruct the original cumulative counters, chart availability or engine calculation. No correction follows from dividing them.
+
+Freshly retrieved source SHA-256 digests (paths follow the source trace above):
+- realtime cpu — `2b3682f7aa5f7a3a146304e503e7544a6a23061a2d6f3a5646b7f092339f698e`
+- realtime memory — `36144b7d0f36a9559c2e8c20a3108335cd6859e8de004619caa202cd42715c1c`
+- realtime ifstat — `5f30a99916fe5f97955def264ef73427b0369a1ab0a2f6f2725da87e8d802aae`
+- realtime arcstat — `abec3e543dfdd52cfa82a929a13a4547018ca27e7a89611dfdc984788f91935d`
+- realtime utils — `6bd6291ee049f2f45100a489b91df5d77821af8323232aeeca38f7da6cf49b00`
+- metrics cpu_usage — `3ee08afd9d7bc6be6195589cc16fb1b4621c17afda08237310f61118d0e4c7e2`
+- metrics arcstat — `59c7523826db4c9428976b1372ae40e478be0591fbdd3611dc56b213ceda163b`
+- utils memory — `3c06b48eb125bb2f40df6f6ef378dec021e4d182f5f07e64b21ff1eee59464f4`
+- ARC chart — `4ba7fb5766786f843afa66edff4a362fde73874da1380f2da808a9ac1f05a976`
