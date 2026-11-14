@@ -134,3 +134,9 @@ Loopback TLS regressions verify malformed errors and notifications fail both pen
 The validator now prints its passing report after the cleanup context exits. Failed removals are checked against an exact-name Docker list query so a failed start with no residual container is distinguished from a daemon or removal failure. Every registered name receives a cleanup attempt. Cleanup failures make a successful validation fail; when validation already failed, its original exception survives and cleanup errors are reported on stderr.
 
 Six Python regressions cover result ordering, a failed removal followed by another attempt, preservation of the primary exception, absent containers after failed starts, and Docker execution errors. They are included in scripts/check.sh. Formatting, strict Clippy, all 42 Rust tests and six Python tests passed. The linux/amd64 build and the actual local container suite passed with the revised cleanup path.
+
+## TN-15 fixed listener port (2026-11-13)
+
+The shared exporter listen-address parser rejects port zero with a setting-specific error. Parser cases cover IPv4/IPv6 wildcard and loopback addresses, the default port and valid boundary ports. Child-process tests verify both normal startup and the credential-free healthcheck reject zero before attempting service operation. Loopback HTTP tests verify IPv4 and IPv6 wildcard addresses still map to their respective loopback addresses for the healthcheck.
+
+Formatting, strict Clippy, all 45 Rust tests and six Python cleanup tests passed. TN-02 remains pending captured, sanitized appliance response evidence; the capture directory still contains only its README.

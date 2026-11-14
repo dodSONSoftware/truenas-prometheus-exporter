@@ -269,10 +269,15 @@ fn environment_values(keys: &[&str]) -> Result<HashMap<String, String>> {
 }
 
 pub fn listen_address(value: Option<&str>) -> Result<SocketAddr> {
-    value
+    let address: SocketAddr = value
         .unwrap_or("0.0.0.0:9110")
         .parse()
-        .context("EXPORTER_LISTEN must be a numeric socket address")
+        .context("EXPORTER_LISTEN must be a numeric socket address")?;
+    ensure!(
+        address.port() != 0,
+        "EXPORTER_LISTEN port must be between 1 and 65535"
+    );
+    Ok(address)
 }
 
 fn required<'a>(values: &'a HashMap<String, String>, key: &str) -> Result<&'a str> {

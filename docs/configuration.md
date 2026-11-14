@@ -4,7 +4,7 @@ No secret values belong in environment files, logs or Git. Config reads supporte
 
 | Setting | Default | Validation |
 | --- | --- | --- |
-| EXPORTER_LISTEN | 0.0.0.0:9110 | Numeric socket address |
+| EXPORTER_LISTEN | 0.0.0.0:9110 | Numeric socket address with port 1..65535 |
 | EXPORTER_MOCK | false | true/false; true bypasses all API config and makes no network connections |
 | TRUENAS_POLL_INTERVAL_SECONDS | 60 | Integer 1..86400 |
 | TRUENAS_API_TIMEOUT_SECONDS | 10 | Integer 1..300 |

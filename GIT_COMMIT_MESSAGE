@@ -1,13 +1,12 @@
-fix: report container cleanup failures accurately
+fix: reject port zero for the exporter listener
 
-[0.0.12] Iron Ferret
+[0.0.13] Iron Ferret
 
-- validation: Print success only after temporary container cleanup
-- validation: Attempt every removal and retain primary validation failures
-- validation: Distinguish absent containers from failed Docker cleanup
-- tests: Add six cleanup regressions to the project quality gates
-- docs: Document cleanup result semantics
-- VERSION: Increment the patch release to 0.0.12
+- config: Require a fixed nonzero port in the shared listen parser
+- tests: Verify normal startup and healthcheck reject IPv4 and IPv6 port zero
+- tests: Preserve default, fixed-port and wildcard-to-loopback healthcheck behavior
+- docs: Specify the supported listen port range
+- VERSION: Increment the patch release to 0.0.13
 - README.md: Update the Iron Ferret release information
 
 developed by Randel Dodson and AI

@@ -375,3 +375,50 @@ async fn environment_unicode_errors_are_redacted_and_unrelated_bytes_are_ignored
     );
     assert!(!error.contains("PRIVATE_MARKER") && !error.contains("panicked"));
 }
+
+#[test]
+fn listen_address_requires_a_discoverable_port() {
+    use truenas_exporter::config::listen_address;
+    assert_eq!(listen_address(None).unwrap().to_string(), "0.0.0.0:9110");
+    for address in ["127.0.0.1:1", "0.0.0.0:65535", "[::1]:9110", "[::]:65535"] {
+        assert_eq!(
+            listen_address(Some(address)).unwrap(),
+            address.parse::<std::net::SocketAddr>().unwrap()
+        );
+    }
+    for address in ["127.0.0.1:0", "0.0.0.0:0", "[::1]:0", "[::]:0"] {
+        assert_eq!(
+            listen_address(Some(address)).unwrap_err().to_string(),
+            "EXPORTER_LISTEN port must be between 1 and 65535"
+        );
+    }
+}
+
+#[tokio::test]
+async fn startup_and_healthcheck_reject_port_zero() {
+    use tokio::{
+        process::Command,
+        time::{Duration, timeout},
+    };
+    for address in ["127.0.0.1:0", "0.0.0.0:0", "[::1]:0", "[::]:0"] {
+        for args in [vec![], vec!["healthcheck"]] {
+            let output = timeout(
+                Duration::from_secs(2),
+                Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+                    .env_clear()
+                    .args(args)
+                    .env("EXPORTER_MOCK", "true")
+                    .env("EXPORTER_LISTEN", address)
+                    .output(),
+            )
+            .await
+            .unwrap()
+            .unwrap();
+            assert!(!output.status.success());
+            assert!(
+                String::from_utf8_lossy(&output.stderr)
+                    .contains("EXPORTER_LISTEN port must be between 1 and 65535")
+            );
+        }
+    }
+}

@@ -231,3 +231,41 @@ async fn healthcheck_handles_split_bounded_status_lines() {
         let _ = server.await;
     }
 }
+
+#[tokio::test]
+async fn healthcheck_maps_wildcard_listen_addresses_to_loopback() {
+    for bind in ["127.0.0.1:0", "[::1]:0"] {
+        let listener = TcpListener::bind(bind).await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let configured = if address.is_ipv4() {
+            format!("0.0.0.0:{}", address.port())
+        } else {
+            format!("[::]:{}", address.port())
+        };
+        let server = tokio::spawn(async move {
+            let (mut stream, _) = listener.accept().await.unwrap();
+            let mut request = Vec::new();
+            while !request.ends_with(b"\r\n\r\n") {
+                request.push(stream.read_u8().await.unwrap());
+            }
+            stream.write_all(b"HTTP/1.1 200 OK\r\n\r\n").await.unwrap();
+        });
+        let output = timeout(
+            Duration::from_secs(4),
+            Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+                .arg("healthcheck")
+                .env_clear()
+                .env("EXPORTER_LISTEN", configured)
+                .output(),
+        )
+        .await
+        .unwrap()
+        .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        server.await.unwrap();
+    }
+}
