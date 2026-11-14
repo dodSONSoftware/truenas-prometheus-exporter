@@ -1,9 +1,10 @@
-fix: align executable and container examples with release authority
+docs: record authorized bounded numerical observation
 
-[0.4.2] Bronze Ferret
+[0.4.3] Bronze Ferret
 
-- Report root VERSION through the CLI and copy it into container builds
-- Require a reviewed observability image and add a version regression check
-- VERSION, README.md and CHANGELOG.md: record release 0.4.2
+- Save 45 sanitized selected observations and owned cleanup evidence
+- Preserve unresolved paired source and ARC percentage semantics
+- Update current status and validation records
+- VERSION, README.md and CHANGELOG.md: record release 0.4.3
 
 developed by Randel Dodson and AI

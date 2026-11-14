@@ -379,3 +379,11 @@ Fresh public pinned source review and pure CPU/normalization/missing-dimension e
 ## November 14 — release identity and local candidate checks, 0.4.2
 
 The executable now embeds root VERSION, including the Docker build. A configuration-free CLI regression verifies the release text. Ordinary checks passed 80 Rust and 11 Python tests on stable and Rust 1.88, including strict Clippy and formatting. Four sustained tests remained ignored. The desktop-linux linux/amd64 image built successfully and its --version returned 0.4.2 with networking disabled. Existing check-container.py passed synthetic mounts, freshness/outage, multi-target, mock realtime and hardening checks. cargo audit --deny warnings passed. Trivy's HIGH,CRITICAL gate passed for 14 Debian packages; its output reported no language-specific files, so Rust coverage comes from cargo-audit. Hosted CI remains unexecuted.
+
+## November 14 — authorized selected event window, 0.4.3
+
+One approved native event window completed with 45 selected observations, version exactly 25.04.2.6, acknowledged owned unsubscribe and socket close. Last observation arrived 89.352 seconds after harness start. Saved evidence contains converted selected measurements and aliases. No paired Reporting or raw-counter evidence was acquired.
+
+The final ordinary suite passed 80 Rust tests and 11 Python tests, formatting and strict Clippy. Twenty additional config-suite repetitions passed (220 test executions). The historical intermittent ConnectionReset/early-exit cause was not reproduced or closed. Sustained profiles and hosted CI remained outside this run.
+
+The pinned linux/amd64 container build for 0.4.3 passed on desktop-linux. Fresh security/hardening evidence above belongs to the 0.4.2 image. This release changes the embedded release text and documentation/evidence; it does not claim a fresh security scan for the resulting image identity.

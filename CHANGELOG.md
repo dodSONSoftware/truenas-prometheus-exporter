@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.3 - 2026-11-14
+
+- Record the authorized 45-event numerical observation with sanitized selected values and successful subscription cleanup.
+- Preserve the remaining independent numerical and ARC zero-provenance acceptance gaps.
+
+
 ## 0.4.2 - 2026-11-14
 
 - Report root VERSION from the executable and include it in container builds.

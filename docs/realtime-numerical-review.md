@@ -91,3 +91,13 @@ Freshly retrieved source SHA-256 digests (paths follow the source trace above):
 - metrics arcstat — `59c7523826db4c9428976b1372ae40e478be0591fbdd3611dc56b213ceda163b`
 - utils memory — `3c06b48eb125bb2f40df6f6ef378dec021e4d182f5f07e64b21ff1eee59464f4`
 - ARC chart — `4ba7fb5766786f843afa66edff4a362fde73874da1380f2da808a9ac1f05a976`
+
+## Authorized bounded event observation
+
+The operator explicitly approved the first proposed window on November 14. One native Mac connection authenticated using the existing file credential, called system.info once, required version exactly 25.04.2.6, subscribed at two seconds and received 45 selected frames. Receipt times span 21:15:20.313542 through 21:16:49.325149 UTC, with the last frame 89.352 seconds after harness start. Owned unsubscribe was acknowledged and the socket closed. No reconnect or repeated window was performed.
+
+Available bytes ranged 17,088,888,832–17,125,597,184. ARC size ranged 40,292,309,624–40,292,492,832 bytes. The selected interface reported UP and 1,000,000,000 bits/s throughout. Both ARC hit ratios remained zero. These are event observations without paired Reporting views or independent raw counters.
+
+The temporary source-copy harness reused production configuration, verified TLS, authentication, Session connect/parse/cleanup and selected-field Frame decoding. It imposed a 110-second acquisition deadline including connect, a 45-event cap and production one-second cleanup timeout, within the authorized 120-second total. It required all four selected groups to parse successfully, stopped on transport/schema errors and saved only after successful cleanup. It saved CPU names, indexed interface aliases and selected numeric measurements with receipt times. No key values, authentication frames, source identities or subscription IDs were saved. Interface aliases apply within this window only. The standard executable was not extended with a capture feature.
+
+The committed [sanitized selected observations](evidence/numerical-observation-2026-11-14.json) are measurements after production conversion, rather than original wire notifications. They supplement the four earlier complete captured frames. The live comparison proposal's second window remains dependent on operator-provided or separately authorized source evidence.
