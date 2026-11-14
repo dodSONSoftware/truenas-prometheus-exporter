@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1 - 2026-11-14
+
+- Record the separately approved successful 13-call public chart window and receipt-aligned comparison residuals.
+- Confirm public ARC percentage zeros while retaining independent raw-counter and algorithm acceptance gaps.
+
+
 ## 0.5.0 - 2026-11-14
 
 - Add an explicit bounded public chart comparison diagnostic with loopback TLS tests, owned subscription cleanup and sanitized evidence output.

@@ -85,3 +85,5 @@ All 35 downloaded reporting implementation/schema files were verified against Gi
 ## Harness implementation
 
 The explicit Cargo example public_chart_comparison implements this scope with synthetic TLS regressions. Its first authorized window stopped during cleanup after four calls, before chart queries. See public-chart-comparison-results.md for partial evidence and the notification-order regression.
+
+The separately approved corrected window subsequently completed all 13 requests and returned the selected charts. Results and numerical limitations are recorded in public-chart-comparison-results.md.

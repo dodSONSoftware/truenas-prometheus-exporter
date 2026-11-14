@@ -1,11 +1,10 @@
-feat: add bounded public chart comparison diagnostic
+docs: record successful bounded public chart comparison
 
-[0.5.0] Brass Ferret
+[0.5.1] Brass Ferret
 
-- Reuse verified transport and selected-field decoders in an explicit one-shot example
-- Enforce request, response, time and sanitization bounds with synthetic TLS tests
-- Preserve partial evidence from the approved window and fix unsubscribe notification handling
-- Record that paired chart acceptance remains incomplete
-- VERSION, README.md and CHANGELOG.md: record release 0.5.0
+- Preserve the separately authorized 13-call selected chart and event evidence
+- Report receipt-aligned residuals and confirmed public ARC percentage zeros
+- Retain independent counter, metadata and minimum-role acceptance limits
+- VERSION, README.md and CHANGELOG.md: record release 0.5.1
 
 developed by Randel Dodson and AI

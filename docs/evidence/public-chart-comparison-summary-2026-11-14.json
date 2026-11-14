@@ -1,0 +1,65 @@
+[
+  {
+    "metric": "cpu_ratio",
+    "pairs": 28,
+    "exact_equal": 24,
+    "median_absolute_residual": 0.0,
+    "max_absolute_residual": 0.01,
+    "min_time_offset": -0.49842333793640137,
+    "max_time_offset": 0.47896671295166016
+  },
+  {
+    "metric": "available_bytes",
+    "pairs": 28,
+    "exact_equal": 0,
+    "median_absolute_residual": 2134576.0,
+    "max_absolute_residual": 14670016,
+    "min_time_offset": -0.49842333793640137,
+    "max_time_offset": 0.47896671295166016
+  },
+  {
+    "metric": "arc_size_bytes",
+    "pairs": 28,
+    "exact_equal": 0,
+    "median_absolute_residual": 4136.0,
+    "max_absolute_residual": 162128,
+    "min_time_offset": -0.49842333793640137,
+    "max_time_offset": 0.47896671295166016
+  },
+  {
+    "metric": "rx_bytes_per_second",
+    "pairs": 28,
+    "exact_equal": 6,
+    "median_absolute_residual": 122.5,
+    "max_absolute_residual": 804.0,
+    "min_time_offset": -0.49842333793640137,
+    "max_time_offset": 0.47896671295166016
+  },
+  {
+    "metric": "tx_bytes_per_second",
+    "pairs": 28,
+    "exact_equal": 6,
+    "median_absolute_residual": 639.0,
+    "max_absolute_residual": 30228.0,
+    "min_time_offset": -0.49842333793640137,
+    "max_time_offset": 0.47896671295166016
+  },
+  {
+    "metric": "arc_data_hit_ratio",
+    "pairs": 28,
+    "exact_equal": 28,
+    "median_absolute_residual": 0.0,
+    "max_absolute_residual": 0.0,
+    "min_time_offset": -0.9840843677520752,
+    "max_time_offset": 0.47896671295166016
+  },
+  {
+    "metric": "arc_metadata_hit_ratio",
+    "pairs": 28,
+    "exact_equal": 28,
+    "median_absolute_residual": 0.0,
+    "max_absolute_residual": 0.0,
+    "min_time_offset": -0.9840843677520752,
+    "max_time_offset": 0.47896671295166016
+  }
+]
