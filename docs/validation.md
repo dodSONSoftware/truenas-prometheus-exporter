@@ -128,3 +128,9 @@ Formatting, strict Clippy and all 39 Rust tests passed.
 Errors now require a string message as well as an integer code. Notifications accept omitted parameters, objects and arrays; scalar or null parameters fail the session as protocol errors. Decoder tests retain valid permission/unsupported/API categories and arbitrary valid error data.
 
 Loopback TLS regressions verify malformed errors and notifications fail both pending callers with Protocol, close the affected session and recover after reauthentication. A process-level trace test confirms malformed payload content and synthetic credentials stay redacted while HTTP remains live. Formatting, strict Clippy and all 42 tests passed.
+
+## TN-14 container cleanup results (2026-11-13)
+
+The validator now prints its passing report after the cleanup context exits. Failed removals are checked against an exact-name Docker list query so a failed start with no residual container is distinguished from a daemon or removal failure. Every registered name receives a cleanup attempt. Cleanup failures make a successful validation fail; when validation already failed, its original exception survives and cleanup errors are reported on stderr.
+
+Six Python regressions cover result ordering, a failed removal followed by another attempt, preservation of the primary exception, absent containers after failed starts, and Docker execution errors. They are included in scripts/check.sh. Formatting, strict Clippy, all 42 Rust tests and six Python tests passed. The linux/amd64 build and the actual local container suite passed with the revised cleanup path.

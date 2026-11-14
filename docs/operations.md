@@ -17,3 +17,6 @@ The runtime has no shell or package manager. Use logs/metrics and `truenas-expor
 The integration fragment now consumes a read-only target JSON file plus distinct key and public Caddy CA mounts. Set TRUENAS_TARGETS_SOURCE, MEMORY_ALPHA_API_KEY_SOURCE and CADDY_CA_SOURCE on the Docker host; deployment/.env.example contains path examples only. Credentials are mounted at /run/secrets/memory-alpha-api-key and the public CA at /run/secrets/memory-alpha-caddy-root-ca.pem. Add each future server's entry and secret mounts explicitly. No host trust store or runtime image mutation is required.
 
 The example fragment does not create a production network or account, and was not applied. Use paths appropriate to the eventual Docker host; the Mac's ~/.config path is not assumed to exist on the observability VM.
+
+
+Container validation reports success after removing its temporary containers. A cleanup failure identifies affected containers and makes an otherwise successful run fail. If validation also fails, its original exception is retained and cleanup errors are written to stderr. Failed starts that leave no container are distinguished with a successful Docker list query. The script attempts cleanup of every name registered by its run.

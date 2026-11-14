@@ -5,3 +5,5 @@ rustfmt --edition 2024 --check "$root/deployment/tests/runtime_probe.rs"
 cargo fmt --manifest-path "$root/application/Cargo.toml" --check
 cargo clippy --locked --manifest-path "$root/application/Cargo.toml" --all-targets -- -D warnings
 cargo test --locked --manifest-path "$root/application/Cargo.toml"
+
+python3 -B -m unittest discover -s "$root/scripts/tests"

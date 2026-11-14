@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Validate a shell-free image against an explicitly selected local daemon."""
+from contextlib import contextmanager
 import argparse
 import json
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import time
 import urllib.error
@@ -16,6 +18,39 @@ PROBE = "/validation/runtime-probe"
 KEY = "/validation/api-key"
 CA = "/validation/ca.pem"
 TARGETS = "/validation/targets.json"
+
+
+
+@contextmanager
+def cleanup_containers(command, containers):
+    try:
+        yield
+    finally:
+        validation_error = sys.exc_info()[1]
+        failures = []
+        for name in containers:
+            try:
+                removed = subprocess.run(command + ["rm", "--force", name],
+                                         capture_output=True, text=True, check=False)
+                if removed.returncode == 0:
+                    continue
+                # A failed start may never create a container. A successful list
+                # distinguishes that case from an unavailable Docker daemon.
+                remaining = subprocess.run(
+                    command + ["container", "ls", "--all", "--filter",
+                               "name=^/" + name + "$", "--format", "{{.ID}}"],
+                    capture_output=True, text=True, check=False)
+                if remaining.returncode == 0 and not remaining.stdout.strip():
+                    continue
+                failures.append(name + " (removal failed)")
+            except OSError:
+                failures.append(name + " (could not execute Docker cleanup)")
+        if failures:
+            message = "Container cleanup failed: " + ", ".join(failures)
+            if validation_error is not None:
+                print(message, file=sys.stderr)
+            else:
+                raise RuntimeError(message)
 
 
 def main():
@@ -98,7 +133,7 @@ def main():
             if docker("inspect", "--format", "{{.State.ExitCode}}", name) != "0":
                 raise RuntimeError("Container did not stop cleanly on SIGTERM")
 
-        try:
+        with cleanup_containers(command, containers):
             mock = start({"EXPORTER_MOCK": "true"})
             healthy(mock)
             address = docker("port", mock, "9110/tcp")
@@ -134,16 +169,12 @@ def main():
             healthy(multiple)
             docker("exec", multiple, PROBE, KEY, CA, "--unready", "--targets")
             stop(multiple)
-            print(json.dumps({"result": "passed", "image_id": image["Id"],
-                              "platform": "linux/amd64", "checks": ["HTTP liveness/readiness/metrics",
-                              "Docker healthcheck", "non-root UID/GID", "read-only filesystem",
-                              "zero capability sets", "no-new-privileges", "license and CA bundle",
-                              "no shell/package manager", "credential/private-CA mounts",
-                              "network-isolated outage readiness", "multi-target configuration/metrics", "SIGTERM"]}, indent=2))
-        finally:
-            for name in containers:
-                subprocess.run(command + ["rm", "--force", name], check=False,
-                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print(json.dumps({"result": "passed", "image_id": image["Id"],
+                          "platform": "linux/amd64", "checks": ["HTTP liveness/readiness/metrics",
+                          "Docker healthcheck", "non-root UID/GID", "read-only filesystem",
+                          "zero capability sets", "no-new-privileges", "license and CA bundle",
+                          "no shell/package manager", "credential/private-CA mounts",
+                          "network-isolated outage readiness", "multi-target configuration/metrics", "SIGTERM"]}, indent=2))
 
 
 if __name__ == "__main__":
