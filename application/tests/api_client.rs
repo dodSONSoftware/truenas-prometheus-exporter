@@ -746,3 +746,37 @@ async fn pool_count_limit_preserves_snapshot_and_session() {
     task.await.unwrap();
     server.await.unwrap();
 }
+
+#[tokio::test]
+async fn late_response_cannot_complete_the_next_query() {
+    let (listener, url) = listen().await;
+    let server = tokio::spawn(async move {
+        let mut ws = login(&listener).await;
+        let expired = text(&mut ws).await;
+        let current = text(&mut ws).await;
+        for (request, name) in [(expired, "expired"), (current, "fresh")] {
+            ws.send(Message::text(
+                json!({"jsonrpc":"2.0","id":request["id"],"result":[{"name":name}]}).to_string(),
+            ))
+            .await
+            .unwrap();
+        }
+        while let Some(Ok(_)) = ws.next().await {}
+    });
+    let stop = CancellationToken::new();
+    let state = State::new(Duration::from_secs(180), false);
+    let (client, task) = Client::spawn(
+        config(url, Duration::from_millis(500)),
+        state.clone(),
+        stop.clone(),
+    );
+    ready(&state).await;
+    assert_eq!(client.pool_query().await, Err(Reason::Timeout));
+    assert_eq!(
+        client.pool_query().await.unwrap(),
+        json!([{"name":"fresh"}])
+    );
+    stop.cancel();
+    task.await.unwrap();
+    server.await.unwrap();
+}

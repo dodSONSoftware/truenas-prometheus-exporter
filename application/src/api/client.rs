@@ -3,7 +3,7 @@ use crate::{
     config::{ApiConfig, TransportConfig},
     state::{Reason, State},
 };
-use futures_util::{SinkExt, StreamExt};
+use futures_util::{Sink, SinkExt, StreamExt};
 use serde_json::Value;
 use std::{
     collections::HashMap,
@@ -14,7 +14,7 @@ use tokio::{
     net::TcpStream,
     sync::{mpsc, oneshot},
     task::JoinHandle,
-    time::{Instant, MissedTickBehavior, interval, sleep, timeout, timeout_at},
+    time::{Instant, MissedTickBehavior, interval, sleep, sleep_until, timeout, timeout_at},
 };
 use tokio_tungstenite::{
     Connector, MaybeTlsStream, WebSocketStream, connect_async_tls_with_config,
@@ -30,6 +30,47 @@ struct Request {
     method: Method,
     deadline: Instant,
     reply: oneshot::Sender<Result<Value, Reason>>,
+}
+
+impl Request {
+    fn complete(self, result: Result<Value, Reason>) {
+        let result = if Instant::now() >= self.deadline {
+            Err(Reason::Timeout)
+        } else {
+            result
+        };
+        let _ = self.reply.send(result);
+    }
+}
+
+enum Outbound {
+    Request { frame: Message, expires: Instant },
+    Control(Message),
+}
+
+async fn write_frames(
+    mut sink: impl Sink<Message, Error = tungstenite::Error> + Unpin,
+    mut outgoing: mpsc::Receiver<Outbound>,
+    control_timeout: Duration,
+) -> Result<(), Reason> {
+    while let Some(outbound) = outgoing.recv().await {
+        let (frame, expires) = match outbound {
+            Outbound::Request { frame, expires } => {
+                if Instant::now() >= expires {
+                    continue;
+                }
+                (frame, expires)
+            }
+            Outbound::Control(frame) => (frame, Instant::now() + control_timeout),
+        };
+        // A partially flushed frame has uncertain delivery. Drop the session on expiry.
+        tokio::select! {
+            biased;
+            _ = sleep_until(expires) => return Err(Reason::Timeout),
+            result = sink.send(frame) => result.map_err(transport_reason)?,
+        }
+    }
+    Ok(())
 }
 
 #[derive(Clone)]
@@ -118,7 +159,7 @@ async fn supervise(
         let outcome = connect_and_run(&config, &state, &mut receiver, &stop).await;
         state.connected.store(false, Ordering::Relaxed);
         while let Ok(request) = receiver.try_recv() {
-            let _ = request.reply.send(Err(Reason::Unavailable));
+            request.complete(Err(Reason::Unavailable));
         }
         if stop.is_cancelled() || receiver.is_closed() {
             break;
@@ -219,21 +260,9 @@ async fn run_session(
     receiver: &mut mpsc::Receiver<Request>,
     stop: &CancellationToken,
 ) -> Result<(), Reason> {
-    let (mut sink, mut stream) = socket.split();
-    let (write, mut outgoing) = mpsc::channel::<Message>(CAPACITY);
-    let (failed, mut writer_failure) = oneshot::channel();
-    let writer = tokio::spawn(async move {
-        while let Some(message) = outgoing.recv().await {
-            let result = timeout(deadline, sink.send(message)).await;
-            let reason = match result {
-                Ok(Ok(())) => continue,
-                Ok(Err(e)) => transport_reason(e),
-                Err(_) => Reason::Timeout,
-            };
-            let _ = failed.send(reason);
-            return;
-        }
-    });
+    let (sink, mut stream) = socket.split();
+    let (write, outgoing) = mpsc::channel(CAPACITY);
+    let mut writer = tokio::spawn(write_frames(sink, outgoing, deadline));
     let mut pending: HashMap<String, Request> = HashMap::new();
     let mut sequence = 0u64;
     let mut heartbeat = interval(deadline);
@@ -242,26 +271,26 @@ async fn run_session(
     let outcome = loop {
         // Prune independently of traffic so late responses cannot refresh expired requests.
         let now = Instant::now();
-        pending.retain(|_, r| !r.reply.is_closed() && r.deadline > now);
+        for (_, request) in pending.extract_if(|_, r| r.reply.is_closed() || r.deadline <= now) {
+            request.complete(Err(Reason::Timeout));
+        }
         tokio::select! {
             _ = stop.cancelled() => break Ok(()),
-            result = &mut writer_failure => break Err(result.unwrap_or(Reason::Transport)),
+            result = &mut writer => break result.unwrap_or(Err(Reason::Transport)),
             message = stream.next() => {
                 last_received = Instant::now();
                 let result = match message {
                     Some(Ok(Message::Text(text))) => match protocol::decode_pool_response(&text) {
                         Ok(Incoming::Response { id, result }) => {
-                            if let Some(request) = pending.remove(&id)
-                                && request.deadline > Instant::now()
-                            {
-                                let _ = request.reply.send(result);
+                            if let Some(request) = pending.remove(&id) {
+                                request.complete(result);
                             }
                             Ok(())
                         },
                         Ok(Incoming::Notification) => Ok(()),
                         Err(reason) => Err(reason),
                     },
-                    Some(Ok(Message::Ping(bytes))) => write.try_send(Message::Pong(bytes)).map_err(|_| Reason::Busy),
+                    Some(Ok(Message::Ping(bytes))) => write.try_send(Outbound::Control(Message::Pong(bytes))).map_err(|_| Reason::Busy),
                     Some(Ok(Message::Pong(_))) => Ok(()),
                     Some(Err(error)) => Err(transport_reason(error)),
                     _ => Err(Reason::Transport),
@@ -270,29 +299,31 @@ async fn run_session(
             },
             request = receiver.recv() => {
                 let Some(request) = request else { break Ok(()); };
-                if request.reply.is_closed() || request.deadline <= Instant::now() { continue; }
-                if pending.len() >= CAPACITY { let _ = request.reply.send(Err(Reason::Busy)); continue; }
+                if request.reply.is_closed() || request.deadline <= Instant::now() { request.complete(Err(Reason::Timeout)); continue; }
+                if pending.len() >= CAPACITY { request.complete(Err(Reason::Busy)); continue; }
                 sequence += 1;
                 let id = sequence.to_string();
                 let frame = Message::Text(request.method.request(&id).to_string().into());
-                if write.try_send(frame).is_err() { let _ = request.reply.send(Err(Reason::Busy)); continue; }
+                if write.try_send(Outbound::Request { frame, expires: request.deadline }).is_err() { request.complete(Err(Reason::Busy)); continue; }
                 pending.insert(id, request);
             },
             _ = heartbeat.tick() => {
                 if last_received.elapsed() >= deadline * 2 { break Err(Reason::Timeout); }
-                if write.try_send(Message::Ping(Vec::new().into())).is_err() { break Err(Reason::Busy); }
+                if write.try_send(Outbound::Control(Message::Ping(Vec::new().into()))).is_err() { break Err(Reason::Busy); }
             },
         }
     };
-    writer.abort();
-    let _ = writer.await;
+    if !writer.is_finished() {
+        writer.abort();
+        let _ = writer.await;
+    }
     let reason = outcome
         .as_ref()
         .err()
         .copied()
         .unwrap_or(Reason::Unavailable);
     for (_, request) in pending {
-        let _ = request.reply.send(Err(reason));
+        request.complete(Err(reason));
     }
     outcome
 }
@@ -305,5 +336,73 @@ fn transport_reason(error: tungstenite::Error) -> Reason {
         | tungstenite::Error::Capacity(_)
         | tungstenite::Error::Utf8(_) => Reason::Protocol,
         _ => Reason::Transport,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tokio::io::duplex;
+    use tungstenite::protocol::Role;
+
+    #[tokio::test(start_paused = true)]
+    async fn completion_preserves_timeout_and_transport_reasons() {
+        for (elapsed, outcome, expected) in [
+            (0, Err(Reason::Transport), Err(Reason::Transport)),
+            (1, Ok(serde_json::json!([])), Err(Reason::Timeout)),
+            (1, Err(Reason::Unavailable), Err(Reason::Timeout)),
+        ] {
+            let (reply, receive) = oneshot::channel();
+            let request = Request {
+                method: Method::PoolQuery,
+                deadline: Instant::now() + Duration::from_secs(1),
+                reply,
+            };
+            tokio::time::advance(Duration::from_secs(elapsed)).await;
+            request.complete(outcome);
+            assert_eq!(receive.await.unwrap(), expected);
+        }
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn stalled_writer_skips_expired_queue_entries() {
+        let (tx, rx) = duplex(1);
+        let client = WebSocketStream::from_raw_socket(tx, Role::Client, None).await;
+        let mut peer = WebSocketStream::from_raw_socket(rx, Role::Server, None).await;
+        let (send, queue) = mpsc::channel(3);
+        let now = Instant::now();
+        for (text, seconds) in [("first", 10), ("expired", 1), ("fresh", 10)] {
+            send.try_send(Outbound::Request {
+                frame: Message::text(text),
+                expires: now + Duration::from_secs(seconds),
+            })
+            .unwrap();
+        }
+        drop(send);
+        let writer = tokio::spawn(write_frames(client, queue, Duration::from_secs(10)));
+        tokio::task::yield_now().await;
+        tokio::time::advance(Duration::from_secs(1)).await;
+        for expected in ["first", "fresh"] {
+            assert_eq!(peer.next().await.unwrap().unwrap(), Message::text(expected));
+        }
+        writer.await.unwrap().unwrap();
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn stalled_flush_ends_session_at_request_deadline() {
+        let (tx, _stalled_peer) = duplex(1);
+        let socket = WebSocketStream::from_raw_socket(tx, Role::Client, None).await;
+        let (send, queue) = mpsc::channel(1);
+        let expires = Instant::now() + Duration::from_secs(2);
+        send.try_send(Outbound::Request {
+            frame: Message::text("stalled"),
+            expires,
+        })
+        .unwrap();
+        assert_eq!(
+            write_frames(socket, queue, Duration::from_secs(10)).await,
+            Err(Reason::Timeout)
+        );
+        assert_eq!(Instant::now(), expires);
     }
 }
