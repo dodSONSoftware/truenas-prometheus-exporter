@@ -387,3 +387,7 @@ One approved native event window completed with 45 selected observations, versio
 The final ordinary suite passed 80 Rust tests and 11 Python tests, formatting and strict Clippy. Twenty additional config-suite repetitions passed (220 test executions). The historical intermittent ConnectionReset/early-exit cause was not reproduced or closed. Sustained profiles and hosted CI remained outside this run.
 
 The pinned linux/amd64 container build for 0.4.3 passed on desktop-linux. Fresh security/hardening evidence above belongs to the 0.4.2 image. This release changes the embedded release text and documentation/evidence; it does not claim a fresh security scan for the resulting image identity.
+
+## November 14 — supported reporting comparison plan, 0.4.4
+
+Offline review verified 35 reporting implementation/schema files against pinned Git blob IDs, including the current v25_04_2 schema. An AST check confirmed all eight proposed ARC plugin/chart mappings. Public chart history is available under REPORTING_READ; system.info declares READONLY_ADMIN. Public history null2zero and the batch literal schema limit the evidence it can provide. The new plan specifies exact public requests and separate operator-local raw-counter/metadata scope. No appliance access was performed for this milestone. scripts/check.sh passed formatting, strict Clippy, 80 ordinary Rust tests and 11 Python tests. The desktop-linux linux/amd64 container build passed. Four sustained cases remained ignored.

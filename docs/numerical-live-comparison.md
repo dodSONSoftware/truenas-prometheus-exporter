@@ -23,3 +23,7 @@ Closure requires recording chart availability separately from zero, explaining t
 ## Separate combined daemon acceptance
 
 After approval, run one local daemon for at most 180 seconds with pool/system poll 60 seconds, realtime interval two seconds, one target and loopback HTTP. Maximum four scheduled pool and four scheduled system reads on the polling socket (including connection gate), one realtime system gate, two authentications and one owned subscription. Abort the window on connection loss rather than allowing unbounded reconnect traffic. Sample local metrics/readiness every ten seconds for at most 18 samples. Cleanup includes termination, owned unsubscribe and verification that the local process exited. A controller enforcing these limits must be prepared and inspected before live execution. Confirm the dedicated role separately using operator configuration evidence. Avoid permission testing by administrative writes.
+
+## Pinned public API refinement
+
+See [supported reporting API plan](reporting-api-comparison-plan.md) for the verified public chart methods, REPORTING_READ/system.info role declarations, exact 13-request bounded sequence and separate operator-local counter/metadata proposal. The public chart path applies null2zero and cannot establish ARC zero provenance by itself.

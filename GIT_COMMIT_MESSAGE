@@ -1,10 +1,10 @@
-docs: record authorized bounded numerical observation
+docs: specify supported bounded reporting comparisons
 
-[0.4.3] Bronze Ferret
+[0.4.4] Bronze Ferret
 
-- Save 45 sanitized selected observations and owned cleanup evidence
-- Preserve unresolved paired source and ARC percentage semantics
-- Update current status and validation records
-- VERSION, README.md and CHANGELOG.md: record release 0.4.3
+- Trace public chart calls, schema limits, normalization and declared roles
+- Specify exact request, duration and response budgets before live access
+- Separate public chart agreement from local raw-counter and metadata evidence
+- VERSION, README.md and CHANGELOG.md: record release 0.4.4
 
 developed by Randel Dodson and AI

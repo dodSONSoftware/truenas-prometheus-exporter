@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.4 - 2026-11-14
+
+- Verify public reporting chart calls, schema limitations and declared roles at the pinned middleware revision.
+- Specify bounded public chart and separately authorized local counter/metadata comparison scopes.
+
+
 ## 0.4.3 - 2026-11-14
 
 - Record the authorized 45-event numerical observation with sanitized selected values and successful subscription cleanup.
