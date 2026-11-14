@@ -1,11 +1,11 @@
 # Metric catalog (M1/M2 and opt-in M3-C)
 
-Prometheus/OpenMetrics encoding includes HELP and TYPE. All unsupported/null measurements are absent. No NaN/Inf. Labels include collector=pools/system, bounded reason categories, validated pool identity/status values, and the explicitly enabled system metadata/finite load windows below. Prometheus supplies job/instance. There is no implicit host label in pool-only mode. Enabled system identity exposes a validated host/version tuple only on truenas_system_info, not on every series.
+Prometheus/OpenMetrics encoding includes HELP and TYPE. All unsupported/null measurements are absent. No NaN/Inf. Labels include collector=pools/system/cpu/memory/network/arc, bounded reason categories, validated pool identity/status values, and the explicitly enabled system metadata/finite load windows below. Prometheus supplies job/instance. There is no implicit host label in pool-only mode. Enabled system identity exposes a validated host/version tuple only on truenas_system_info, not on every series.
 
 | Metric | Type | Source / semantics |
 | --- | --- | --- |
 | truenas_api_connected | gauge | 1 only after successful authentication, 0 on disconnect |
-| truenas_exporter_connection_errors_total{reason} | counter | Failed transport/authentication sessions, using the same bounded reasons |
+| truenas_exporter_connection_errors_total{reason} | counter | Polling-client transport/authentication/gate failures, using bounded reasons; realtime lifecycle failures appear in its group error rows |
 | truenas_exporter_mock_mode | gauge | Explicit synthetic mode 0/1 |
 | truenas_exporter_collection_success{collector} | gauge | Last attempt succeeded AND snapshot remains fresh |
 | truenas_exporter_last_attempt_timestamp_seconds{collector} | gauge | Wall epoch at most recent attempt; absent before first attempt |
@@ -50,3 +50,26 @@ These families are present only when TRUENAS_SYSTEM_ENABLED=true. The required s
 System operational metrics reuse the catalog's existing attempt/success/duration/error/age families with collector=system. Success requires the last attempt to succeed, an unexpired snapshot and accepted compatibility; a failed latest attempt is zero even during cache/readiness grace. Both required groups and all configured targets must be fresh and compatible for readyz=200 in enabled mode. A system field/permission error does not reset a pool timestamp; a pool error does not reset system freshness. A version rejection immediately suppresses both measurement groups for the affected target. Other targets remain independent.
 
 The source mapping and preserved units are recorded in system-contract.md and the captured fixture provenance. Captures are used in offline preflight and mock-daemon replay; M3-C did not start the new scheduled mode against MEMORY ALPHA.
+
+## Enabled realtime metrics
+
+These families require TRUENAS_REALTIME_ENABLED=true and TRUENAS_SYSTEM_ENABLED=true. They have independent CPU/memory/network/ARC freshness and the existing configured target label. All are gauges. The total-memory source remains system.info; realtime total is used for validating available <= total, not emitted as a duplicate family.
+
+| Metric | Source and validation |
+| --- | --- |
+| truenas_realtime_subscribed | 1 after the separate realtime socket acknowledges its owned subscription, 0 on disconnect and always in mock mode. Fresh cached data may outlive the active socket only through TTL. |
+| truenas_cpu_utilization_ratio{cpu} | cpu.cpu/cpuN.usage percent divided by 100 exactly once; finite 0..1. Aggregate cpu plus at most 256 canonical numbered cores. |
+| truenas_memory_available_bytes | memory.physical_memory_available as supplied, integer bytes >=0 and <= positive physical_memory_total. This does not substitute ARC-free/available memory; deeper chart accounting and UI equivalence remain live acceptance work. |
+| truenas_network_link_up{interface} | 1/0 only from LINK_STATE_UP/DOWN; unknown states invalidate the network group rather than produce zero. Names bounded to 64 ASCII interface characters, at most 128 entries. |
+| truenas_network_link_speed_bits_per_second{interface} | Positive speed in Mbps multiplied by 1,000,000 once. Missing/null/zero and down-link speed are absent. |
+| truenas_network_receive_bytes_per_second{interface} | received_bytes_rate, already bytes/s. Nonnegative finite gauge; missing/null or down-link rate absent. |
+| truenas_network_transmit_bytes_per_second{interface} | sent_bytes_rate, same byte-rate rules. No second interval conversion and no counter semantics. |
+| truenas_zfs_arc_size_bytes | memory.arc_size, nonnegative integer bytes. ARC validity/freshness is independent of physical-memory fields. |
+| truenas_zfs_arc_data_hit_ratio | Optional zfs.demand_data_hit_percentage divided by 100 once, finite 0..1. |
+| truenas_zfs_arc_metadata_hit_ratio | Optional zfs.demand_metadata_hit_percentage with the same conversion/range. |
+
+Operational collector labels are cpu, memory, network and arc, using the existing attempt/success/duration/last-success/age/error families and bounded reason categories. Each group needs a valid snapshot to start; missing groups never fabricate zeros or timestamps. Optional ARC ratios do not block a valid ARC-size snapshot. Source-defined zero defaults can already erase upstream missing-data provenance; the exporter cannot recover that distinction from an explicit zero. No disk IDs, license/model/serial strings, raw event messages or subscription identifiers are exposed.
+
+Wire/schema/unit evidence is pinned in realtime-contract.md. The checked-in realtime envelope is explicitly synthetic. Real frames, method/role permission and UI/Graphite comparison remain unverified; no live realtime readiness or resource-budget claim is made.
+
+Realtime processing duration measures selected-frame parsing, attributed to each affected group. A single lifecycle/backend failure can increment all four group error counters; summing them does not count unique connection failures. The existing connection-error counter remains owned by the polling client.

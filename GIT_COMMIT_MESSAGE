@@ -1,16 +1,15 @@
-feat: add opt-in system collection and compatibility gating
+feat: add opt-in realtime telemetry and owned subscriptions
 
-[0.2.0] Aluminum Ferret
+[0.3.0] Tin Ferret
 
-- Gate enabled connections and reconnects with typed system.info before admitting requests
-- Poll system and pools independently with required-group readiness and finite per-group freshness
-- Share typed snapshot metrics while retaining separate timestamps, payloads and bounded errors
-- Publish validated system identity, uptime, physical memory and load without hardware identifiers
-- Route responses by pending method, preserving pool bounds and adding a 64 KiB system result limit
-- Verify version changes, response ordering, expiry, recovery and target isolation with offline fixtures
-- Extend container validation and configuration examples with explicit system-enabled mock coverage
-- Document opt-in defaults, rejection/grace policy and unrun live/resource acceptance
-- VERSION: Increment the minor release to 0.2.0 for the new collector functionality
-- README.md: Update the Aluminum Ferret release information
+- Add a separately authenticated and version-checked realtime connection per enabled target
+- Subscribe only to reporting.realtime and clean up only connection-owned identifiers within a bounded deadline
+- Validate CPU, physical memory, network and ARC independently with bounded latest snapshots and finite freshness
+- Preserve missing values and omit down-link rates while applying source unit conversions once
+- Add fixed-output check-realtime and verify ownership, pre-ack delivery, silence/retry, redaction and shutdown offline
+- Extend synthetic container validation and opt-in configuration examples without changing default polling behavior
+- Document pinned source evidence, new metric semantics and pending live/capture/resource acceptance
+- VERSION: Increment the minor release to 0.3.0 for realtime collection and preflight functionality
+- README.md: Update the Tin Ferret release information
 
 developed by Randel Dodson and AI

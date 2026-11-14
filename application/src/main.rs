@@ -52,9 +52,30 @@ async fn main() -> Result<()> {
             );
             return Ok(());
         }
+        [arg] if arg == "check-realtime" => {
+            let mut config = Config::from_env()?;
+            let realtime = config.realtime.context("check-realtime requires TRUENAS_REALTIME_ENABLED=true and TRUENAS_SYSTEM_ENABLED=true")?;
+            if config.targets.len() != 1 || config.targets[0].api.is_none() {
+                bail!("check-realtime requires exactly one non-mock target");
+            }
+            let api = config
+                .targets
+                .remove(0)
+                .api
+                .context("missing API configuration")?;
+            truenas_exporter::api::realtime::check(api, realtime)
+                .await
+                .map_err(|reason| {
+                    anyhow::anyhow!("Realtime preflight failed: {}", reason.as_str())
+                })?;
+            println!(
+                "Verified WSS, system compatibility and fresh CPU/memory/network/ARC groups; owned realtime subscription closed"
+            );
+            return Ok(());
+        }
         [arg] if arg == "--help" => {
             println!(
-                "truenas-exporter [healthcheck|check-transport|check-system|--help|--version]\nConfiguration: environment; see docs/configuration.md. EXPORTER_MOCK=true runs offline."
+                "truenas-exporter [healthcheck|check-transport|check-system|check-realtime|--help|--version]\nConfiguration: environment; see docs/configuration.md. EXPORTER_MOCK=true runs offline."
             );
             return Ok(());
         }
@@ -91,12 +112,24 @@ async fn main() -> Result<()> {
             "target",
             target = target.name.as_deref().unwrap_or("default")
         );
-        let state = State::configured(
+        let state = State::with_realtime(
             target.name,
             config.ttl,
             target.api.is_none(),
             config.system_enabled,
+            config.realtime,
         );
+        if let (Some(api), Some(realtime)) = (&target.api, config.realtime) {
+            workers.push(tokio::spawn(
+                truenas_exporter::api::realtime::run(
+                    api.clone(),
+                    realtime,
+                    state.clone(),
+                    stop.clone(),
+                )
+                .instrument(span.clone()),
+            ));
+        }
         let client = match target.api {
             Some(api) => {
                 let (client, connection) =

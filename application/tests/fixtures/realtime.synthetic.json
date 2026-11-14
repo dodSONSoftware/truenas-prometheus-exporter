@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "method": "collection_update",
+  "params": {
+    "collection": "reporting.realtime:{\"interval\":2}",
+    "msg": "added",
+    "fields": {
+      "failed_to_connect": false,
+      "cpu": {"cpu": {"usage": 25, "temp": null}, "cpu0": {"usage": 75}},
+      "memory": {"physical_memory_total": 4294967296, "physical_memory_available": 1073741824, "arc_size": 536870912},
+      "interfaces": {
+        "synthetic0": {"link_state": "LINK_STATE_UP", "speed": 1000, "received_bytes_rate": 1024, "sent_bytes_rate": 2048},
+        "synthetic1": {"link_state": "LINK_STATE_DOWN", "speed": 0}
+      },
+      "zfs": {"demand_data_hit_percentage": 95, "demand_metadata_hit_percentage": 90},
+      "disks": {}
+    }
+  }
+}

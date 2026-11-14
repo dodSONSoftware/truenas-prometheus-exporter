@@ -158,7 +158,7 @@ def main():
             stop(mock)
 
             # The system-enabled mock exercises the real scheduler without NAS traffic.
-            system_mock = start({"EXPORTER_MOCK": "true", "TRUENAS_SYSTEM_ENABLED": "true"})
+            system_mock = start({"EXPORTER_MOCK": "true", "TRUENAS_SYSTEM_ENABLED": "true", "TRUENAS_REALTIME_ENABLED": "true"})
             healthy(system_mock)
             address = docker("port", system_mock, "9110/tcp")
             get("/readyz")
@@ -167,7 +167,12 @@ def main():
                              'truenas_system_uptime_seconds 12345.75',
                              'truenas_memory_total_bytes 34359738368',
                              'truenas_system_load_average{minutes="5"} 1.5',
-                             'truenas_exporter_collection_success{collector="system"} 1'):
+                             'truenas_exporter_collection_success{collector="system"} 1',
+                             'truenas_realtime_subscribed 0',
+                             'truenas_cpu_utilization_ratio{cpu="cpu"} 0.25',
+                             'truenas_memory_available_bytes 1073741824',
+                             'truenas_zfs_arc_size_bytes 536870912',
+                             'truenas_network_receive_bytes_per_second{interface="synthetic0"} 1024'):
                 if expected not in system_metrics:
                     raise RuntimeError("Missing synthetic system metric: " + expected)
             stop(system_mock)
@@ -189,7 +194,7 @@ def main():
                           "Docker healthcheck", "non-root UID/GID", "read-only filesystem",
                           "zero capability sets", "no-new-privileges", "license and CA bundle",
                           "no shell/package manager", "credential/private-CA mounts",
-                          "network-isolated outage readiness", "multi-target configuration/metrics", "system-enabled mock metrics/readiness", "SIGTERM"]}, indent=2))
+                          "network-isolated outage readiness", "multi-target configuration/metrics", "system/realtime-enabled mock metrics/readiness", "SIGTERM"]}, indent=2))
 
 
 if __name__ == "__main__":

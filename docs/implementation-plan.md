@@ -44,7 +44,8 @@ Accepted findings: missing captured fixtures; pin API evidence; enumerate protoc
 ## M3 and later
 - [x] Exact system/version/uptime/memory/load sources and explicit M3-A compatibility preflight.
 - [x] Opt-in automatic per-connection runtime compatibility gate and scheduled system collector, with independent required-group freshness.
-- [ ] Realtime wire fixtures, subscription recovery, per-group validation and silence expiry.
+- [x] Source-pinned realtime subscription/recovery, independent group validation and silence expiry with synthetic wire fixtures.
+- [ ] Operator-authorized live realtime preflight and captured wire fixtures.
 - [ ] General scan metrics (SCRUB and RESILVER), verified callable schema.
 - [ ] Container outage/recovery, least privilege and runtime resource validation.
 - [ ] P1 collectors only after P0 contracts are established.
@@ -65,7 +66,7 @@ No implementation milestone is fully validated until its container checks pass. 
 
 ## Delivery status
 
-M1/M2 functional work and all fifteen review findings now have recorded evidence. TN-02 is resolved for the captured pool.query scope; M3-A preflight and M3-B native/container system evidence are complete; M3-C opt-in connection gating/system collection is implemented and verified offline; realtime remains open. See validation.md for this milestone and security-validation.md for the preceding security refresh.
+M1/M2 functional work and all fifteen review findings now have recorded evidence. TN-02 is resolved for the captured pool.query scope; M3-A preflight and M3-B native/container system evidence are complete; M3-C opt-in connection gating/system collection is implemented and verified offline; M3-D realtime implementation is verified offline; live realtime acceptance remains open. See validation.md for this milestone and security-validation.md for the preceding security refresh.
 
 ## MEMORY ALPHA proxy integration and multiple targets
 
@@ -99,7 +100,8 @@ The current gate for starting M3 is satisfied for pools. Broader live calls requ
 - [x] Keep ordinary pool polling, metrics and readiness unchanged; test the new path only with synthetic fixtures and loopback TLS.
 - [x] Obtain separate operator authorization and capture sanitized native/container system responses (M3-B); replay through the production preflight offline.
 - [x] Integrate opt-in per-connection runtime version gating and independent required system snapshot/TTL/readiness (M3-C).
-- [ ] Implement source-verified realtime CPU/memory/network/ARC groups and their independent freshness (M3-D).
+- [x] Implement source-verified opt-in realtime CPU/memory/network/ARC groups with independent freshness (M3-D), verified offline.
+- [ ] Separately authorize live subscription/preflight checks and capture sanitized realtime payloads.
 
 The detailed current source mapping, command behavior, acceptance limits and next slices are in system-contract.md. This milestone does not establish live system.info support or complete M3.
 
@@ -114,3 +116,9 @@ At completion of M3-B, the next slice was automatic version gating and scheduled
 TRUENAS_SYSTEM_ENABLED defaults false. Enabled targets gate every connection/reconnect before request admission, poll system and pools independently, and require both fresh snapshots plus compatibility for readiness. System info/uptime/physical total memory/load metrics and per-group operational history are implemented. Version rejection immediately masks measurements while keeping historical timestamps; ordinary per-group errors retain bounded cache grace. A scheduler completion cannot reopen a rejected gate. Mock mode remains network-free.
 
 Focused unit/TLS/process tests, full Rust/MSRV checks and the enhanced container mock/hardening validator pass; see validation.md for commands, the transient existing test failure and scope limits. No live scheduled polling, new appliance method, infrastructure edit or deployment occurred. Detailed design decisions are in m3-c-implementation.md. Next: M3-D realtime contracts and per-group event handling, then callable scan metrics after schema validation. Previously recorded live acceptance covers individual pool/system calls, not the new integrated daemon mode.
+
+## M3-D — realtime implementation, live acceptance pending
+
+The source-pinned separate connection, owned subscribe/unsubscribe lifecycle, bounded latest snapshots, CPU/memory/network/ARC mappings, independent event-group TTLs and required-group readiness are implemented behind TRUENAS_REALTIME_ENABLED=false. The flag requires system collection; synthetic mode never opens sockets. check-realtime is ready for a separately authorized one-shot live preflight.
+
+Offline validation covers conversions, up/down/missing fields, partial-group failures, limits and duplicate keys, exact independent expiry, event receipt time, foreign collection filtering, pre-ack replacement, permission/remote-unsubscribe recovery, silence despite pongs, bounded cancellation cleanup, real daemon dual-socket metrics/redaction/SIGTERM and container mock operation. Source gaps, account role permission, actual frames, UI/Graphite equivalence and full enabled-mode resource budgets remain explicit acceptance limits. See realtime-contract.md and validation.md. No live realtime calls were made. Next after authorized evidence: scan metrics, remaining operational acceptance and expanded monitoring/dashboard handoff.

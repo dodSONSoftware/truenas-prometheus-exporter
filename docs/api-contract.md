@@ -8,8 +8,8 @@ Established before M2 implementation. Transport is JSON-RPC 2.0 on a persistent 
 | --- | --- | --- |
 | auth.login_ex | One object: mechanism=API_KEY_PLAIN, username, api_key, login_options.user_info=false | M2 |
 | pool.query | Empty positional array; full list result required | M2 |
-| core.subscribe | Exactly reporting.realtime:{"interval":N}, integer N >= 2 | M3, denied until implemented |
-| core.unsubscribe | Subscription ID owned by this connection | M3, denied until implemented |
+| core.subscribe | Exactly reporting.realtime:{"interval":N}, integer N 2..300 | M3-D opt-in realtime socket/check-realtime |
+| core.unsubscribe | Only the ID returned by this connection’s successful subscribe ACK | M3-D bounded cancellation/check cleanup |
 | system.info | Empty positional array; selected version/identity/uptime/memory/load validated | Explicit check-system and opt-in M3-C connection gate/scheduler |
 
 Authentication is session establishment, not a NAS administrative write. Only typed method selection is exposed; no arbitrary method string or recursive discovery. Authentication never follows REDIRECT URLs. AUTH_ERR, EXPIRED, OTP_REQUIRED and REDIRECT are bounded error categories. JSON-RPC success alone does not authenticate a session.
@@ -32,4 +32,12 @@ Multi-target mode gives each target its own client instance; the closed method a
 
 The closed SystemInfo variant was introduced by check-system, through the shared verified socket/authentication helpers. It validates the selected source fields and 25.04.2.x compatibility under one API-timeout budget, with no retries or subscriptions. M3-C routes results by pending method, retaining the bounded pool decoder and adding a 64 KiB object-only system result decoder. See system-contract.md for pinned source evidence, exact field rules, catalog omissions and the opt-in automatic runtime gate. M3-B subsequently verified separately authorized native and UID-10001 Docker system.info calls and captured full sanitized responses; see memory-alpha-integration.md. No subscription or additional method is implied by those checks.
 
-M3-C enables scheduled system.info only with TRUENAS_SYSTEM_ENABLED=true, default false. Every enabled connection checks the version/selected core fields before setting connected=1 or admitting requests; reconnects repeat the gate. Unsupported or unvalidated versions fail closed, with immediate measurement/readiness suppression for the target. System methods return typed data to the independent scheduler; optional field/permission failures retain per-group bounded freshness. No subscription method has been added. See configuration.md for the exact readiness/grace and gate-failure policy.
+M3-C enables scheduled system.info only with TRUENAS_SYSTEM_ENABLED=true, default false. Every enabled connection checks the version/selected core fields before setting connected=1 or admitting requests; reconnects repeat the gate. Unsupported or unvalidated versions fail closed, with immediate measurement/readiness suppression for the target. System methods return typed data to the independent scheduler; optional field/permission failures retain per-group bounded freshness. M3-D separately adds narrowly scoped lifecycle helpers on an isolated realtime socket; they are not generic polling methods. See configuration.md for the exact readiness/grace and gate-failure policy.
+
+## M3-D lifecycle and event demultiplexing
+
+The separate realtime connection authenticates and validates system.info before sending one core.subscribe request with params=[the exact configured dynamic collection name]. The acknowledged string ID is bounded to 128 bytes and stored privately on that session. Only that ID can be sent to core.unsubscribe; the expected result is null. No externally supplied method/event/ID routing is exposed. Reconnect creates a fresh subscription and never reuses an old socket's ID.
+
+collection_update is accepted only for the exact full collection name and msg=added. Its CPU/memory/network/ARC groups are decoded independently. notify_unsubscribed for that collection ends the stream and triggers bounded reconnect/resubscribe, keeping only bounded cache grace. Other collections/notifications never refresh freshness. One pre-ack typed event can be retained; replacement preserves the chosen event's original receipt time. No event queue or task list grows with source traffic.
+
+Application limits: text <=256 KiB, fields <=128 KiB, response ACK <=4 KiB, aggregate plus 256 cores, 128 interfaces; shared TLS wire limit remains 1 MiB. No matching events for realtime TTL triggers retry even with pongs. Cancellation interrupts connect/read/write/backoff; owned unsubscribe/ACK/close cleanup shares at most one second. Failure output/logs are bounded categories, never raw errors or subscription IDs. See realtime-contract.md for source links and live acceptance limits.

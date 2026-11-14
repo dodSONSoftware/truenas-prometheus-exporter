@@ -7,12 +7,15 @@ No secret values belong in environment files, logs or Git. Config reads supporte
 | EXPORTER_LISTEN | 0.0.0.0:9110 | Numeric socket address with port 1..65535 |
 | EXPORTER_MOCK | false | true/false; true bypasses all API config and makes no network connections |
 | TRUENAS_SYSTEM_ENABLED | false | true/false; enable system polling, per-connection compatibility gate and required system freshness for every target |
+| TRUENAS_REALTIME_ENABLED | false | true/false; requires system enabled; add a separate authenticated realtime connection per target |
+| TRUENAS_REALTIME_INTERVAL_SECONDS | 2 | Whole seconds 2..300 |
+| TRUENAS_REALTIME_TTL_SECONDS | 3 x realtime interval | Whole seconds greater than interval, at most 86400 |
 | TRUENAS_POLL_INTERVAL_SECONDS | 60 | Integer 1..86400 |
 | TRUENAS_API_TIMEOUT_SECONDS | 10 | Integer 1..300 |
 | TRUENAS_CACHE_TTL_SECONDS | 3 x poll interval | Greater than poll interval + API timeout |
 | RUST_LOG | info | tracing-subscriber filter |
 
-TRUENAS_HOST and TRUENAS_REALTIME_INTERVAL_SECONDS from the handoff are reserved for M3 and not consumed by M2. Do not claim realtime monitoring in this milestone.
+TRUENAS_HOST remains unconsumed. Realtime settings are consumed only as explicit validated configuration; enabling realtime is a separate opt-in from system polling.
 
 Normal mode and direct Rust transport entry points accept only wss URLs without embedded credentials, query or fragment. Authenticated collection and the diagnostic share the same validated socket-opening path. There is no insecure runtime flag. Mozilla trust roots plus optional private CA are used. A matching certificate DNS name or IP SAN is required. Unreadable/invalid local files fail startup; remote outages keep HTTP alive with readiness 503 after cache expiration.
 
@@ -52,3 +55,13 @@ System and pool polling use independent loops with the same configured poll inte
 A failed reconnect gate immediately revokes compatibility. Scheduled replies with invalid/missing versions, an unparseable/oversized system result or an unsupported system method also revoke it and end the session. Compatibility rejection hides both groups' measurements and makes readiness false immediately, while historical timestamps/errors remain available. An ordinary transport outage keeps the normal bounded cache grace. A later successful connection gate restores compatibility; a scheduler completion alone cannot do so.
 
 EXPORTER_MOCK=true with this flag produces explicitly synthetic pool/system snapshots without network access. API connected and API compatible stay zero in mock mode, while readiness may become true from synthetic required snapshots. Scheduled real-appliance runtime acceptance was not performed in M3-C; prior dedicated-account checks/captures remain the live evidence scope. Realtime is not enabled by this flag.
+
+## Opt-in realtime collection (M3-D)
+
+Set both TRUENAS_SYSTEM_ENABLED=true and TRUENAS_REALTIME_ENABLED=true. Every target then has a polling socket and a separate realtime socket, each independently authenticated and version-checked. Both use the dedicated target credentials and verified TLS; no arbitrary event or method can be configured. The additional socket isolates subscription role/transport failures from ordinary polling. A known unsupported version detected at the realtime gate also revokes target compatibility and wakes polling to recheck.
+
+CPU, physical memory, network and ARC each get their own realtime-TTL snapshot, attempts/errors and freshness. All four become required for readiness, alongside pools/system. A valid memory/network update does not refresh invalid CPU data. Expired group measurements disappear; prior successful data remains only through its bounded grace. A complete empty network snapshot removes deleted interfaces. Backend failed_to_connect marks all groups unavailable without creating measurements. Network down-link rates/speed are omitted even when the producer supplies generated zeros; missing up-link rates are also absent.
+
+The interval and TTL are validated for direct Rust entry points as well as environment configuration. The optional Compose TTL environment entry inherits an explicitly supplied value; when unset, the application computes three intervals rather than fixing six seconds for all intervals. Both example feature flags remain false. Mock mode supports both flags with synthetic data only, keeps API-connected/compatible/subscribed zero, and can become ready from synthetic required snapshots.
+
+check-realtime is a one-shot preflight for exactly one non-mock target using these settings. It authenticates, reads system.info, subscribes to the exact reporting.realtime collection, validates fresh groups and unsubscribes its connection-owned identifier. No pool request or arbitrary subscription is sent. See realtime-contract.md for time/memory limits, protocol evidence and the explicit live authorization still required. This command and the integrated realtime daemon were tested with synthetic loopback data only; no live realtime calls were made.

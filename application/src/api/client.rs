@@ -26,7 +26,7 @@ use tracing::Instrument;
 
 const CAPACITY: usize = 32;
 const MAX_MESSAGE: usize = 1024 * 1024;
-type Socket = WebSocketStream<MaybeTlsStream<TcpStream>>;
+pub(super) type Socket = WebSocketStream<MaybeTlsStream<TcpStream>>;
 struct Request {
     method: Method,
     deadline: Instant,
@@ -102,7 +102,10 @@ pub async fn check_system(config: ApiConfig) -> Result<SystemInfo, Reason> {
     .map_err(|_| Reason::Timeout)?
 }
 
-async fn read_system(socket: &mut Socket, request_id: &str) -> Result<SystemInfo, Reason> {
+pub(super) async fn read_system(
+    socket: &mut Socket,
+    request_id: &str,
+) -> Result<SystemInfo, Reason> {
     socket
         .send(Message::Text(
             Method::SystemInfo.request(request_id).to_string().into(),
@@ -225,7 +228,7 @@ async fn supervise(
     state.connected.store(false, Ordering::Relaxed);
 }
 
-fn retry_delay(backoff: &mut u64, authenticated_since: Option<Instant>) -> Duration {
+pub(super) fn retry_delay(backoff: &mut u64, authenticated_since: Option<Instant>) -> Duration {
     if authenticated_since.is_some_and(|since| since.elapsed() >= Duration::from_secs(120)) {
         *backoff = 1;
     }
@@ -273,7 +276,7 @@ async fn connect_and_run(
     run_session(socket, config.timeout, receiver, stop, state).await
 }
 
-async fn open_authenticated(config: &ApiConfig) -> Result<Socket, Reason> {
+pub(super) async fn open_authenticated(config: &ApiConfig) -> Result<Socket, Reason> {
     let mut socket = open_transport(&config.url, config.tls.clone(), config.timeout).await?;
     timeout(config.timeout, authenticate(&mut socket, config))
         .await
@@ -281,7 +284,7 @@ async fn open_authenticated(config: &ApiConfig) -> Result<Socket, Reason> {
     Ok(socket)
 }
 
-async fn open_transport(
+pub(super) async fn open_transport(
     url: &url::Url,
     tls: Arc<rustls::ClientConfig>,
     deadline: Duration,
@@ -349,6 +352,9 @@ async fn run_session(
     heartbeat.set_missed_tick_behavior(MissedTickBehavior::Skip);
     let mut last_received = Instant::now();
     let outcome = loop {
+        if state.system_enabled() && !state.compatibility_accepted() {
+            break Err(Reason::Unsupported);
+        }
         // Prune independently of traffic so late responses cannot refresh expired requests.
         let now = Instant::now();
         for (_, request) in pending.extract_if(|_, r| r.reply.is_closed() || r.deadline <= now) {
@@ -356,6 +362,7 @@ async fn run_session(
         }
         tokio::select! {
             _ = stop.cancelled() => break Ok(()),
+            _ = state.compatibility_rejected() => break Err(Reason::Unsupported),
             result = &mut writer => break result.unwrap_or(Err(Reason::Transport)),
             message = stream.next() => {
                 last_received = Instant::now();
@@ -391,6 +398,7 @@ async fn run_session(
             },
             request = receiver.recv() => {
                 let Some(request) = request else { break Ok(()); };
+                if state.system_enabled() && !state.compatibility_accepted() { request.complete(Err(Reason::Unsupported)); continue; }
                 if request.reply.is_closed() || request.deadline <= Instant::now() { request.complete(Err(Reason::Timeout)); continue; }
                 if pending.len() >= CAPACITY { request.complete(Err(Reason::Busy)); continue; }
                 sequence += 1;
@@ -420,7 +428,7 @@ async fn run_session(
     outcome
 }
 
-fn transport_reason(error: tungstenite::Error) -> Reason {
+pub(super) fn transport_reason(error: tungstenite::Error) -> Reason {
     match error {
         tungstenite::Error::Tls(_) => Reason::Tls,
         tungstenite::Error::Io(e) if e.kind() == std::io::ErrorKind::InvalidData => Reason::Tls,

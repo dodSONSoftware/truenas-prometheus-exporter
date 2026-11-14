@@ -2,6 +2,8 @@
 
 ## Development history
 
+- Implement opt-in M3-D realtime CPU/memory/network/ARC collection on an isolated authenticated/version-checked socket, with owned subscriptions, bounded latest snapshots, independent freshness, silence/reconnect recovery, bounded cleanup and a redacted check-realtime preflight. Verify with synthetic unit/TLS/process/container fixtures; live realtime acceptance remains pending.
+
 - Add opt-in M3-C system collection: per-connection/reconnect compatibility checks, independently fresh system/pool snapshots, system identity/uptime/memory/load metrics, method-aware result bounds and required-group readiness. Preserve pool-only defaults and keep realtime disabled. Verify with unit, loopback TLS, two-target process, Rust 1.88 and hardened container mock checks.
 
 - Complete M3-B with operator-authorized native and UID-10001 Docker system.info preflights, API-reported 25.04.2.6 version evidence, sanitized full system captures and offline production-preflight replay. Automatic system polling/version gating remains pending.

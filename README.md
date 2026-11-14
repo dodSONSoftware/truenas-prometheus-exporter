@@ -1,6 +1,6 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Aluminum Ferret — version 0.2.0.
+**Release:** Tin Ferret — version 0.3.0.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
@@ -72,8 +72,8 @@ For an independent image build use `docker build --platform linux/amd64 -f deplo
 ## Prioritized remaining work
 
 1. Pool compatibility is verified through authorized native and local Docker checks, with genuine sanitized captures and offline replay. Extend this evidence to the M3 methods/events as separately authorized. Rust 1.88 and the recorded security gates pass; see docs/security-validation.md.
-2. M3-D: implement reporting.realtime CPU/memory/network/ARC groups with independent freshness after source/fixture validation. M3-C system collection and connection gating are implemented behind TRUENAS_SYSTEM_ENABLED; its new daemon mode remains offline-validated.
-3. M3: CPU/memory/network/ARC mappings and general SCRUB/RESILVER metrics after schema validation.
+2. M3-D realtime collection is implemented behind TRUENAS_REALTIME_ENABLED with independent group freshness. Next, separately authorize live preflight/captured realtime fixtures and validate integrated operation; current realtime evidence is offline only.
+3. M3: implement general SCRUB/RESILVER metrics after callable-schema validation; retain explicit live/unit-equivalence acceptance for realtime mappings.
 4. M4: measured resource budgets, long outage tests and operator-verified least privilege.
 5. P1 and dashboard migration artifacts after P0 validation; production rollout requires separate authorization.
 
@@ -92,3 +92,9 @@ The new endpoint wss://memory-alpha.home.lab/api/current passes verified Rust WS
 ## Optional system collection
 
 Set `TRUENAS_SYSTEM_ENABLED=true` to add scheduled system identity/version, uptime, physical total memory and 1/5/15-minute load metrics. Each connection must pass the 25.04.2.x compatibility gate before admitting requests. Pools and system retain independent snapshots/expiry; both are required for readiness in this mode. Unsupported or unvalidated versions suppress the affected target's measurements immediately. The default false preserves pool-only collection. See [configuration](docs/configuration.md), [metric catalog](docs/metric-catalog.md), and [system contract](docs/system-contract.md) for optional-value and failure policies. Realtime is not enabled by this switch. No live daemon or production deployment was performed for M3-C.
+
+## Optional realtime collection
+
+Set `TRUENAS_SYSTEM_ENABLED=true` and `TRUENAS_REALTIME_ENABLED=true` to add CPU, available-memory, network and ARC metrics from a separate version-checked `reporting.realtime` subscription. Interval defaults to two seconds; realtime TTL defaults to three intervals. Each event group has independent validation/freshness and becomes required for readiness. Missing values stay absent; down-link rates/speeds are omitted. Both flags default false, and mock mode stays network-free.
+
+`check-realtime` is the fixed-output one-shot subscription preflight for a separately authorized endpoint. It validates fresh groups and unsubscribes only its owned ID. See [realtime contract](docs/realtime-contract.md) for exact methods, source mappings, bounded memory/cleanup, and the outstanding live/capture/resource acceptance gates. No realtime call or production change was made during implementation.

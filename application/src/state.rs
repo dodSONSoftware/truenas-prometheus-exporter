@@ -1,4 +1,11 @@
-use crate::collectors::{pools::Pool, system::SystemInfo};
+use crate::{
+    collectors::{
+        pools::Pool,
+        realtime::{self, Frame},
+        system::SystemInfo,
+    },
+    config::RealtimeConfig,
+};
 use prometheus_client::{
     encoding::{EncodeLabelValue, LabelValueEncoder, text::encode},
     metrics::{counter::Counter, family::Family, gauge::Gauge},
@@ -118,7 +125,19 @@ pub struct State {
     system: RwLock<Collection<SystemInfo>>,
     system_enabled: bool,
     compatible: AtomicBool,
+    compatibility_reset: tokio::sync::Notify,
+    realtime: Option<RealtimeState>,
     api_errors: RwLock<BTreeMap<Reason, u64>>,
+}
+
+struct RealtimeState {
+    config: RealtimeConfig,
+    compatible: AtomicBool,
+    subscribed: AtomicBool,
+    cpu: RwLock<Collection<Vec<realtime::CpuUsage>>>,
+    memory: RwLock<Collection<realtime::Memory>>,
+    network: RwLock<Collection<Vec<realtime::Interface>>>,
+    arc: RwLock<Collection<realtime::ArcStats>>,
 }
 
 type FloatGauge = Gauge<f64, std::sync::atomic::AtomicU64>;
@@ -232,9 +251,28 @@ impl State {
         mock: bool,
         system_enabled: bool,
     ) -> Arc<Self> {
+        Self::with_realtime(target, ttl, mock, system_enabled, None)
+    }
+    pub fn with_realtime(
+        target: Option<String>,
+        ttl: Duration,
+        mock: bool,
+        system_enabled: bool,
+        realtime: Option<RealtimeConfig>,
+    ) -> Arc<Self> {
         Arc::new(Self {
             target,
             system_enabled,
+            compatibility_reset: tokio::sync::Notify::new(),
+            realtime: realtime.map(|config| RealtimeState {
+                config,
+                compatible: AtomicBool::new(mock),
+                subscribed: AtomicBool::new(false),
+                cpu: RwLock::new(Collection::default()),
+                memory: RwLock::new(Collection::default()),
+                network: RwLock::new(Collection::default()),
+                arc: RwLock::new(Collection::default()),
+            }),
             compatible: AtomicBool::new(!system_enabled || mock),
             system: RwLock::new(Collection::default()),
             connected: AtomicBool::new(false),
@@ -274,6 +312,75 @@ impl State {
 
     pub(crate) fn reject_compatibility(&self) {
         self.compatible.store(false, Ordering::Relaxed);
+        self.compatibility_reset.notify_waiters();
+    }
+    pub(crate) async fn compatibility_rejected(&self) {
+        self.compatibility_reset.notified().await;
+    }
+    pub(crate) fn compatibility_accepted(&self) -> bool {
+        self.compatible.load(Ordering::Relaxed)
+    }
+
+    pub fn realtime_config(&self) -> Option<RealtimeConfig> {
+        self.realtime.as_ref().map(|r| r.config)
+    }
+    pub(crate) fn realtime_subscription(&self, accepted: bool) {
+        if let Some(r) = &self.realtime {
+            r.subscribed.store(accepted, Ordering::Relaxed);
+            if accepted {
+                r.compatible.store(true, Ordering::Relaxed);
+            }
+        }
+    }
+    pub(crate) fn reject_realtime(&self) {
+        if let Some(r) = &self.realtime {
+            r.compatible.store(false, Ordering::Relaxed);
+        }
+    }
+    pub fn complete_realtime(&self, frame: Frame, now: Instant, epoch: f64, duration: Duration) {
+        if let Some(r) = &self.realtime {
+            r.cpu
+                .write()
+                .expect("CPU lock poisoned")
+                .complete(frame.cpu, now, epoch, duration);
+            r.memory.write().expect("memory lock poisoned").complete(
+                frame.memory,
+                now,
+                epoch,
+                duration,
+            );
+            r.network.write().expect("network lock poisoned").complete(
+                frame.network,
+                now,
+                epoch,
+                duration,
+            );
+            r.arc
+                .write()
+                .expect("ARC lock poisoned")
+                .complete(frame.arc, now, epoch, duration);
+        }
+    }
+    pub fn realtime_ready_at(&self, now: Instant) -> bool {
+        self.realtime.as_ref().is_none_or(|r| {
+            r.compatible.load(Ordering::Relaxed)
+                && r.cpu
+                    .read()
+                    .expect("CPU lock poisoned")
+                    .fresh(now, r.config.ttl)
+                && r.memory
+                    .read()
+                    .expect("memory lock poisoned")
+                    .fresh(now, r.config.ttl)
+                && r.network
+                    .read()
+                    .expect("network lock poisoned")
+                    .fresh(now, r.config.ttl)
+                && r.arc
+                    .read()
+                    .expect("ARC lock poisoned")
+                    .fresh(now, r.config.ttl)
+        })
     }
 
     pub fn complete_system(
@@ -297,6 +404,7 @@ impl State {
             .read()
             .expect("state lock poisoned")
             .fresh(now, self.ttl)
+            && self.realtime_ready_at(now)
             && (!self.system_enabled
                 || (self.compatible.load(Ordering::Relaxed)
                     && self
@@ -352,6 +460,102 @@ impl State {
             );
             if let Some(info) = collection_metrics(registry, &c, "system", self.ttl, now, allowed) {
                 system_metrics(registry, info);
+            }
+        }
+        if let Some(r) = &self.realtime {
+            let allowed = allowed && r.compatible.load(Ordering::Relaxed);
+            scalar(
+                registry,
+                "truenas_realtime_subscribed",
+                "Owned realtime subscription active",
+                f64::from(!self.mock && r.subscribed.load(Ordering::Relaxed)),
+            );
+            let cpu = r.cpu.read().expect("CPU lock poisoned").clone();
+            if let Some(values) =
+                collection_metrics(registry, &cpu, "cpu", r.config.ttl, now, allowed)
+            {
+                family(
+                    registry,
+                    "truenas_cpu_utilization_ratio",
+                    "CPU usage ratio",
+                    values
+                        .iter()
+                        .map(|v| (vec![("cpu".into(), v.name.clone())], v.ratio)),
+                );
+            }
+            let memory = r.memory.read().expect("memory lock poisoned").clone();
+            if let Some(v) =
+                collection_metrics(registry, &memory, "memory", r.config.ttl, now, allowed)
+            {
+                scalar(
+                    registry,
+                    "truenas_memory_available_bytes",
+                    "Available physical memory reported by reporting.realtime in bytes",
+                    v.available as f64,
+                );
+            }
+            let arc = r.arc.read().expect("ARC lock poisoned").clone();
+            if let Some(v) = collection_metrics(registry, &arc, "arc", r.config.ttl, now, allowed) {
+                scalar(
+                    registry,
+                    "truenas_zfs_arc_size_bytes",
+                    "ZFS ARC size in bytes",
+                    v.size as f64,
+                );
+                if let Some(value) = v.data_hit {
+                    scalar(
+                        registry,
+                        "truenas_zfs_arc_data_hit_ratio",
+                        "ARC demand data hit ratio",
+                        value,
+                    );
+                }
+                if let Some(value) = v.metadata_hit {
+                    scalar(
+                        registry,
+                        "truenas_zfs_arc_metadata_hit_ratio",
+                        "ARC demand metadata hit ratio",
+                        value,
+                    );
+                }
+            }
+            let network = r.network.read().expect("network lock poisoned").clone();
+            if let Some(values) =
+                collection_metrics(registry, &network, "network", r.config.ttl, now, allowed)
+            {
+                for (name, help, selector) in [
+                    ("truenas_network_link_up", "Network link up flag", 0),
+                    (
+                        "truenas_network_link_speed_bits_per_second",
+                        "Network link speed in bits per second",
+                        1,
+                    ),
+                    (
+                        "truenas_network_receive_bytes_per_second",
+                        "Received bytes per second",
+                        2,
+                    ),
+                    (
+                        "truenas_network_transmit_bytes_per_second",
+                        "Transmitted bytes per second",
+                        3,
+                    ),
+                ] {
+                    family(
+                        registry,
+                        name,
+                        help,
+                        values.iter().filter_map(|v| {
+                            let value = match selector {
+                                0 => Some(f64::from(v.up)),
+                                1 => v.speed,
+                                2 => v.receive,
+                                _ => v.transmit,
+                            }?;
+                            Some((vec![("interface".into(), v.name.clone())], value))
+                        }),
+                    );
+                }
             }
         }
     }

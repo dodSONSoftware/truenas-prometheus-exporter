@@ -16,11 +16,13 @@ use rustls::{
 use serde::Deserialize;
 use url::Url;
 
+#[derive(Clone)]
 pub struct Credentials {
     pub username: String,
     pub key: String,
 }
 
+#[derive(Clone)]
 pub struct ApiConfig {
     pub url: Url,
     pub credentials: Credentials,
@@ -59,10 +61,35 @@ pub struct TargetConfig {
 
 pub struct Config {
     pub system_enabled: bool,
+    pub realtime: Option<RealtimeConfig>,
     pub listen: SocketAddr,
     pub poll_interval: Duration,
     pub ttl: Duration,
     pub targets: Vec<TargetConfig>,
+}
+
+#[derive(Clone, Copy)]
+pub struct RealtimeConfig {
+    pub interval: Duration,
+    pub ttl: Duration,
+}
+
+impl RealtimeConfig {
+    pub fn validate(self) -> Result<()> {
+        ensure!(
+            self.interval.subsec_nanos() == 0 && self.ttl.subsec_nanos() == 0,
+            "realtime durations must be whole seconds"
+        );
+        ensure!(
+            (2..=300).contains(&self.interval.as_secs()),
+            "realtime interval must be 2..300 seconds"
+        );
+        ensure!(
+            self.ttl > self.interval && self.ttl.as_secs() <= 86400,
+            "realtime TTL must exceed the interval and be at most 86400 seconds"
+        );
+        Ok(())
+    }
 }
 
 #[derive(Deserialize)]
@@ -87,6 +114,9 @@ impl Config {
             "EXPORTER_LISTEN",
             "EXPORTER_MOCK",
             "TRUENAS_SYSTEM_ENABLED",
+            "TRUENAS_REALTIME_ENABLED",
+            "TRUENAS_REALTIME_INTERVAL_SECONDS",
+            "TRUENAS_REALTIME_TTL_SECONDS",
             "TRUENAS_POLL_INTERVAL_SECONDS",
             "TRUENAS_API_TIMEOUT_SECONDS",
             "TRUENAS_CACHE_TTL_SECONDS",
@@ -105,6 +135,28 @@ impl Config {
             Some("true") => true,
             _ => bail!("TRUENAS_SYSTEM_ENABLED must be true or false"),
         };
+        let realtime_enabled = match values.get("TRUENAS_REALTIME_ENABLED").map(String::as_str) {
+            None | Some("false") => false,
+            Some("true") => true,
+            _ => bail!("TRUENAS_REALTIME_ENABLED must be true or false"),
+        };
+        let realtime_interval = seconds(values, "TRUENAS_REALTIME_INTERVAL_SECONDS", 2, 300)?;
+        let realtime_ttl = seconds(
+            values,
+            "TRUENAS_REALTIME_TTL_SECONDS",
+            realtime_interval * 3,
+            86400,
+        )?;
+        let realtime_config = RealtimeConfig {
+            interval: Duration::from_secs(realtime_interval),
+            ttl: Duration::from_secs(realtime_ttl),
+        };
+        realtime_config.validate()?;
+        ensure!(
+            !realtime_enabled || system_enabled,
+            "realtime requires TRUENAS_SYSTEM_ENABLED=true"
+        );
+        let realtime = realtime_enabled.then_some(realtime_config);
         let listen = listen_address(values.get("EXPORTER_LISTEN").map(String::as_str))?;
         let mock = match values.get("EXPORTER_MOCK").map(String::as_str) {
             None | Some("false") => false,
@@ -148,6 +200,7 @@ impl Config {
         };
         Ok(Self {
             system_enabled,
+            realtime,
             listen,
             poll_interval: Duration::from_secs(poll),
             ttl: Duration::from_secs(ttl),

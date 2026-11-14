@@ -1552,3 +1552,297 @@ async fn cancellation_interrupts_the_connection_version_gate() {
         .unwrap();
     server.await.unwrap();
 }
+
+fn realtime_event(collection: &str, usage: f64) -> Value {
+    let mut event: Value =
+        serde_json::from_str(include_str!("fixtures/realtime.synthetic.json")).unwrap();
+    event["params"]["collection"] = json!(collection);
+    event["params"]["fields"]["cpu"]["cpu"]["usage"] = json!(usage);
+    event
+}
+fn realtime_config() -> truenas_exporter::config::RealtimeConfig {
+    truenas_exporter::config::RealtimeConfig {
+        interval: Duration::from_secs(2),
+        ttl: Duration::from_secs(3),
+    }
+}
+async fn realtime_subscribe(socket: &mut Socket, owned: &str, before_ack: bool) -> String {
+    system_gate(socket, captured_system_result()).await;
+    let request = text(socket).await;
+    assert_eq!(request["method"], "core.subscribe");
+    let collection = "reporting.realtime:{\"interval\":2}";
+    assert_eq!(request["params"], json!([collection]));
+    if before_ack {
+        socket
+            .send(Message::text(realtime_event(collection, 10.0).to_string()))
+            .await
+            .unwrap();
+        socket
+            .send(Message::text(realtime_event(collection, 25.0).to_string()))
+            .await
+            .unwrap();
+    }
+    socket
+        .send(Message::text(
+            json!({"jsonrpc":"2.0","id":request["id"],"result":owned}).to_string(),
+        ))
+        .await
+        .unwrap();
+    collection.into()
+}
+async fn realtime_cleanup(socket: &mut Socket, owned: &str) {
+    let request = text(socket).await;
+    assert_eq!(request["method"], "core.unsubscribe");
+    assert_eq!(request["params"], json!([owned]));
+    socket.send(Message::text(json!({"jsonrpc":"2.0","method":"notify_unsubscribed","params":{"collection":"reporting.realtime:{\"interval\":2}","error":null}}).to_string())).await.unwrap();
+    socket
+        .send(Message::text(
+            json!({"jsonrpc":"2.0","id":request["id"],"result":null}).to_string(),
+        ))
+        .await
+        .unwrap();
+    while let Some(Ok(message)) = socket.next().await {
+        assert!(!matches!(message, Message::Text(_)));
+    }
+}
+async fn realtime_ready(state: &State) {
+    timeout(Duration::from_secs(8), async {
+        while !state.realtime_ready_at(tokio::time::Instant::now()) {
+            sleep(Duration::from_millis(5)).await;
+        }
+    })
+    .await
+    .unwrap();
+}
+
+#[tokio::test]
+async fn realtime_worker_keeps_latest_pre_ack_event_and_unsubscribes_owned_id() {
+    let (listener, url) = listen().await;
+    let server = tokio::spawn(async move {
+        let mut socket = login(&listener).await;
+        realtime_subscribe(&mut socket, "synthetic-owned-id", true).await;
+        realtime_cleanup(&mut socket, "synthetic-owned-id").await;
+    });
+    let rt = realtime_config();
+    let state = State::with_realtime(None, Duration::from_secs(30), true, true, Some(rt));
+    let stop = CancellationToken::new();
+    let task = tokio::spawn(truenas_exporter::api::realtime::run(
+        config(url, Duration::from_secs(2)),
+        rt,
+        state.clone(),
+        stop.clone(),
+    ));
+    realtime_ready(&state).await;
+    let metrics = state.metrics_at(tokio::time::Instant::now()).unwrap();
+    assert!(metrics.contains("truenas_cpu_utilization_ratio{cpu=\"cpu\"} 0.25"));
+    assert!(!metrics.contains("truenas_cpu_utilization_ratio{cpu=\"cpu\"} 0.1\n"));
+    stop.cancel();
+    timeout(Duration::from_secs(2), task)
+        .await
+        .unwrap()
+        .unwrap();
+    server.await.unwrap();
+}
+
+#[tokio::test]
+async fn realtime_permission_failure_retries_with_a_new_owned_subscription() {
+    realtime_retry_case(false).await;
+}
+
+#[tokio::test]
+async fn realtime_notify_unsubscribed_resubscribes_without_reusing_the_old_id() {
+    realtime_retry_case(true).await;
+}
+
+async fn realtime_retry_case(terminated: bool) {
+    let (listener, url) = listen().await;
+    let server = tokio::spawn(async move {
+        let mut socket = login(&listener).await;
+        system_gate(&mut socket, captured_system_result()).await;
+        let request = text(&mut socket).await;
+        assert_eq!(request["method"], "core.subscribe");
+        let response = if terminated {
+            json!({"jsonrpc":"2.0","id":request["id"],"result":"terminated-owned-id"})
+        } else {
+            json!({"jsonrpc":"2.0","id":request["id"],"error":{"code":-32001,"message":"synthetic-private-error","data":{"error":13}}})
+        };
+        socket
+            .send(Message::text(response.to_string()))
+            .await
+            .unwrap();
+        if terminated {
+            socket.send(Message::text(json!({"jsonrpc":"2.0","method":"notify_unsubscribed","params":{"collection":request["params"][0],"error":{"reason":"synthetic-private-error"}}}).to_string())).await.unwrap();
+        }
+        while let Some(Ok(message)) = socket.next().await {
+            assert!(!matches!(message, Message::Text(_)));
+        }
+        let mut socket = login(&listener).await;
+        let collection = realtime_subscribe(&mut socket, "second-owned-id", false).await;
+        socket
+            .send(Message::text(realtime_event(&collection, 25.0).to_string()))
+            .await
+            .unwrap();
+        realtime_cleanup(&mut socket, "second-owned-id").await;
+    });
+    let rt = realtime_config();
+    let state = State::with_realtime(None, Duration::from_secs(30), false, true, Some(rt));
+    let stop = CancellationToken::new();
+    let task = tokio::spawn(truenas_exporter::api::realtime::run(
+        config(url, Duration::from_secs(2)),
+        rt,
+        state.clone(),
+        stop.clone(),
+    ));
+    realtime_ready(&state).await;
+    let expected = if terminated { "api" } else { "permission" };
+    assert!(
+        state
+            .metrics_at(tokio::time::Instant::now())
+            .unwrap()
+            .contains(&format!("collector=\"cpu\",reason=\"{expected}\""))
+    );
+    stop.cancel();
+    timeout(Duration::from_secs(2), task)
+        .await
+        .unwrap()
+        .unwrap();
+    server.await.unwrap();
+}
+
+#[tokio::test]
+async fn realtime_silence_reconnects_even_when_pongs_continue() {
+    let (listener, url) = listen().await;
+    let server = tokio::spawn(async move {
+        let mut socket = login(&listener).await;
+        realtime_subscribe(&mut socket, "silent-id", false).await;
+        while let Some(Ok(message)) = socket.next().await {
+            match message {
+                Message::Ping(bytes) => {
+                    if socket.send(Message::Pong(bytes)).await.is_err() {
+                        break;
+                    }
+                }
+                Message::Text(_) => panic!("unexpected method on silent connection"),
+                _ => {}
+            }
+        }
+        let mut socket = login(&listener).await;
+        let collection = realtime_subscribe(&mut socket, "recovered-id", false).await;
+        socket
+            .send(Message::text(realtime_event(&collection, 25.0).to_string()))
+            .await
+            .unwrap();
+        realtime_cleanup(&mut socket, "recovered-id").await;
+    });
+    let rt = realtime_config();
+    let state = State::with_realtime(None, Duration::from_secs(30), false, true, Some(rt));
+    let stop = CancellationToken::new();
+    let task = tokio::spawn(truenas_exporter::api::realtime::run(
+        config(url, Duration::from_secs(1)),
+        rt,
+        state.clone(),
+        stop.clone(),
+    ));
+    realtime_ready(&state).await;
+    assert!(
+        state
+            .metrics_at(tokio::time::Instant::now())
+            .unwrap()
+            .contains("collector=\"network\",reason=\"timeout\"")
+    );
+    stop.cancel();
+    timeout(Duration::from_secs(2), task)
+        .await
+        .unwrap()
+        .unwrap();
+    server.await.unwrap();
+}
+
+#[tokio::test]
+async fn realtime_cleanup_deadline_bounds_a_missing_unsubscribe_ack() {
+    let (listener, url) = listen().await;
+    let server = tokio::spawn(async move {
+        let mut socket = login(&listener).await;
+        realtime_subscribe(&mut socket, "unacked-id", true).await;
+        let request = text(&mut socket).await;
+        assert_eq!(request["method"], "core.unsubscribe");
+        assert_eq!(request["params"], json!(["unacked-id"]));
+        while let Some(Ok(message)) = socket.next().await {
+            assert!(!matches!(message, Message::Text(_)));
+        }
+    });
+    let rt = realtime_config();
+    let state = State::with_realtime(None, Duration::from_secs(30), false, true, Some(rt));
+    let stop = CancellationToken::new();
+    let task = tokio::spawn(truenas_exporter::api::realtime::run(
+        config(url, Duration::from_secs(30)),
+        rt,
+        state.clone(),
+        stop.clone(),
+    ));
+    realtime_ready(&state).await;
+    stop.cancel();
+    timeout(Duration::from_millis(1500), task)
+        .await
+        .unwrap()
+        .unwrap();
+    server.await.unwrap();
+}
+
+#[tokio::test]
+async fn realtime_check_cli_is_fixed_output_and_redacts_source_and_subscription() {
+    let (listener, url) = listen().await;
+    let server = tokio::spawn(async move {
+        let mut socket = login(&listener).await;
+        let collection =
+            realtime_subscribe(&mut socket, "synthetic-private-subscription", false).await;
+        let mut event = realtime_event(&collection, 25.0);
+        event["params"]["fields"]["private_text"] = json!("synthetic-private-payload");
+        socket.send(Message::text(event.to_string())).await.unwrap();
+        realtime_cleanup(&mut socket, "synthetic-private-subscription").await;
+    });
+    let temp = tempfile::tempdir().unwrap();
+    let key = temp.path().join("key");
+    let ca = temp.path().join("ca.pem");
+    std::fs::write(&key, "synthetic-key").unwrap();
+    std::fs::write(&ca, &fixture_tls().pem).unwrap();
+    let output = timeout(
+        Duration::from_secs(5),
+        tokio::process::Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+            .arg("check-realtime")
+            .env_clear()
+            .env("TRUENAS_WS_URL", url)
+            .env("TRUENAS_USERNAME", "test-user")
+            .env("TRUENAS_API_KEY_FILE", key)
+            .env("TRUENAS_CA_CERT_FILE", ca)
+            .env("TRUENAS_SYSTEM_ENABLED", "true")
+            .env("TRUENAS_REALTIME_ENABLED", "true")
+            .env("RUST_LOG", "trace")
+            .kill_on_drop(true)
+            .output(),
+    )
+    .await
+    .unwrap()
+    .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let text = format!(
+        "{}{}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(text.contains("fresh CPU/memory/network/ARC groups"));
+    for marker in [
+        "synthetic-key",
+        "test-user",
+        "synthetic-private-subscription",
+        "synthetic-private-payload",
+        "captured-host-1",
+    ] {
+        assert!(!text.contains(marker));
+    }
+    server.await.unwrap();
+}
