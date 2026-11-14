@@ -45,7 +45,8 @@ Accepted findings: missing captured fixtures; pin API evidence; enumerate protoc
 - [x] Exact system/version/uptime/memory/load sources and explicit M3-A compatibility preflight.
 - [x] Opt-in automatic per-connection runtime compatibility gate and scheduled system collector, with independent required-group freshness.
 - [x] Source-pinned realtime subscription/recovery, independent group validation and silence expiry with synthetic wire fixtures.
-- [ ] Operator-authorized live realtime preflight and captured wire fixtures.
+- [x] Operator-authorized native and local Docker realtime preflight, including owned unsubscribe acknowledgement.
+- [ ] Captured sanitized realtime wire fixtures with provenance and offline replay.
 - [ ] General scan metrics (SCRUB and RESILVER), verified callable schema.
 - [ ] Container outage/recovery, least privilege and runtime resource validation.
 - [ ] P1 collectors only after P0 contracts are established.
@@ -66,7 +67,7 @@ No implementation milestone is fully validated until its container checks pass. 
 
 ## Delivery status
 
-M1/M2 functional work and all fifteen review findings now have recorded evidence. TN-02 is resolved for the captured pool.query scope; M3-A preflight and M3-B native/container system evidence are complete; M3-C opt-in connection gating/system collection is implemented and verified offline; M3-D realtime implementation is verified offline; live realtime acceptance remains open. See validation.md for this milestone and security-validation.md for the preceding security refresh.
+M1/M2 functional work and all fifteen review findings now have recorded evidence. TN-02 is resolved for the captured pool.query scope; M3-A preflight and M3-B native/container system evidence are complete; M3-C opt-in connection gating/system collection is implemented and verified offline; M3-D realtime implementation is verified offline; native/container realtime preflight now passes, while captured fixtures and integrated runtime acceptance remain open. See validation.md for this milestone and security-validation.md for the preceding security refresh.
 
 ## MEMORY ALPHA proxy integration and multiple targets
 
@@ -122,3 +123,9 @@ Focused unit/TLS/process tests, full Rust/MSRV checks and the enhanced container
 The source-pinned separate connection, owned subscribe/unsubscribe lifecycle, bounded latest snapshots, CPU/memory/network/ARC mappings, independent event-group TTLs and required-group readiness are implemented behind TRUENAS_REALTIME_ENABLED=false. The flag requires system collection; synthetic mode never opens sockets. check-realtime is ready for a separately authorized one-shot live preflight.
 
 Offline validation covers conversions, up/down/missing fields, partial-group failures, limits and duplicate keys, exact independent expiry, event receipt time, foreign collection filtering, pre-ack replacement, permission/remote-unsubscribe recovery, silence despite pongs, bounded cancellation cleanup, real daemon dual-socket metrics/redaction/SIGTERM and container mock operation. Source gaps, account role permission, actual frames, UI/Graphite equivalence and full enabled-mode resource budgets remain explicit acceptance limits. See realtime-contract.md and validation.md. No live realtime calls were made. Next after authorized evidence: scan metrics, remaining operational acceptance and expanded monitoring/dashboard handoff.
+
+## M3-D live preflight evidence
+
+The operator separately authorized check-realtime from macOS and local Docker Desktop against the configured WSS endpoint with the existing dedicated credential. Both completed successfully: verified TLS/authentication/system compatibility, fresh selected CPU/memory/network/ARC groups and confirmed owned unsubscribe. Temporary Docker secrets were removed; no raw payload or captured realtime fixture was saved. See memory-alpha-integration.md.
+
+This closes the one-shot live permission/schema preflight gate. Remaining realtime acceptance is reviewed sanitized captures/replay, observed down/missing cases where available, numerical UI/Graphite equivalence and measured integrated runtime/resource/outage behavior. Normal feature defaults remain off and no production configuration was changed.

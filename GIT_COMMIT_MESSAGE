@@ -1,15 +1,12 @@
-feat: add opt-in realtime telemetry and owned subscriptions
+docs: record authorized realtime preflight acceptance
 
-[0.3.0] Tin Ferret
+[0.3.1] Tin Ferret
 
-- Add a separately authenticated and version-checked realtime connection per enabled target
-- Subscribe only to reporting.realtime and clean up only connection-owned identifiers within a bounded deadline
-- Validate CPU, physical memory, network and ARC independently with bounded latest snapshots and finite freshness
-- Preserve missing values and omit down-link rates while applying source unit conversions once
-- Add fixed-output check-realtime and verify ownership, pre-ack delivery, silence/retry, redaction and shutdown offline
-- Extend synthetic container validation and opt-in configuration examples without changing default polling behavior
-- Document pinned source evidence, new metric semantics and pending live/capture/resource acceptance
-- VERSION: Increment the minor release to 0.3.0 for realtime collection and preflight functionality
+- Record successful native macOS and UID-10001 Docker check-realtime runs against the authorized endpoint
+- Confirm effective subscription access, selected live schemas and owned unsubscribe acknowledgement
+- Document restricted credential handling, temporary secret cleanup and fixed redacted output
+- Distinguish live preflight evidence from pending captures, numerical comparison and integrated runtime acceptance
+- VERSION: Increment the patch release to 0.3.1 for validation documentation
 - README.md: Update the Tin Ferret release information
 
 developed by Randel Dodson and AI

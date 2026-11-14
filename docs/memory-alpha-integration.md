@@ -2,6 +2,20 @@
 
 Endpoint: `wss://memory-alpha.home.lab/api/current`. Backend and proxy details, supplied by the operator: TrueNAS SCALE 25.04.2.6 at 10.10.10.7, Caddy at 10.10.10.2. This integration test is explicitly authorized for read-only access; infrastructure changes remain prohibited.
 
+## Authorized realtime preflight — November 14, 2026 UTC
+
+The operator explicitly approved check-realtime against wss://memory-alpha.home.lab/api/current from macOS and local Docker Desktop using the existing dedicated credential file. Both invocations completed successfully and printed only the fixed confirmation:
+
+> Verified WSS, system compatibility and fresh CPU/memory/network/ARC groups; owned realtime subscription closed
+
+The command performed verified TLS/hostname checks, typed auth.login_ex, system.info validation against the supported 25.04.2.x family, core.subscribe for exactly reporting.realtime:{"interval":2}, observation of fresh valid CPU/memory/network/ARC snapshots, and core.unsubscribe for its own acknowledged identifier. Successful completion includes the null unsubscribe acknowledgement and WebSocket close. No pool query, arbitrary subscription or administrative method was sent.
+
+The Mac ran the repository binary through cargo run --quiet --locked. Docker Desktop used desktop-linux, linux/amd64 and local/truenas-rust-exporter:realtime under UID/GID 10001:10001, read-only root, dropped capabilities, no-new-privileges and a 128 MiB memory limit. That limit was a run constraint, not a measured maximum-target resource result.
+
+The existing Mac key remained mode 0600. A temporary Docker volume received the key through stdin, with mode 0400 and ownership 10001:10001, and was mounted read-only. The CA was also mounted read-only. The temporary helper/probe containers and secret volume were removed; subsequent inventories were empty for their names. Credentials, raw responses, source identities, event payloads and subscription IDs were not printed or saved. No captured realtime fixture was created by these preflights.
+
+This establishes successful read subscription and owned unsubscribe with this credential, plus live acceptance of the selected group schemas. It does not independently inventory its role list, establish minimum privilege or denial of writes, record the current exact patch version beyond the supported-family check, compare UI/Graphite values, or validate a long-running integrated daemon. Existing system fixtures retain their earlier exact 25.04.2.6 provenance. Captured realtime envelopes and full enabled-mode resource/outage acceptance remain pending. No infrastructure, live dashboard or production deployment was changed.
+
 ## Authorized system checks — November 14, 2026 UTC
 
 The operator separately authorized read-only auth.login_ex and system.info checks against the configured WSS endpoint from the Mac and local Docker Desktop, using the existing dedicated credential file.

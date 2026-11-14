@@ -283,3 +283,17 @@ Offline verification:
 - Compose configuration checks passed for the mock project and the integration fragment combined with the temporary synthetic enclosing network definition, without starting services or creating infrastructure.
 
 Limits: no live core.subscribe/core.unsubscribe, no captured realtime response, no observed REPORTING_READ permission, no UI/Graphite equivalence check and no integrated production deployment. Maximum-target CPU/RSS/outage measurements have not been repeated with both sockets/realtime groups enabled. Prior security scans retain their original scope; dependencies/base images were not changed. Hosted CI was not run. Earlier intermittent process-fixture failures remain historical unresolved reliability work; the final M3-D full runs passed without those failures.
+
+## Authorized native/container realtime preflight — November 14, 2026 UTC
+
+The operator explicitly authorized check-realtime against wss://memory-alpha.home.lab/api/current from macOS and local Docker Desktop using the existing dedicated credential file. Both commands exited successfully, reporting verified WSS/system compatibility, fresh CPU/memory/network/ARC groups and closed owned subscription. Native interval configuration was confirmed to use the authorized two-second setting; the Docker command used the default two-second interval.
+
+The calls were auth.login_ex, system.info, core.subscribe for exactly reporting.realtime:{"interval":2}, then core.unsubscribe for that connection's acknowledged identifier. A successful command includes a null unsubscribe result and successful WebSocket close. It sends no pool request or administrative method. This demonstrates effective event-read/unsubscribe permission and acceptance of the selected live schemas, not minimum privileges, exact role inventory or numerical UI/Graphite equivalence.
+
+Docker used desktop-linux, linux/amd64, local/truenas-rust-exporter:realtime image ID sha256:e5922d872114bd0e0c8717e6ececb7d157836f1c63740783876121aaee26d504, UID/GID 10001:10001, read-only root, dropped capabilities, no-new-privileges and a 128 MiB limit. The key was transferred over stdin into a temporary volume, mode 0400/owner 10001, and mounted read-only alongside the read-only CA. All temporary secret volumes and helper/probe containers were removed; subsequent inventories were empty. The original Mac key remains mode 0600.
+
+No authentication frame, source identity, raw response, event payload or subscription ID was printed or saved. The command does not create a captured fixture. Existing synthetic realtime tests remain explicitly synthetic; earlier pool/system fixtures retain their original capture provenance and version observation.
+
+Before the evidence commit, sh scripts/check.sh passed formatting, strict Clippy, all 76 regular Rust tests and six Python tests (one sustained operational test intentionally ignored). The production linux/amd64 image build also passed using unchanged production build layers. Production source, dependencies and base images did not change; the previous full Rust 1.88 and hardened-container results retain their recorded scope and were not rerun. Hosted CI was not run.
+
+Remaining acceptance: reviewed sanitized realtime captures and offline replay, observed alternate/down/missing cases where available, numerical comparison, longer-running integrated daemon/outage tests and maximum-target resource measurements. No continuous daemon or production deployment was started, and no infrastructure/dashboard configuration changed.

@@ -2,6 +2,8 @@
 
 ## Development history
 
+- Record successful operator-authorized native and UID-10001 Docker realtime preflights, including selected live group validation and owned unsubscribe acknowledgement. Preserve the distinction from captured fixtures, numerical comparisons and integrated runtime/resource acceptance.
+
 - Implement opt-in M3-D realtime CPU/memory/network/ARC collection on an isolated authenticated/version-checked socket, with owned subscriptions, bounded latest snapshots, independent freshness, silence/reconnect recovery, bounded cleanup and a redacted check-realtime preflight. Verify with synthetic unit/TLS/process/container fixtures; live realtime acceptance remains pending.
 
 - Add opt-in M3-C system collection: per-connection/reconnect compatibility checks, independently fresh system/pool snapshots, system identity/uptime/memory/load metrics, method-aware result bounds and required-group readiness. Preserve pool-only defaults and keep realtime disabled. Verify with unit, loopback TLS, two-target process, Rust 1.88 and hardened container mock checks.
