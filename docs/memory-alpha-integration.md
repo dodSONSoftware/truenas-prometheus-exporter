@@ -2,7 +2,20 @@
 
 Endpoint: `wss://memory-alpha.home.lab/api/current`. Backend and proxy details, supplied by the operator: TrueNAS SCALE 25.04.2.6 at 10.10.10.7, Caddy at 10.10.10.2. This integration test is explicitly authorized for read-only access; infrastructure changes remain prohibited.
 
-## Authenticated pool checks — November 13, 2026
+## Authorized system checks — November 14, 2026 UTC
+
+The operator separately authorized read-only auth.login_ex and system.info checks against the configured WSS endpoint from the Mac and local Docker Desktop, using the existing dedicated credential file.
+
+- The actual production check-system command passed on native macOS and the local linux/amd64 distroless image local/truenas-rust-exporter:system-preflight. Both verified TLS/hostname, typed authentication, selected system.info fields and 25.04.2.x compatibility. The command printed only fixed success text.
+- A separate temporary Rust capture harness reused configuration/TLS/protocol/authentication helpers and the system parser. It requested system.info with params=[] once per capture, under 1 MiB frame/message bounds and a 30-second outer timeout. It sanitized successful replies in memory before writing anything; raw responses and authentication exchanges were never saved.
+- The API-reported short version is 25.04.2.6 in both captures. This is an API observation through the verified configured endpoint, beyond the preceding operator-only version evidence. Automatic per-connection daemon version gating is still not implemented.
+- Both Docker runs used UID/GID 10001:10001, read-only root, dropped capabilities, no-new-privileges and a 128 MiB memory limit. The key was provisioned over stdin into a temporary volume as mode 0400, owned by UID 10001 and mounted read-only. The CA was also mounted read-only. Temporary containers and secret volumes were removed, and final inventory checks found none remaining. The Mac key remains mode 0600.
+- Full sanitized host/container system envelopes are saved beside the pool captures. The fixture README records local UTC output timestamps, aliasing, preserved measurement fields and limitations. Serial/model/product/manufacturer/timezone strings were replaced; the hostname is aliased, and license is null in both captures.
+- Offline captured_system_envelopes_replay_through_preflight_offline replays each full envelope through the production check_system path over loopback TLS, changing only the mock request ID. It asserts API version, hostname alias, physical-memory bytes, fractional uptime and load values. The existing decoder accepted the genuine responses without changes.
+
+These runs establish successful read authorization for system.info with this dedicated credential. The exact role assignment remains operator-reported; minimum privilege and denial of writes were not tested. No system.version call, subscription, administrative method, infrastructure edit or production deployment occurred. Future realtime methods require their own explicit authorization. M3-C system scheduling/version-gate/freshness work remains an offline implementation task.
+
+## Earlier authenticated pool checks — November 13, 2026
 
 The operator explicitly authorized read-only `auth.login_ex` and `pool.query` checks against the endpoint above from the Mac and local Docker Desktop, using the operator-provisioned credential file. The operator reported the dedicated account as Readonly Admin and reconfirmed software version 25.04.2.6 in the UI. No version method was called.
 

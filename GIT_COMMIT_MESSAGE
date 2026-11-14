@@ -1,14 +1,13 @@
-feat: add bounded system compatibility preflight
+test: verify captured TrueNAS system compatibility
 
-[0.1.0] Zinc Ferret
+[0.1.1] Zinc Ferret
 
-- Add explicit check-system using verified TLS, typed authentication and allowlisted system.info
-- Validate the supported version family, hostname, numeric uptime, optional memory and load without exposing raw data
-- Bound the entire one-shot check by the API timeout without changing normal pool collection
-- Add synthetic field, loopback TLS and actual CLI redaction and error tests
-- Pin system method registration and field mappings to the official 25.04.2.6 source
-- Document remaining live acceptance, automatic version gating and system/realtime collector milestones
-- VERSION: Increment the minor release to 0.1.0 for the new command
+- Add full sanitized native and UID-10001 Docker system.info envelopes with capture provenance
+- Replay genuine responses offline through the production system preflight
+- Assert API-reported version, physical memory, fractional uptime and load averages
+- Record authorized live checks, restricted secret cleanup and remaining runtime integration limits
+- Update M3-B acceptance and the next automatic version-gate/system-collection scope
+- VERSION: Increment the patch release to 0.1.1
 - README.md: Update the Zinc Ferret release information
 
 developed by Randel Dodson and AI

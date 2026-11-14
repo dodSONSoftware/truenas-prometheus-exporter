@@ -1,0 +1,35 @@
+{
+  "id": "captured-system-info",
+  "jsonrpc": "2.0",
+  "result": {
+    "boottime": {
+      "$date": 1786506718000
+    },
+    "buildtime": {
+      "$date": 1761725923000
+    },
+    "cores": 12,
+    "datetime": {
+      "$date": 1794629862000
+    },
+    "ecc_memory": false,
+    "hostname": "captured-host-1",
+    "license": null,
+    "loadavg": [
+      11.17333984375,
+      11.07421875,
+      11.072265625
+    ],
+    "model": "sanitized",
+    "physical_cores": 6,
+    "physmem": 63093960704,
+    "system_manufacturer": "sanitized",
+    "system_product": "sanitized",
+    "system_product_version": "sanitized",
+    "system_serial": "sanitized",
+    "timezone": "sanitized",
+    "uptime": "sanitized",
+    "uptime_seconds": 8123144.626117497,
+    "version": "25.04.2.6"
+  }
+}

@@ -1266,3 +1266,53 @@ async fn system_preflight_cli_reports_only_bounded_results() {
             .contains("exactly one non-mock target")
     );
 }
+
+#[tokio::test]
+async fn captured_system_envelopes_replay_through_preflight_offline() {
+    for (fixture, uptime, loadavg) in [
+        (
+            include_str!("../../fixtures/truenas-25.04.2.6/system.info.host.response.json"),
+            8_123_070.622_656_644_f64,
+            [11.04736328125, 11.03857421875, 11.0615234375],
+        ),
+        (
+            include_str!("../../fixtures/truenas-25.04.2.6/system.info.container.response.json"),
+            8_123_144.626_117_497_f64,
+            [11.17333984375, 11.07421875, 11.072265625],
+        ),
+    ] {
+        let (listener, url) = listen().await;
+        let mut envelope: Value = serde_json::from_str(fixture).unwrap();
+        let server = tokio::spawn(async move {
+            let mut socket = login(&listener).await;
+            let request = text(&mut socket).await;
+            assert_eq!(request["method"], "system.info");
+            assert_eq!(request["params"], json!([]));
+            assert!(request["id"].is_string());
+            // Preserve the complete saved result and change only request correlation.
+            envelope["id"] = request["id"].clone();
+            socket
+                .send(Message::text(envelope.to_string()))
+                .await
+                .unwrap();
+            while let Some(Ok(message)) = socket.next().await {
+                assert!(
+                    !matches!(message, Message::Text(_)),
+                    "unexpected additional method"
+                );
+            }
+        });
+        let info = truenas_exporter::api::client::check_system(config(url, Duration::from_secs(2)))
+            .await
+            .unwrap();
+        assert_eq!(info.version, "25.04.2.6");
+        assert_eq!(info.hostname, "captured-host-1");
+        assert_eq!(info.physmem, Some(63_093_960_704));
+        assert!((info.uptime_seconds - uptime).abs() < 0.000_001);
+        assert_eq!(info.loadavg, Some(loadavg));
+        timeout(Duration::from_secs(2), server)
+            .await
+            .unwrap()
+            .unwrap();
+    }
+}

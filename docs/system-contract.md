@@ -1,6 +1,6 @@
 # M3-A system preflight contract
 
-Status: implemented and tested offline; no live system.info call or captured system response yet. This is a manual preflight, not a scheduled collector or daemon-wide runtime gate. Normal pool polling, metrics and readiness retain the M2 contract.
+Status: implemented, tested offline and verified by operator-authorized native/container system.info checks; full sanitized responses are captured and replayed offline. This is a manual preflight, not a scheduled collector or daemon-wide runtime gate. Normal pool polling, metrics and readiness retain the M2 contract.
 
 ## Exact source evidence
 
@@ -12,7 +12,7 @@ Inspected official TrueNAS middleware tag TS-25.04.2.6, resolved commit `244b717
 - [Version source](https://github.com/truenas/middleware/blob/244b717370fe35fb9eefc3096acfbc25f12b57b6/src/middlewared/middlewared/plugins/system/product.py): system.info uses system.version_short, which returns the manifest version. system.version returns a branded full name and is not called by this implementation. [sw_info](https://github.com/truenas/middleware/blob/244b717370fe35fb9eefc3096acfbc25f12b57b6/src/middlewared/middlewared/utils/__init__.py) constructs those two forms separately.
 - [WebUI alternative](https://github.com/truenas/middleware/blob/244b717370fe35fb9eefc3096acfbc25f12b57b6/src/middlewared/middlewared/plugins/webui/main_dashboard.py) is explicitly intended for the WebUI team and is not selected as the exporter source.
 
-No fallback API calls, method discovery, webUI methods, local appliance files or shell commands are used. The READONLY_ADMIN role declaration is source evidence; actual authorization for this method remains unverified on the appliance.
+No fallback API calls, method discovery, webUI methods, local appliance files or shell commands are used. The READONLY_ADMIN role declaration is source evidence; successful dedicated-account read authorization was subsequently observed in M3-B; minimum privilege and denial of writes remain untested.
 
 ## Selected field contract
 
@@ -34,12 +34,12 @@ Syntactically numeric releases outside 25.04.2.x return unsupported. Invalid for
 
 One API-timeout budget covers connect, authentication, request send, response wait and close. Existing 1 MiB frame/message bounds and TLS/hostname verification apply. Ping frames are answered; unrelated valid notifications/IDs do not satisfy or extend the deadline. Failure output contains bounded reason categories; success output contains only a fixed confirmation. Hostname, version details, uptime, credentials, raw frames and remote error messages are not printed. Diagnostic mode does not initialize dependency tracing, including when RUST_LOG=trace.
 
-A live invocation requires explicit authorization for auth.login_ex and system.info on the selected endpoint, plus the dedicated read-only account/key. Prior pool.query authorization does not cover system.info. This command is never part of CI against a real appliance.
+A live invocation requires explicit authorization for auth.login_ex and system.info on the selected endpoint, plus the dedicated read-only account/key. Prior pool.query authorization does not cover system.info. The operator separately approved the M3-B checks; the recorded runs completed under that approval. This command is never part of CI against a real appliance.
 
 ## Acceptance and next slices
 
 - M3-A: source mappings, closed SystemInfo method, typed selected-field parser, explicit bounded check-system and offline CLI/TLS tests. Implemented.
-- M3-B: separately authorized native and UID-10001 Docker system.info checks; sanitize full system responses in memory and record exact version/role/capture provenance. Pending operator authorization and implementation of the sanitized capture path; never redirect raw system.info output into Git.
+- M3-B: separately authorized native and UID-10001 Docker system.info checks passed. Full responses were sanitized in memory and replayed offline with capture/version provenance; see fixtures/truenas-25.04.2.6/README.md. API-reported version is 25.04.2.6. Completed for this observed response scope.
 - M3-C: integrate per-connection compatibility checks with scheduled system polling, finite system TTL and independent operational metrics. Define required/unsupported group readiness before enabling the collector; test version changes on reconnect and failure/expiry isolation from pools. No system metric or automatic runtime gate is delivered by M3-A.
 - M3-D: exact reporting.realtime subscription/event contract, bounded latest-value delivery and CPU/memory/network/ARC group validation with independent freshness. Missing/down-link rates remain absent. Separately authorize live subscribe/unsubscribe only after the concrete path is ready.
 

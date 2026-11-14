@@ -2,7 +2,7 @@
 
 ## Current review status — November 13, 2026
 
-Fourteen findings have implementation fixes. TN-02 now has authorized native/container pool captures and offline replay through the production client and HTTP metrics/readiness. Version 25.04.2.6 is operator-confirmed. Earlier results below retain their original scope.
+Fourteen findings have implementation fixes. TN-02 now has authorized native/container pool captures and offline replay through the production client and HTTP metrics/readiness. Version 25.04.2.6 was initially operator-confirmed; the later M3-B system captures also report it through the API. Earlier results below retain their original scope.
 
 | Finding | Commit | Disposition |
 | --- | --- | --- |
@@ -226,3 +226,19 @@ The first full sh scripts/check.sh run failed in the existing real_process_keeps
 Rust 1.88 strict Clippy across all targets and all six new system/preflight tests passed. The linux/amd64 production image local/truenas-rust-exporter:system-preflight built successfully on local Docker Desktop. The standard check-container.py hardening/synthetic-secret/multi-target/outage/SIGTERM validation passed on that image. A network-disabled container smoke check confirmed check-system is advertised in help and rejects mock configuration. Live Docker system.info permission and response compatibility remain unverified.
 
 No dependency/base-image changes were made, and prior security scans and sustained operational measurements were not rerun. Hosted CI was not run. Normal pool polling, cached metrics and readiness retain their existing behavior. Automatic runtime version gating and system metrics are not implemented by M3-A.
+
+## M3-B — authorized system preflight and captured replay, November 14, 2026 UTC
+
+The operator explicitly approved read-only auth.login_ex and system.info checks from the Mac and local Docker Desktop against wss://memory-alpha.home.lab/api/current with the existing dedicated read-only credential. The actual check-system command passed in both environments using verified TLS and its single API-timeout budget. It returned fixed success text without exposing raw fields. The container ran the production distroless linux/amd64 image as UID/GID 10001:10001.
+
+A separate temporary capture harness then authenticated with auth.login_ex and requested system.info with empty parameters in each environment using the repository configuration/TLS/protocol/authentication helpers and system parser, 1 MiB frame/message limits and a 30-second overall deadline. It sanitized the complete successful response structure before writing. Raw replies and authentication exchanges were not saved. Full host/container fixtures and exact timestamps, transformations and measurement provenance are in fixtures/truenas-25.04.2.6/README.md.
+
+Both system.info captures report version 25.04.2.6 and 63,093,960,704 physical-memory bytes. The observed uptime and three load averages are preserved independently for each capture. Their serial/model/manufacturer/product/timezone strings are replaced, hostname is aliased and license is null. The existing typed decoder passed unchanged.
+
+The new captured_system_envelopes_replay_through_preflight_offline test replays both full envelopes over loopback TLS through production check_system, replacing only request correlation. It checks exact version, aliased hostname, memory bytes and load values, plus fractional uptime within one microsecond. It passed on the default toolchain and Rust 1.88.
+
+sh scripts/check.sh passed formatting, strict Clippy, 53 regular Rust tests and six Python tests. The sustained operational test remains intentionally ignored by the default suite. The production linux/amd64 image build passed as local/truenas-rust-exporter:system-captured, reusing unchanged production build layers. No production source, dependencies or base images changed; the prior hardened-container, sustained operational and security results retain their original recorded scope and were not rerun. Hosted CI was not run.
+
+The Docker preflight and capture used a read-only root filesystem, dropped capabilities, no-new-privileges, 128 MiB memory and a mode-0400 UID-10001 secret mounted read-only. The secret was copied over stdin into temporary volumes and removed in cleanup. Final container/volume inventories were empty for these temporary names; the original Mac key remains mode 0600.
+
+This verifies successful system.info read permission for the dedicated credential and its current API-reported version. It does not establish minimum privileges, denial of writes, automatic per-connection version gating, scheduled system metrics, realtime subscriptions or production deployment. No method beyond auth.login_ex and system.info was invoked in this milestone.
