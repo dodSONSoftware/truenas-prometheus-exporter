@@ -139,3 +139,14 @@ All interfaces observed were up; down/missing/backend-failure cases remain expli
 ## Numerical source review — November 14, 2026
 
 The offline source-to-wire review and synthetic upstream-function experiments are complete; see realtime-numerical-review.md. Exporter conversions agree with the pinned adapter. Upstream missing-data defaults and ARC cumulative-percentage/chart-algorithm semantics prevent closing independent numerical acceptance. No appliance access or production behavior change occurred. Paired operator-supplied Reporting evidence or separately authorized bounded source-chart inspection remains necessary. Controlled local integrated resource/outage testing can proceed independently.
+
+
+## Integrated finite operational baseline — November 14, 2026
+
+- [x] Exercise opt-in system/realtime collection together with maximum target/pool/CPU/interface cardinalities on native and network-disabled Docker loopback sources.
+- [x] Verify realtime silence does not refresh expired groups or invalidate fresh polling; verify full outage expiry/recovery and owned shutdown requests under a stalled metrics reader.
+- [x] Record scoped native child and Docker child/cgroup CPU/RSS observations; preserve ordinary-suite opt-in behavior for sustained tests.
+- [ ] Profile longer steady-state and repeated recovery to establish memory stability/headroom; finite passes are not a universal budget guarantee.
+- [ ] Complete independent paired live numerical/source-chart verification and remaining role/CI acceptance before production readiness.
+
+See integrated-operational-validation.md and validation.md for results. Production code/defaults are unchanged. The next resource investigation should distinguish allocator retention and fixture/client overhead from exporter growth before selecting a correction or changing limits. Scan callable contracts remain a separate subsequent milestone.

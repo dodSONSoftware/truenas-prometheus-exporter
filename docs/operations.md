@@ -20,3 +20,8 @@ The example fragment does not create a production network or account, and was no
 
 
 Container validation reports success after removing its temporary containers. A cleanup failure identifies affected containers and makes an otherwise successful run fail. If validation also fails, its original exception is retained and cleanup errors are written to stderr. Failed starts that leave no container are distinguished with a successful Docker list query. The script attempts cleanup of every name registered by its run.
+
+
+## Integrated offline operational validation
+
+The opt-in sustained system/realtime test and its container reproduction are documented in [integrated-operational-validation.md](integrated-operational-validation.md). It uses generated synthetic credentials and loopback TLS only, with two sockets per target, silence/outage/recovery and stalled-reader shutdown. Two sustained tests are intentionally ignored by ordinary cargo test and require explicit --ignored invocation. Child CPU/RSS and whole-cgroup resources have different scopes; neither a finite pass nor a capped run certifies long-term memory stability or production readiness.

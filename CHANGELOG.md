@@ -2,6 +2,8 @@
 
 ## Development history
 
+- Add an opt-in full-process maximum-cardinality system/realtime operational scenario, shared with the existing pool-only fixture. Verify silence isolation, full outage recovery, final owned unsubscribe requests and stalled-reader shutdown; record native and capped-container child/cgroup resource observations without claiming long-term memory stability.
+
 - Trace pinned CPU/memory/ARC chart producers and realtime adapter arithmetic; verify synthetic conversion/default cases and document the unresolved ARC chart-algorithm concern and a concrete independent-comparison procedure. No exporter behavior changes.
 
 - Add four sanitized native/container TrueNAS 25.04.2.6 realtime notifications, version/receipt/cleanup provenance and production-worker metric replay. Preserve explicit zero ARC values and document their upstream-default ambiguity; numerical and sustained integrated runtime acceptance remain open.
