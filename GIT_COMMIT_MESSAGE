@@ -1,12 +1,12 @@
-fix: read complete bounded healthcheck status lines
+fix: reset retries only after authenticated stability
 
-[0.0.9] Iron Ferret
+[0.0.10] Iron Ferret
 
-- healthcheck: Accumulate partial TCP reads through the HTTP status terminator
-- healthcheck: Enforce a 128-byte limit within the existing three-second deadline
-- tests: Cover split success, exact limits, oversized lines, early EOF and stalled peers
-- docs: Document the status-line bounds and deadline
-- VERSION: Increment the patch release to 0.0.9
+- client: Timestamp stability after successful authentication
+- client: Keep exponential jitter and the cap across long failed handshakes
+- tests: Verify failed attempts, brief sessions, exact stability threshold and delay bounds
+- docs: Specify the authenticated uptime required to reset retries
+- VERSION: Increment the patch release to 0.0.10
 - README.md: Update the Iron Ferret release information
 
 developed by Randel Dodson and AI

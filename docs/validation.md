@@ -116,3 +116,9 @@ File-based targets now pass parsed fields and the common timeout directly to val
 The executable healthcheck now reads through CRLF across partial TCP reads with a fixed 128-byte status buffer. A subprocess regression splits the status prefix across writes, verifies an exactly 128-byte valid line, and rejects a 129-byte line, non-200 status, early EOF and bare LF. A peer holding the socket open triggers the existing three-second overall timeout. The test runs without API credentials.
 
 Formatting, strict Clippy, all 38 tests, the linux/amd64 image build and the local container runtime suite passed.
+
+## TN-11 authenticated retry stability (2026-11-13)
+
+Each connection attempt starts without a stability timestamp. The client sets it only after open_authenticated succeeds, and the retry calculation resets after 120 seconds from that timestamp. A controlled-time unit test advances through repeated 300-second unsuccessful-attempt intervals, verifies exponential jitter ranges through the 60-second cap, retains backoff at 119 seconds of authenticated uptime and verifies reset at exactly 120 seconds. Existing loopback reconnect and cancellation-during-authentication/backoff tests pass.
+
+Formatting, strict Clippy and all 39 Rust tests passed.

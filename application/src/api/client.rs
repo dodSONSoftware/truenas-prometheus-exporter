@@ -141,8 +141,15 @@ async fn supervise(
 ) {
     let mut backoff = 1u64;
     loop {
-        let started = Instant::now();
-        let outcome = connect_and_run(&config, &state, &mut receiver, &stop).await;
+        let mut authenticated_since = None;
+        let outcome = connect_and_run(
+            &config,
+            &state,
+            &mut receiver,
+            &stop,
+            &mut authenticated_since,
+        )
+        .await;
         state.connected.store(false, Ordering::Relaxed);
         while let Ok(request) = receiver.try_recv() {
             request.complete(Err(Reason::Unavailable));
@@ -164,14 +171,19 @@ async fn supervise(
                 );
             }
         }
-        if started.elapsed() >= Duration::from_secs(120) {
-            backoff = 1;
-        }
-        let delay = Duration::from_millis(rand::random_range((backoff * 500)..=(backoff * 1000)));
+        let delay = retry_delay(&mut backoff, authenticated_since);
         tokio::select! { _ = stop.cancelled() => break, _ = sleep(delay) => {} }
-        backoff = (backoff * 2).min(60);
     }
     state.connected.store(false, Ordering::Relaxed);
+}
+
+fn retry_delay(backoff: &mut u64, authenticated_since: Option<Instant>) -> Duration {
+    if authenticated_since.is_some_and(|since| since.elapsed() >= Duration::from_secs(120)) {
+        *backoff = 1;
+    }
+    let delay = Duration::from_millis(rand::random_range((*backoff * 500)..=(*backoff * 1000)));
+    *backoff = (*backoff * 2).min(60);
+    delay
 }
 
 async fn connect_and_run(
@@ -179,12 +191,14 @@ async fn connect_and_run(
     state: &State,
     receiver: &mut mpsc::Receiver<Request>,
     stop: &CancellationToken,
+    authenticated_since: &mut Option<Instant>,
 ) -> Result<(), Reason> {
     let socket = tokio::select! {
         biased;
         _ = stop.cancelled() => return Ok(()),
         result = open_authenticated(config) => result?,
     };
+    *authenticated_since = Some(Instant::now());
     state.connected.store(true, Ordering::Relaxed);
     tracing::info!("API authenticated");
     run_session(socket, config.timeout, receiver, stop).await
@@ -340,6 +354,29 @@ mod tests {
     use super::*;
     use tokio::io::duplex;
     use tungstenite::protocol::Role;
+
+    #[tokio::test(start_paused = true)]
+    async fn backoff_requires_authenticated_stability() {
+        let mut backoff = 1;
+        for expected in [1, 2, 4, 8, 16, 32, 60, 60] {
+            // Even lengthy unsuccessful connection/auth attempts have no session timestamp.
+            tokio::time::advance(Duration::from_secs(300)).await;
+            let delay = retry_delay(&mut backoff, None);
+            assert!(
+                (Duration::from_millis(expected * 500)..=Duration::from_secs(expected))
+                    .contains(&delay)
+            );
+            assert_eq!(backoff, (expected * 2).min(60));
+        }
+        let authenticated = Instant::now();
+        tokio::time::advance(Duration::from_secs(119)).await;
+        let delay = retry_delay(&mut backoff, Some(authenticated));
+        assert!((Duration::from_secs(30)..=Duration::from_secs(60)).contains(&delay));
+        tokio::time::advance(Duration::from_secs(1)).await;
+        let delay = retry_delay(&mut backoff, Some(authenticated));
+        assert!((Duration::from_millis(500)..=Duration::from_secs(1)).contains(&delay));
+        assert_eq!(backoff, 2);
+    }
 
     #[tokio::test(start_paused = true)]
     async fn completion_preserves_timeout_and_transport_reasons() {
