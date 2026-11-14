@@ -1,6 +1,6 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Brass Ferret — version 0.5.1.
+**Release:** Copper Ferret — version 0.6.0.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
@@ -105,3 +105,5 @@ Set `TRUENAS_SYSTEM_ENABLED=true` and `TRUENAS_REALTIME_ENABLED=true` to add CPU
 Authorized native and UID-10001 local Docker `check-realtime` runs now pass against MEMORY ALPHA, including fresh selected groups and owned unsubscribe acknowledgement. The command saves no payload. A subsequent temporary capture helper saved four sanitized notifications with provenance and successful offline replay. UI/Graphite comparison and full integrated runtime/resource acceptance remain pending. See [integration evidence](docs/memory-alpha-integration.md).
 
 An explicitly authorized one-shot public chart diagnostic is available as the Cargo example public_chart_comparison. It requires a new output-file path. Read docs/public-chart-comparison-results.md and docs/reporting-api-comparison-plan.md before use.
+
+The complete Grafana dashboard is in dashboards/truenas-exporter.json. The authorized local Docker Desktop setup runs Prometheus, Grafana 13.2.2 and the live exporter together in metric-simulator-observability. See docs/operations.md for paths and lifecycle instructions.

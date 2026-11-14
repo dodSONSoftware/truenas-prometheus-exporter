@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.0 - 2026-11-14
+
+- Add a complete Grafana dashboard covering all 34 exporter metric families, with target filters, units and freshness context.
+- Run the authorized live exporter alongside local Prometheus and Grafana in the selected Docker Desktop project.
+- Back up and upgrade local Grafana to 13.2.2, provision the dashboard and validate its queries against live metrics.
+
+
 ## 0.5.1 - 2026-11-14
 
 - Record the separately approved successful 13-call public chart window and receipt-aligned comparison residuals.

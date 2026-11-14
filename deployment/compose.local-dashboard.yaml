@@ -1,0 +1,49 @@
+# Merge with the selected local Prometheus/Grafana Compose project.
+services:
+  truenas-exporter:
+    image: ${TRUENAS_EXPORTER_IMAGE:?Set the reviewed local image tag or digest}
+    platform: linux/amd64
+    restart: unless-stopped
+    init: true
+    user: "10001:10001"
+    environment:
+      TRUENAS_TARGET: memory-alpha
+      TRUENAS_WS_URL: wss://memory-alpha.home.lab/api/current
+      TRUENAS_USERNAME: prometheus_exporter
+      TRUENAS_API_KEY_FILE: /run/secrets/api-key
+      TRUENAS_CA_CERT_FILE: /run/ca/root.pem
+      TRUENAS_SYSTEM_ENABLED: "true"
+      TRUENAS_REALTIME_ENABLED: "true"
+      TRUENAS_REALTIME_INTERVAL_SECONDS: "2"
+      TRUENAS_POLL_INTERVAL_SECONDS: "60"
+      TRUENAS_CACHE_TTL_SECONDS: "180"
+      EXPORTER_LISTEN: 0.0.0.0:9110
+      RUST_LOG: info
+    volumes:
+      - type: volume
+        source: truenas-credential
+        target: /run/secrets
+        read_only: true
+      - type: bind
+        source: ${TRUENAS_CA_CERT_SOURCE:?Set the public CA path}
+        target: /run/ca/root.pem
+        read_only: true
+        bind:
+          create_host_path: false
+    ports:
+      - "127.0.0.1:9110:9110"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 128m
+    cpus: 0.5
+    pids_limit: 64
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+volumes:
+  truenas-credential:
+    external: true
+    name: truenas-local-exporter-credential

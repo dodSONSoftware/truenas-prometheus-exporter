@@ -1,10 +1,11 @@
-docs: record successful bounded public chart comparison
+feat: add complete Grafana dashboard and live local observability stack
 
-[0.5.1] Brass Ferret
+[0.6.0] Copper Ferret
 
-- Preserve the separately authorized 13-call selected chart and event evidence
-- Report receipt-aligned residuals and confirmed public ARC percentage zeros
-- Retain independent counter, metadata and minimum-role acceptance limits
-- VERSION, README.md and CHANGELOG.md: record release 0.5.1
+- Cover every exporter metric with filters, units and freshness context
+- Add focused coverage, layout and source-unit dashboard checks
+- Run the authorized exporter with local Prometheus and Grafana 13.2.2
+- Document protected credentials, backup, provisioning and rollback
+- VERSION, README.md and CHANGELOG.md: record release 0.6.0
 
 developed by Randel Dodson and AI

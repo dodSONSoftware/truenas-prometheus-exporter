@@ -32,3 +32,26 @@ The [phased memory profile](operational-memory-profile.md) adds integrated_memor
 [Separate-cgroup validation](isolated-cgroup-validation.md) uses scripts/profile-isolated-cgroups.py to run the fixture and exporter in separate containers/cgroups sharing only the network-disabled loopback namespace. It requires an explicit local Docker context and rejects real endpoints/credentials. Invoke this fourth sustained scenario through that controller; select exact test names for the three in-process scenarios instead of running every ignored operational test indiscriminately.
 
 The executable --version reports the root VERSION release. For the observability Compose example, set TRUENAS_EXPORTER_IMAGE to the reviewed immutable image digest or release tag. The local synthetic Compose build uses the dev tag.
+
+## Local Mac observability stack — November 14, 2026
+
+The operator authorized ongoing read-only exporter collection in a separate container in the existing metric-simulator-observability Docker Desktop project. Prometheus and Grafana remain in that project. Use Docker context desktop-linux. Grafana was upgraded with approval to 13.2.2, commit 1bea008f7e4e858b6824c9e364d608bd4d10b13a.
+
+The base Compose file is /Users/randydodson/Documents/_work/prometheus-metrics-simulator-docker-volumes/compose.yaml. Merge it with this repository's deployment/compose.local-dashboard.yaml using project name metric-simulator-observability. The local base project's .env supplies TRUENAS_EXPORTER_IMAGE and the public TRUENAS_CA_CERT_SOURCE path. It also retains existing local UID/GID settings. These paths belong to the Mac setup.
+
+```sh
+docker --context desktop-linux compose -p metric-simulator-observability \
+  -f /Users/randydodson/Documents/_work/prometheus-metrics-simulator-docker-volumes/compose.yaml \
+  -f /Users/randydodson/Documents/__development/truenas_metrics/deployment/compose.local-dashboard.yaml \
+  up -d
+```
+
+The exporter uses verified WSS, the existing dedicated identity, 60-second pool/system polls and a two-second realtime subscription. Its runtime is non-root UID/GID 10001, read-only, capability-free, no-new-privileges and limited to 128 MiB. A dedicated external volume truenas-local-exporter-credential holds only the mounted key, owned by 10001:10001 with mode 0400. The original operator credential remains separate. Rotation must update the protected copy and restart only the exporter; never print its contents. The CA is a read-only bind mount. Loopback ports are Grafana 3000, Prometheus 9090 and exporter 9110. These are local-development services, separate from the Linux production stack.
+
+Prometheus job truenas-api-exporter scrapes truenas-exporter:9110 every five seconds. This scrapes the cache; NAS collection intervals are unchanged. The previous simulator scrape job is preserved. Its configuration was backed up before adding the exporter job and validated using promtool before reload.
+
+The dashboard UID is truenas-rust-exporter, titled TrueNAS · API Exporter in folder TrueNAS. Source JSON is dashboards/truenas-exporter.json. The local Grafana provider is config/grafana/provisioning/dashboards/truenas.yaml under the base project; its dashboard copy is dashboards/truenas/truenas-exporter.json relative to that provisioning directory. Built-in panels cover all 34 cataloged metric families and Prometheus up. Filters select datasource, scrape job, instance, TrueNAS target, pool, interface and CPU. Missing/expired values remain absent; no error counter is fabricated before its series exists. ARC ratios retain explicit source-semantic caveats.
+
+Grafana 13.2.2 successfully persisted all 40 panel/row entries and seven variables through file provisioning. All panel queries parsed and ran against local Prometheus. The connection-error family had no series before a polling connection error. No browser visual inspection was available in this run.
+
+Before the Grafana upgrade, the stopped service's data, provisioning and Compose file were archived at /Users/randydodson/Documents/_work/prometheus-metrics-simulator-docker-volumes/backups/grafana-before-13.2.2-20261114T232518Z.tar.gz, mode 0600. Restoring 12.1.0 requires stopping Grafana and restoring this data backup as well as the earlier image configuration. Do not downgrade a migrated database in place. The Prometheus scrape backup is alongside its configuration. For exporter rollback, stop only truenas-exporter or select a previously reviewed image; preserve monitoring data and the protected credential volume. Use stop rather than down -v for routine shutdown.
