@@ -1,6 +1,6 @@
 # Configuration
 
-No secret values belong in environment files, logs or Git. Config reads env once. Required in normal mode: TRUENAS_WS_URL, TRUENAS_USERNAME, TRUENAS_API_KEY_FILE. No hardcoded NAS address. Username must be nonempty. Key file must be UTF-8, nonempty, <=16 KiB; trailing line endings are removed. Reject control characters in key/username. Optional TRUENAS_CA_CERT_FILE must contain valid trusted PEM certificates. Secret-bearing structs intentionally have no Debug implementation.
+No secret values belong in environment files, logs or Git. Config reads env once. Required in normal mode: TRUENAS_WS_URL, TRUENAS_USERNAME, TRUENAS_API_KEY_FILE. No hardcoded NAS address. Username must be nonempty. Key file must be UTF-8, nonempty, <=16 KiB; trailing line endings are removed. Reject control characters in key/username. Optional TRUENAS_CA_CERT_FILE must contain valid trusted PEM certificates and be at most 1 MiB. Target, key and CA inputs must resolve to regular files. Symlinks to regular files are supported. Reads use one opened handle and consume at most the byte cap plus one byte before rejecting excess content. Limits apply before parsing or trimming line endings. Secret-bearing structs intentionally have no Debug implementation.
 
 | Setting | Default | Validation |
 | --- | --- | --- |

@@ -1,6 +1,7 @@
 use std::{
     collections::{HashMap, HashSet},
-    fs,
+    fs::OpenOptions,
+    io::Read,
     net::SocketAddr,
     path::Path,
     sync::Arc,
@@ -145,14 +146,7 @@ impl Config {
 }
 
 fn load_targets(path: &str, global: &HashMap<String, String>) -> Result<Vec<TargetConfig>> {
-    ensure!(
-        fs::metadata(path)
-            .context("cannot inspect targets file")?
-            .len()
-            <= 65536,
-        "targets file exceeds 64 KiB"
-    );
-    let bytes = fs::read(path).context("cannot read targets file")?;
+    let bytes = read_config_file(Path::new(path), 65536, "TRUENAS_TARGETS_FILE")?;
     let file: TargetsFile = serde_json::from_slice(&bytes)
         .map_err(|_| anyhow::anyhow!("invalid TRUENAS_TARGETS_FILE JSON/schema"))?;
     ensure!(
@@ -212,14 +206,12 @@ fn load_api(values: &HashMap<String, String>) -> Result<ApiConfig> {
         "username contains control characters"
     );
     let path = required(values, "TRUENAS_API_KEY_FILE")?;
-    ensure!(
-        fs::metadata(path)
-            .context("cannot inspect API key file")?
-            .len()
-            <= 16384,
-        "API key file exceeds 16 KiB"
-    );
-    let key = fs::read_to_string(path).context("cannot read UTF-8 API key file")?;
+    let key = String::from_utf8(read_config_file(
+        Path::new(path),
+        16384,
+        "TRUENAS_API_KEY_FILE",
+    )?)
+    .map_err(|_| anyhow::anyhow!("TRUENAS_API_KEY_FILE must contain UTF-8"))?;
     let key = key.trim_end_matches(['\r', '\n']).to_owned();
     ensure!(
         !key.is_empty() && !key.chars().any(char::is_control),
@@ -265,7 +257,7 @@ fn seconds(values: &HashMap<String, String>, key: &str, default: u64, max: u64) 
 pub fn tls_config(ca: Option<&Path>) -> Result<Arc<ClientConfig>> {
     let mut roots = RootCertStore::from_iter(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
     if let Some(path) = ca {
-        let data = fs::read(path).context("cannot read CA certificate file")?;
+        let data = read_config_file(path, 1024 * 1024, "TRUENAS_CA_CERT_FILE")?;
         let certs = CertificateDer::pem_slice_iter(&data)
             .collect::<std::result::Result<Vec<_>, _>>()
             .context("invalid CA PEM")?;
@@ -288,4 +280,56 @@ fn api_timeout(values: &HashMap<String, String>) -> Result<Duration> {
         10,
         300,
     )?))
+}
+
+// Nonblocking open prevents a FIFO without a writer from stalling before we can
+// inspect the opened handle. Symlinks to ordinary mounted files remain supported.
+fn read_config_file(path: &Path, limit: usize, setting: &str) -> Result<Vec<u8>> {
+    let mut options = OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.custom_flags(libc::O_NONBLOCK);
+    }
+    let file = options
+        .open(path)
+        .with_context(|| format!("cannot open {setting} file"))?;
+    ensure!(
+        file.metadata()
+            .with_context(|| format!("cannot inspect {setting} file"))?
+            .is_file(),
+        "{setting} must refer to a regular file"
+    );
+    read_bounded(file, limit, setting)
+}
+
+fn read_bounded(reader: impl Read, limit: usize, setting: &str) -> Result<Vec<u8>> {
+    let mut bytes = Vec::new();
+    reader
+        .take(limit as u64 + 1)
+        .read_to_end(&mut bytes)
+        .with_context(|| format!("cannot read {setting} file"))?;
+    ensure!(bytes.len() <= limit, "{setting} file exceeds {limit} bytes");
+    Ok(bytes)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    struct GrowingSource(usize);
+    impl Read for GrowingSource {
+        fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+            buf.fill(b'x');
+            self.0 += buf.len();
+            Ok(buf.len())
+        }
+    }
+
+    #[test]
+    fn bounded_read_stops_a_growing_source() {
+        let mut reader = GrowingSource(0);
+        assert!(read_bounded(&mut reader, 8, "fixture").is_err());
+        assert_eq!(reader.0, 9);
+    }
 }

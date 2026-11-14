@@ -1293,6 +1293,7 @@ dependencies = [
  "axum",
  "futures-util",
  "http-body-util",
+ "libc",
  "prometheus-client",
  "rand 0.10.3",
  "rcgen",
