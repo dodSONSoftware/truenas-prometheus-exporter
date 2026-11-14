@@ -1,5 +1,6 @@
 use anyhow::{Context, Result, bail};
 use std::{
+    future::IntoFuture,
     net::{IpAddr, Ipv4Addr, Ipv6Addr},
     time::Duration,
 };
@@ -98,9 +99,7 @@ async fn main() -> Result<()> {
         signal_stop.cancel();
     });
     tracing::info!(targets = states.len(), "Exporter HTTP server starting");
-    let served = axum::serve(listener, http::router_targets(states))
-        .with_graceful_shutdown(stop.clone().cancelled_owned())
-        .await;
+    let served = serve_http(listener, http::router_targets(states), stop.clone()).await;
     stop.cancel();
     for worker in workers {
         worker.await.context("background worker failed")?;
@@ -146,4 +145,135 @@ async fn healthcheck() -> Result<()> {
     })
     .await
     .context("liveness check timed out")?
+}
+
+async fn serve_http(
+    listener: tokio::net::TcpListener,
+    router: axum::Router,
+    stop: CancellationToken,
+) -> std::io::Result<()> {
+    let server = axum::serve(listener, router)
+        .with_graceful_shutdown(stop.clone().cancelled_owned())
+        .into_future();
+    tokio::pin!(server);
+    tokio::select! {
+        result = &mut server => return result,
+        _ = stop.cancelled() => {}
+    }
+    match tokio::time::timeout(Duration::from_secs(2), &mut server).await {
+        Ok(result) => result,
+        Err(_) => {
+            // Main joins cancelled workers and exits the runtime, which drops
+            // the remaining HTTP connection tasks.
+            tracing::warn!("HTTP drain deadline reached; process shutting down");
+            Ok(())
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tokio::{
+        net::{TcpListener, TcpSocket},
+        time::{Instant, timeout},
+    };
+    use truenas_exporter::collectors::pools;
+
+    #[tokio::test]
+    async fn shutdown_bounds_the_wait_for_a_stalled_metrics_response() {
+        let states = (0..16)
+            .map(|n| {
+                let state =
+                    State::for_target(format!("target-{n}"), Duration::from_secs(180), false);
+                let data = serde_json::json!(
+                    (0..256)
+                        .map(|i| serde_json::json!({
+                            "name":format!("pool-{i:03}-{}", "x".repeat(119)),
+                            "size":1000,"allocated":400,"free":600,
+                            "healthy":true,"warning":false,"fragmentation":13,
+                            "status":"ONLINE"
+                        }))
+                        .collect::<Vec<_>>()
+                );
+                state.complete(
+                    Ok(pools::parse(data).unwrap()),
+                    Instant::now(),
+                    1.0,
+                    Duration::ZERO,
+                );
+                state
+            })
+            .collect::<Vec<_>>();
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = CancellationToken::new();
+        let server = tokio::spawn(serve_http(
+            listener,
+            http::router_targets(states),
+            stop.clone(),
+        ));
+        let socket = TcpSocket::new_v4().unwrap();
+        socket.set_recv_buffer_size(1024).unwrap();
+        let mut peer = socket.connect(address).await.unwrap();
+        peer.write_all(b"GET /metrics HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
+            .await
+            .unwrap();
+        let mut first = [0; 256];
+        let length = timeout(Duration::from_secs(3), peer.read(&mut first))
+            .await
+            .unwrap()
+            .unwrap();
+        assert!(first[..length].starts_with(b"HTTP/1.1 200"));
+        // Keep the tiny receive window full while a multi-megabyte response remains.
+        tokio::time::sleep(Duration::from_millis(100)).await;
+        assert!(!server.is_finished());
+        let started = Instant::now();
+        stop.cancel();
+        timeout(Duration::from_secs(3), server)
+            .await
+            .expect("HTTP drain exceeded stop budget")
+            .unwrap()
+            .unwrap();
+        eprintln!("stalled HTTP drain completed in {:?}", started.elapsed());
+        drop(peer);
+    }
+    #[tokio::test]
+    async fn shutdown_drains_a_reading_client() {
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = CancellationToken::new();
+        let router = axum::Router::new().route(
+            "/fixture",
+            axum::routing::get(|| async { "x".repeat(4 * 1024 * 1024) }),
+        );
+        let server = tokio::spawn(serve_http(listener, router, stop.clone()));
+        let socket = TcpSocket::new_v4().unwrap();
+        let mut peer = socket.connect(address).await.unwrap();
+        peer.write_all(b"GET /fixture HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
+            .await
+            .unwrap();
+        let mut prefix = [0; 256];
+        let length = peer.read(&mut prefix).await.unwrap();
+        assert!(prefix[..length].starts_with(b"HTTP/1.1 200"));
+        stop.cancel();
+        let mut rest = Vec::new();
+        timeout(Duration::from_secs(2), peer.read_to_end(&mut rest))
+            .await
+            .unwrap()
+            .unwrap();
+        let mut response = prefix[..length].to_vec();
+        response.extend_from_slice(&rest);
+        let body = response
+            .windows(4)
+            .position(|bytes| bytes == b"\r\n\r\n")
+            .unwrap()
+            + 4;
+        assert_eq!(&response[body..], vec![b'x'; 4 * 1024 * 1024]);
+        timeout(Duration::from_secs(1), server)
+            .await
+            .unwrap()
+            .unwrap()
+            .unwrap();
+    }
 }

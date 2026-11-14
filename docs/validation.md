@@ -92,3 +92,9 @@ Successful responses were about 2,032,280 bytes. Excess corrected requests recei
 Formatting, strict Clippy and all 33 tests passed, including busy-encoder rejection, availability of health/readiness, recovery of encoder admission, and existing exact TTL and per-target expiry tests. The linux/amd64 runtime image build and container runtime checks passed.
 
 With eight clients delaying reads for 500 ms, the corrected run admitted one scrape, returned 503 to seven, completed in 512 ms, peaked at 22,192,128 bytes, served health in 30 ms and recorded 66 updater iterations. This finite delayed-read case does not establish a bound for indefinitely stalled clients or test shutdown under socket backpressure; TN-07 retains that investigation.
+
+## TN-07 HTTP drain deadline (2026-11-13)
+
+A real loopback HTTP regression uses the production metrics router with 16 targets, 256 pools each, and 128-byte pool names. The client advertises a 1 KiB receive buffer, reads only the first 256 response bytes, and leaves the response open. With the original drain implementation the server failed to return within the three-second test budget. With a two-second post-cancellation drain deadline, the same case returned in 2.002 seconds.
+
+A companion test reads a complete 4 MiB response while cancelling the server and verifies every body byte arrives. Formatting, strict Clippy and the full 35-test suite pass. Existing process-level tests independently exercise SIGTERM and worker/socket shutdown. The slow-reader regression cancels the production HTTP lifecycle function directly; it does not measure complete SIGTERM-to-process-exit time under maximum metrics load. Main joins cancelled workers after the drain and process runtime teardown releases remaining HTTP tasks. Already-running blocking encoding jobs may also contribute to total exit time.

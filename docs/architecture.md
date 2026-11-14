@@ -30,3 +30,8 @@ The executable now supports up to 16 explicitly configured targets. Each target 
 Metrics use one registry with gauge/counter families keyed by a configured target ID; descriptors and EOF are emitted once. Legacy unnamed single-target mode retains its original exposition. No arbitrary HTTP target parameter or user-selected scrape-time connection is provided.
 
 All configured targets are required for readiness. A partial outage can therefore yield readyz=503 while other targets continue emitting validated, fresh measurements and metrics stays 200. Do not use readiness as an automatic restart policy.
+
+
+## HTTP shutdown
+
+SIGINT/SIGTERM cancels collector and connection workers and starts a two-second HTTP drain. Reading clients may finish within that interval. When the interval expires, main stops waiting for HTTP, joins the cancelled workers, and exits the Tokio runtime, dropping remaining connection tasks. A redacted warning identifies the drain deadline. The two-second interval bounds the HTTP drain wait; worker completion and any already running blocking encoder also contribute to total process exit time.
