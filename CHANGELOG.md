@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0 - 2026-11-14
+
+- Add an explicit bounded public chart comparison diagnostic with loopback TLS tests, owned subscription cleanup and sanitized evidence output.
+- Preserve the initial approved window that stopped after four calls before chart queries, and fix the source-supported unsubscribe notification ordering.
+
+
 ## 0.4.4 - 2026-11-14
 
 - Verify public reporting chart calls, schema limitations and declared roles at the pinned middleware revision.

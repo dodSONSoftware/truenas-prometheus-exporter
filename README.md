@@ -1,6 +1,6 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Bronze Ferret — version 0.4.4.
+**Release:** Brass Ferret — version 0.5.0.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
@@ -103,3 +103,5 @@ Set `TRUENAS_SYSTEM_ENABLED=true` and `TRUENAS_REALTIME_ENABLED=true` to add CPU
 `check-realtime` is the fixed-output one-shot subscription preflight for a separately authorized endpoint. It validates fresh groups and unsubscribes only its owned ID. See [realtime contract](docs/realtime-contract.md) for exact methods, source mappings, bounded memory/cleanup, and the outstanding live/capture/resource acceptance gates. No realtime call or production change was made during implementation.
 
 Authorized native and UID-10001 local Docker `check-realtime` runs now pass against MEMORY ALPHA, including fresh selected groups and owned unsubscribe acknowledgement. The command saves no payload. A subsequent temporary capture helper saved four sanitized notifications with provenance and successful offline replay. UI/Graphite comparison and full integrated runtime/resource acceptance remain pending. See [integration evidence](docs/memory-alpha-integration.md).
+
+An explicitly authorized one-shot public chart diagnostic is available as the Cargo example public_chart_comparison. It requires a new output-file path. Read docs/public-chart-comparison-results.md and docs/reporting-api-comparison-plan.md before use.

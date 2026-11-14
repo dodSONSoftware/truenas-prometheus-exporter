@@ -1,0 +1,1993 @@
+{
+  "chart_reply_bytes": 0,
+  "charts": [],
+  "cleanup_acknowledged": false,
+  "elapsed_seconds": 59.019018958,
+  "error": "protocol",
+  "events": [
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293923272,
+      "available_bytes": 17113088000,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.02
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694300.3057244,
+      "rx_bytes_per_second": 338.0,
+      "tx_bytes_per_second": 29545.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293923272,
+      "available_bytes": 17116794880,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694302.3279104,
+      "rx_bytes_per_second": 1408.0,
+      "tx_bytes_per_second": 2230.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293923272,
+      "available_bytes": 17128734720,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694304.35028,
+      "rx_bytes_per_second": 145.0,
+      "tx_bytes_per_second": 739.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294082792,
+      "available_bytes": 17123426304,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694306.3734596,
+      "rx_bytes_per_second": 1521.0,
+      "tx_bytes_per_second": 702.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294082792,
+      "available_bytes": 17122136064,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694308.3964286,
+      "rx_bytes_per_second": 275.0,
+      "tx_bytes_per_second": 710.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294058816,
+      "available_bytes": 17123536896,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694310.4183254,
+      "rx_bytes_per_second": 828.0,
+      "tx_bytes_per_second": 703.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294058816,
+      "available_bytes": 17117536256,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694312.441446,
+      "rx_bytes_per_second": 153.0,
+      "tx_bytes_per_second": 711.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294058816,
+      "available_bytes": 17133342720,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694314.4640057,
+      "rx_bytes_per_second": 559.0,
+      "tx_bytes_per_second": 1065.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294058816,
+      "available_bytes": 17124761600,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694316.485356,
+      "rx_bytes_per_second": 526.0,
+      "tx_bytes_per_second": 725.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294058816,
+      "available_bytes": 17113276416,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694318.5094848,
+      "rx_bytes_per_second": 165.0,
+      "tx_bytes_per_second": 703.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294058816,
+      "available_bytes": 17120239616,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694320.5302186,
+      "rx_bytes_per_second": 795.0,
+      "tx_bytes_per_second": 16097.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294063144,
+      "available_bytes": 17108062208,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.03
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.04
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694322.553755,
+      "rx_bytes_per_second": 211.0,
+      "tx_bytes_per_second": 703.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294063144,
+      "available_bytes": 17109569536,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.01
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694324.5867891,
+      "rx_bytes_per_second": 1866.0,
+      "tx_bytes_per_second": 730.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294068192,
+      "available_bytes": 17105027072,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694326.6133502,
+      "rx_bytes_per_second": 2807.0,
+      "tx_bytes_per_second": 703.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294068192,
+      "available_bytes": 17111023616,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694328.6396606,
+      "rx_bytes_per_second": 1671.0,
+      "tx_bytes_per_second": 709.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294069144,
+      "available_bytes": 17119637504,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694330.6649687,
+      "rx_bytes_per_second": 705.0,
+      "tx_bytes_per_second": 703.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294069144,
+      "available_bytes": 17122000896,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694332.6879747,
+      "rx_bytes_per_second": 93.0,
+      "tx_bytes_per_second": 712.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294069144,
+      "available_bytes": 17114976256,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694334.7102015,
+      "rx_bytes_per_second": 179.0,
+      "tx_bytes_per_second": 731.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294091216,
+      "available_bytes": 17119531008,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694336.732295,
+      "rx_bytes_per_second": 415.0,
+      "tx_bytes_per_second": 725.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40294091216,
+      "available_bytes": 17132576768,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.02
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694338.754002,
+      "rx_bytes_per_second": 74.0,
+      "tx_bytes_per_second": 711.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293931696,
+      "available_bytes": 17124892672,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.03
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.02
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.02
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694340.776691,
+      "rx_bytes_per_second": 819.0,
+      "tx_bytes_per_second": 16097.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293931696,
+      "available_bytes": 17125339136,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694342.8006513,
+      "rx_bytes_per_second": 93.0,
+      "tx_bytes_per_second": 709.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293931696,
+      "available_bytes": 17119080448,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694344.8248158,
+      "rx_bytes_per_second": 685.0,
+      "tx_bytes_per_second": 1065.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293931696,
+      "available_bytes": 17121845248,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694346.8465543,
+      "rx_bytes_per_second": 1261.0,
+      "tx_bytes_per_second": 704.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293931696,
+      "available_bytes": 17119223808,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694348.8687906,
+      "rx_bytes_per_second": 841.0,
+      "tx_bytes_per_second": 703.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293931696,
+      "available_bytes": 17117036544,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694350.8912141,
+      "rx_bytes_per_second": 825.0,
+      "tx_bytes_per_second": 703.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293936024,
+      "available_bytes": 17116667904,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694352.9147837,
+      "rx_bytes_per_second": 390.0,
+      "tx_bytes_per_second": 730.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293936024,
+      "available_bytes": 17114968064,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694354.9382324,
+      "rx_bytes_per_second": 241.0,
+      "tx_bytes_per_second": 704.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293941072,
+      "available_bytes": 17112506368,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694356.9610882,
+      "rx_bytes_per_second": 640.0,
+      "tx_bytes_per_second": 740.0,
+      "up": true
+    },
+    {
+      "arc_data_hit_ratio": 0.0,
+      "arc_metadata_hit_ratio": 0.0,
+      "arc_size_bytes": 40293941072,
+      "available_bytes": 17104445440,
+      "bits_per_second": 1000000000.0,
+      "cpu": [
+        {
+          "cpu": "cpu",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu0",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu1",
+          "ratio": 0.01
+        },
+        {
+          "cpu": "cpu10",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu11",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu2",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu3",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu4",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu5",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu6",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu7",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu8",
+          "ratio": 0.0
+        },
+        {
+          "cpu": "cpu9",
+          "ratio": 0.0
+        }
+      ],
+      "interface": "interface-0",
+      "receipt_epoch": 1794694358.9837492,
+      "rx_bytes_per_second": 561.0,
+      "tx_bytes_per_second": 711.0,
+      "up": true
+    }
+  ],
+  "physical_total_bytes": 63093960704,
+  "rpc_calls": 4,
+  "socket_closed": true,
+  "version": "25.04.2.6"
+}

@@ -81,3 +81,7 @@ All 35 downloaded reporting implementation/schema files were verified against Gi
 - [Private Netdata service](https://github.com/truenas/middleware/blob/244b717370fe35fb9eefc3096acfbc25f12b57b6/src/middlewared/middlewared/plugins/reporting/rest.py)
 - [Netdata connector](https://github.com/truenas/middleware/blob/244b717370fe35fb9eefc3096acfbc25f12b57b6/src/middlewared/middlewared/plugins/reporting/netdata/connector.py)
 - [System info declaration](https://github.com/truenas/middleware/blob/244b717370fe35fb9eefc3096acfbc25f12b57b6/src/middlewared/middlewared/plugins/system/info.py)
+
+## Harness implementation
+
+The explicit Cargo example public_chart_comparison implements this scope with synthetic TLS regressions. Its first authorized window stopped during cleanup after four calls, before chart queries. See public-chart-comparison-results.md for partial evidence and the notification-order regression.

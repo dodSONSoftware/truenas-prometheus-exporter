@@ -1,10 +1,11 @@
-docs: specify supported bounded reporting comparisons
+feat: add bounded public chart comparison diagnostic
 
-[0.4.4] Bronze Ferret
+[0.5.0] Brass Ferret
 
-- Trace public chart calls, schema limits, normalization and declared roles
-- Specify exact request, duration and response budgets before live access
-- Separate public chart agreement from local raw-counter and metadata evidence
-- VERSION, README.md and CHANGELOG.md: record release 0.4.4
+- Reuse verified transport and selected-field decoders in an explicit one-shot example
+- Enforce request, response, time and sanitization bounds with synthetic TLS tests
+- Preserve partial evidence from the approved window and fix unsubscribe notification handling
+- Record that paired chart acceptance remains incomplete
+- VERSION, README.md and CHANGELOG.md: record release 0.5.0
 
 developed by Randel Dodson and AI
