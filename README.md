@@ -1,10 +1,10 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Tin Ferret — version 0.3.1.
+**Release:** Tin Ferret — version 0.3.2.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
-**Development status:** M1/M2 functionality is implemented with synthetic fixtures and loopback mock servers. No appliance compatibility or production readiness is claimed. System, CPU, memory, network, ARC and scan collectors are planned for M3; disks/services/alerts come later. The existing Graphite pipeline remains independent.
+**Development status:** Pool collection and opt-in system/CPU/memory/network/ARC collection are implemented. Authorized native and local Docker preflights and sanitized captured-response replay establish selected TrueNAS 25.04.2.6 compatibility. Numerical comparisons and sustained integrated runtime/resource acceptance remain open; production readiness is not established. Scan metrics and disks/services/alerts remain planned. The existing Graphite pipeline remains independent.
 
 ## Build, test and run (Debian-based Linux)
 
@@ -58,7 +58,7 @@ For an independent image build use `docker build --platform linux/amd64 -f deplo
 | application/src/state.rs | Atomic pool snapshot, monotonic expiry and metric encoding |
 | application/src/scheduler.rs | Periodic reads without overlapping collection attempts |
 | application/src/http.rs | Cached metrics, liveness and readiness routes |
-| fixtures/truenas-25.04.2.6/ | Captured sanitized API evidence; currently README only |
+| fixtures/truenas-25.04.2.6/ | Captured sanitized pool/system/realtime evidence with provenance |
 | application/tests/ | Synthetic fixture, protocol, state, HTTP and loopback TLS tests |
 | deployment/ | Dockerfile, offline Compose, integration/scrape examples and test-only runtime probe |
 | docs/ | Architecture, protocol, compatibility, metrics, configuration and operations contracts |
@@ -72,7 +72,7 @@ For an independent image build use `docker build --platform linux/amd64 -f deplo
 ## Prioritized remaining work
 
 1. Pool compatibility is verified through authorized native and local Docker checks, with genuine sanitized captures and offline replay. Extend this evidence to the M3 methods/events as separately authorized. Rust 1.88 and the recorded security gates pass; see docs/security-validation.md.
-2. M3-D realtime collection is implemented behind TRUENAS_REALTIME_ENABLED with independent group freshness. Authorized native/container preflight now passes; next capture reviewed sanitized realtime fixtures and validate integrated operation/resource behavior.
+2. M3-D realtime collection is implemented behind TRUENAS_REALTIME_ENABLED with independent group freshness. Authorized native/container preflight and four captured-notification replays now pass; next validate numerical/source semantics and integrated operation/resource behavior.
 3. M3: implement general SCRUB/RESILVER metrics after callable-schema validation; retain explicit live/unit-equivalence acceptance for realtime mappings.
 4. M4: measured resource budgets, long outage tests and operator-verified least privilege.
 5. P1 and dashboard migration artifacts after P0 validation; production rollout requires separate authorization.
@@ -87,7 +87,7 @@ Distroless troubleshooting uses exporter logs, metrics and the built-in healthch
 
 Use TRUENAS_TARGETS_FILE with deployment/targets.example.json to configure independent targets in one process. Add a second entry with its own name, URL, key file and optional CA file; no code change is required. Metrics include target="configured-name" and readiness requires all configured targets to be fresh. Legacy single-target environment settings remain supported.
 
-The new endpoint wss://memory-alpha.home.lab/api/current passes verified Rust WSS transport on the host and distroless container with an explicit, read-only Caddy CA file. The operator provisioned the dedicated prometheus_exporter account/key with Readonly Admin. Authorized native and UID-10001 container authentication and pool.query checks passed, with sanitized captured envelopes replayed offline. Separately authorized `check-system` runs also passed from the Mac and UID-10001 container; captured system.info replies report version 25.04.2.6. Authorized realtime preflight also passed from both environments, including owned unsubscribe; captured realtime frames and integrated live operation remain pending. See docs/memory-alpha-integration.md for scope, evidence and operator steps. check-transport is a manual transport diagnostic, not an authentication test.
+The new endpoint wss://memory-alpha.home.lab/api/current passes verified Rust WSS transport on the host and distroless container with an explicit, read-only Caddy CA file. The operator provisioned the dedicated prometheus_exporter account/key with Readonly Admin. Authorized native and UID-10001 container authentication and pool.query checks passed, with sanitized captured envelopes replayed offline. Separately authorized `check-system` runs also passed from the Mac and UID-10001 container; captured system.info replies report version 25.04.2.6. Authorized realtime preflight also passed from both environments, including owned unsubscribe; four sanitized realtime frames now replay offline; numerical comparison and integrated live operation remain pending. See docs/memory-alpha-integration.md for scope, evidence and operator steps. check-transport is a manual transport diagnostic, not an authentication test.
 
 ## Optional system collection
 
@@ -99,4 +99,4 @@ Set `TRUENAS_SYSTEM_ENABLED=true` and `TRUENAS_REALTIME_ENABLED=true` to add CPU
 
 `check-realtime` is the fixed-output one-shot subscription preflight for a separately authorized endpoint. It validates fresh groups and unsubscribes only its owned ID. See [realtime contract](docs/realtime-contract.md) for exact methods, source mappings, bounded memory/cleanup, and the outstanding live/capture/resource acceptance gates. No realtime call or production change was made during implementation.
 
-Authorized native and UID-10001 local Docker `check-realtime` runs now pass against MEMORY ALPHA, including fresh selected groups and owned unsubscribe acknowledgement. The command saves no payload; realtime captures, UI/Graphite comparison and full integrated runtime/resource acceptance remain pending. See [integration evidence](docs/memory-alpha-integration.md).
+Authorized native and UID-10001 local Docker `check-realtime` runs now pass against MEMORY ALPHA, including fresh selected groups and owned unsubscribe acknowledgement. The command saves no payload. A subsequent temporary capture helper saved four sanitized notifications with provenance and successful offline replay. UI/Graphite comparison and full integrated runtime/resource acceptance remain pending. See [integration evidence](docs/memory-alpha-integration.md).

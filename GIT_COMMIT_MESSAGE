@@ -1,12 +1,11 @@
-docs: record authorized realtime preflight acceptance
+test: replay captured TrueNAS realtime notifications
 
-[0.3.1] Tin Ferret
+[0.3.2] Tin Ferret
 
-- Record successful native macOS and UID-10001 Docker check-realtime runs against the authorized endpoint
-- Confirm effective subscription access, selected live schemas and owned unsubscribe acknowledgement
-- Document restricted credential handling, temporary secret cleanup and fixed redacted output
-- Distinguish live preflight evidence from pending captures, numerical comparison and integrated runtime acceptance
-- VERSION: Increment the patch release to 0.3.1 for validation documentation
-- README.md: Update the Tin Ferret release information
+- fixtures: Add sanitized native and container realtime notifications with capture provenance
+- tests: Replay all four notifications through the production worker and metric encoder
+- docs: Record validation, sanitization and remaining numerical and runtime acceptance
+- VERSION: Increment version from 0.3.1 to 0.3.2
+- README.md: Update current acceptance status and Tin Ferret release information
 
 developed by Randel Dodson and AI

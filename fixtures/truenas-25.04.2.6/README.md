@@ -1,6 +1,6 @@
 # Captured TrueNAS 25.04.2.6 fixtures
 
-This directory contains **captured, sanitized** pool.query and system.info envelopes. The operator initially identified the appliance through its WebUI as TrueNAS SCALE 25.04.2.6; the later authorized system.info checks also returned version 25.04.2.6. These captures establish the observed response shapes; they do not establish compatibility with every method or release.
+This directory contains **captured, sanitized** pool.query/system.info envelopes and reporting.realtime notifications. The operator initially identified the appliance through its WebUI as TrueNAS SCALE 25.04.2.6; the later authorized system.info checks also returned version 25.04.2.6. These captures establish the observed response shapes; they do not establish compatibility with every method or release.
 
 Synthetic fixtures remain in `application/tests/fixtures/` and must never be relabeled as captured evidence. Do not contact MEMORY ALPHA or another live appliance to populate this directory without explicit operator authorization for that specific interaction.
 
@@ -40,3 +40,33 @@ M2 needs a full `pool.query` response. M3 additionally needs version/system and 
 - Container handling: both preflight and capture ran under UID/GID 10001:10001, read-only root, dropped capabilities, no-new-privileges and a 128 MiB memory limit. A mode-0400 temporary secret owned by 10001 was mounted read-only; its contents were transferred over stdin rather than arguments or environment. Temporary containers and secret volumes were removed. The original Mac credential remained mode 0600.
 - Offline regression: `captured_system_envelopes_replay_through_preflight_offline` in application/tests/api_client.rs replays each full envelope over loopback TLS through the production check_system path. Only the correlation ID is replaced. Tests assert exact API-reported version, aliased host, byte count and load values, and fractional uptime within one microsecond. Existing synthetic tests retain required-field/missing/null/error/timeout and output-redaction coverage.
 - Limits: successful system.info establishes read permission for this dedicated credential. The role assignment is operator-reported; minimum privilege and denial of writes were not tested. No alternate release, missing-field system response, system error response or realtime event was captured. No system metrics, automatic runtime version gate or production deployment is established by this capture milestone.
+
+## Realtime notification captures — November 14, 2026 UTC
+
+The operator continued the authorized read-only realtime workflow from macOS and local Docker Desktop using the existing dedicated credential. Each capture authenticated with auth.login_ex, read system.info, subscribed to exactly reporting.realtime:{"interval":2}, collected two notifications, and acknowledged core.unsubscribe for its connection-owned ID before closing. No pool query, arbitrary method or infrastructure change was used. Both version observations were exactly 25.04.2.6; the helper refused another version before subscribing under this fixture directory.
+
+Files are arrays of two complete successful collection_update notification envelopes, with separate provenance JSON. No authentication, system reply, subscription acknowledgement or raw subscription ID is included. The provenance records local wall-clock receipt times, configured interval, source version, alias count and confirmed owned cleanup. These are local receipt timestamps, not claims about appliance clock accuracy.
+
+| Capture | Local UTC receipt times | CPU entries | Interfaces |
+| --- | --- | --- | --- |
+| reporting.realtime.host.notifications.json | 2026-11-14T05:57:23.242202Z; 05:57:25.266949Z | 13 each (aggregate plus 12 cores) | One up interface each |
+| reporting.realtime.container.notifications.json | 2026-11-14T06:00:13.537066Z; 06:00:15.559060Z | 13 each | One up interface each |
+
+Sanitization occurred in memory before files were written. Fixed envelope/section/member names were checked against the pinned producer; unexpected schema member names caused a bounded failure instead of saving unknown metadata. Dynamic interface keys are consistently aliased to captured0 within each capture, with a private in-memory mapping that was not saved. Alias equality across independently captured files is not an independent hardware-identity assertion. CPU keys were reviewed as canonical cpu/cpuN labels and validated by production replay. Only the known UP/DOWN link-state strings and fixed envelope strings are retained; any other string value is replaced by sanitized. No other string values needed retaining for this observed numeric payload. JSON number/bool/null types, existing omissions, arrays and object structure are preserved; whitespace/key ordering are normalized. Numeric values, including unused temperature/disk/ARC fields, are unchanged. No fields were removed or defaults inserted.
+
+The temporary capture harness was built from a copy of the repository source and reused Session connect/parse/cleanup and the selected-field decoders. Only the temporary copy retained raw event text in memory until it could be sanitized; production code was not changed and has no raw capture command. It kept at most one pending pre-ACK notification, observed two notifications under a 15-second capture budget, and had a 30-second outer bound. Persisting the sanitized frames required successful owned unsubscribe acknowledgement. Docker used the current distroless base at UID/GID 10001:10001, read-only root, dropped capabilities, no-new-privileges and a 128 MiB limit. Its mode-0400 secret was mounted read-only from a temporary volume and removed after use; the Mac key remained mode 0600.
+
+Independently reviewed selected wire values used by the replay assertions:
+
+| Frame | Aggregate CPU usage (%) | Available bytes | ARC size bytes | Receive bytes/s | Transmit bytes/s |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Mac 1 | 0.0 | 16,179,863,552 | 41,230,199,528 | 1,142 | 0 |
+| Mac 2 | 0.0 | 16,184,553,472 | 41,230,199,528 | 1,932 | 2,665 |
+| Docker 1 | 9.0 | 16,051,470,336 | 41,246,923,128 | 3,537 | 2,071 |
+| Docker 2 | 8.0 | 15,659,859,968 | 41,246,973,704 | 1,654 | 2,077 |
+
+Physical-memory total is 63,093,960,704 bytes and link speed is 1000 Mbps in all four notifications. Selected ARC data/metadata hit percentages are explicit zero in all four. The producer can substitute zero for missing upstream dimensions; these captures cannot establish whether those zeros represent measured values or defaults. Preserving them faithfully does not independently validate cache-efficiency semantics. A numerical/source-chart comparison remains required before drawing such conclusions. The acquisitions were sequential, so CPU, rates and memory need not agree between environments.
+
+Regression captured_realtime_notifications_replay_through_worker_and_metrics replays each full saved notification unchanged through the production worker over loopback TLS and checks CPU conversion to ratio, all 13 CPU series, memory/ARC bytes, link state/speed conversion, unchanged byte rates, explicit zeros, target/interface labels and absence of a duplicate total-memory family. It confirms owned cleanup after each replay. Login/version/ACK traffic and the inspecting target state are synthetic; notification payloads are genuine captured evidence. Existing synthetic tests remain responsible for down/missing links, malformed fields, backend failure, cancellation and controlled TTL/recovery cases.
+
+No down, unknown-link, missing-rate, backend-failure or null-temperature variant was observed in these four frames. No such case is represented as a capture. UI/Graphite equivalence, upstream zero availability and full integrated resource/outage behavior remain unverified. This capture does not establish every future 25.04.2.x patch or server configuration.

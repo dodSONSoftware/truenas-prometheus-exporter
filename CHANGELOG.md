@@ -2,6 +2,8 @@
 
 ## Development history
 
+- Add four sanitized native/container TrueNAS 25.04.2.6 realtime notifications, version/receipt/cleanup provenance and production-worker metric replay. Preserve explicit zero ARC values and document their upstream-default ambiguity; numerical and sustained integrated runtime acceptance remain open.
+
 - Record successful operator-authorized native and UID-10001 Docker realtime preflights, including selected live group validation and owned unsubscribe acknowledgement. Preserve the distinction from captured fixtures, numerical comparisons and integrated runtime/resource acceptance.
 
 - Implement opt-in M3-D realtime CPU/memory/network/ARC collection on an isolated authenticated/version-checked socket, with owned subscriptions, bounded latest snapshots, independent freshness, silence/reconnect recovery, bounded cleanup and a redacted check-realtime preflight. Verify with synthetic unit/TLS/process/container fixtures; live realtime acceptance remains pending.

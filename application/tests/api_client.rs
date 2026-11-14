@@ -1846,3 +1846,131 @@ async fn realtime_check_cli_is_fixed_output_and_redacts_source_and_subscription(
     }
     server.await.unwrap();
 }
+
+#[tokio::test]
+async fn captured_realtime_notifications_replay_through_worker_and_metrics() {
+    for (fixture, expected) in [
+        (
+            include_str!(
+                "../../fixtures/truenas-25.04.2.6/reporting.realtime.host.notifications.json"
+            ),
+            [
+                (0.0, 16_179_863_552_u64, 41_230_199_528_u64, 1142.0, 0.0),
+                (0.0, 16_184_553_472_u64, 41_230_199_528_u64, 1932.0, 2665.0),
+            ],
+        ),
+        (
+            include_str!(
+                "../../fixtures/truenas-25.04.2.6/reporting.realtime.container.notifications.json"
+            ),
+            [
+                (0.09, 16_051_470_336_u64, 41_246_923_128_u64, 3537.0, 2071.0),
+                (0.08, 15_659_859_968_u64, 41_246_973_704_u64, 1654.0, 2077.0),
+            ],
+        ),
+    ] {
+        let notifications: Vec<Value> = serde_json::from_str(fixture).unwrap();
+        assert_eq!(notifications.len(), 2);
+        for (notification, (cpu, available, arc, receive, transmit)) in
+            notifications.into_iter().zip(expected)
+        {
+            assert!(notification.get("id").is_none());
+            assert_eq!(
+                notification["params"]["fields"]["memory"]["physical_memory_total"],
+                63_093_960_704_u64
+            );
+            let (listener, url) = listen().await;
+            let server = tokio::spawn(async move {
+                let mut socket = login(&listener).await;
+                let collection =
+                    realtime_subscribe(&mut socket, "synthetic-capture-replay-id", false).await;
+                assert_eq!(notification["params"]["collection"], collection);
+                // Replay the full saved notification without altering its payload or envelope.
+                socket
+                    .send(Message::text(notification.to_string()))
+                    .await
+                    .unwrap();
+                realtime_cleanup(&mut socket, "synthetic-capture-replay-id").await;
+            });
+            let rt = realtime_config();
+            // Synthetic state admits inspection without starting a second polling client.
+            // Login/version/ACK replies are synthetic; the notification is captured evidence.
+            let state = State::with_realtime(
+                Some("captured-target".into()),
+                Duration::from_secs(30),
+                true,
+                true,
+                Some(rt),
+            );
+            let stop = CancellationToken::new();
+            let task = tokio::spawn(truenas_exporter::api::realtime::run(
+                config(url, Duration::from_secs(2)),
+                rt,
+                state.clone(),
+                stop.clone(),
+            ));
+            realtime_ready(&state).await;
+            let metrics = state.metrics_at(tokio::time::Instant::now()).unwrap();
+            let sample = |name: &str, extra: &str| -> f64 {
+                let prefix = format!("{name}{{target=\"captured-target\"{extra}}} ");
+                metrics
+                    .lines()
+                    .find_map(|line| line.strip_prefix(&prefix))
+                    .unwrap_or_else(|| panic!("missing {prefix}"))
+                    .parse()
+                    .unwrap()
+            };
+            assert_eq!(sample("truenas_cpu_utilization_ratio", ",cpu=\"cpu\""), cpu);
+            assert_eq!(
+                metrics
+                    .lines()
+                    .filter(|line| line.starts_with("truenas_cpu_utilization_ratio{"))
+                    .count(),
+                13
+            );
+            assert_eq!(
+                sample("truenas_memory_available_bytes", ""),
+                available as f64
+            );
+            assert_eq!(sample("truenas_zfs_arc_size_bytes", ""), arc as f64);
+            assert_eq!(
+                sample("truenas_network_link_up", ",interface=\"captured0\""),
+                1.0
+            );
+            assert_eq!(
+                sample(
+                    "truenas_network_link_speed_bits_per_second",
+                    ",interface=\"captured0\""
+                ),
+                1_000_000_000.0
+            );
+            assert_eq!(
+                sample(
+                    "truenas_network_receive_bytes_per_second",
+                    ",interface=\"captured0\""
+                ),
+                receive
+            );
+            assert_eq!(
+                sample(
+                    "truenas_network_transmit_bytes_per_second",
+                    ",interface=\"captured0\""
+                ),
+                transmit
+            );
+            assert_eq!(sample("truenas_zfs_arc_data_hit_ratio", ""), 0.0);
+            assert_eq!(sample("truenas_zfs_arc_metadata_hit_ratio", ""), 0.0);
+            assert!(
+                !metrics
+                    .lines()
+                    .any(|line| line.starts_with("truenas_memory_total_bytes"))
+            );
+            stop.cancel();
+            timeout(Duration::from_secs(2), task)
+                .await
+                .unwrap()
+                .unwrap();
+            server.await.unwrap();
+        }
+    }
+}

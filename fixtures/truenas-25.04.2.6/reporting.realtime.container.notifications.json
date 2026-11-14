@@ -1,0 +1,224 @@
+[
+  {
+    "jsonrpc": "2.0",
+    "method": "collection_update",
+    "params": {
+      "collection": "reporting.realtime:{\"interval\":2}",
+      "fields": {
+        "cpu": {
+          "cpu": {
+            "temp": 44.0,
+            "usage": 9.0
+          },
+          "cpu0": {
+            "temp": 44.0,
+            "usage": 100.0
+          },
+          "cpu1": {
+            "temp": 44.0,
+            "usage": 6.0
+          },
+          "cpu10": {
+            "temp": 44.0,
+            "usage": 0.0
+          },
+          "cpu11": {
+            "temp": 44.0,
+            "usage": 0.0
+          },
+          "cpu2": {
+            "temp": 44.0,
+            "usage": 0.0
+          },
+          "cpu3": {
+            "temp": 44.0,
+            "usage": 0.0
+          },
+          "cpu4": {
+            "temp": 44.0,
+            "usage": 0.0
+          },
+          "cpu5": {
+            "temp": 44.0,
+            "usage": 1.0
+          },
+          "cpu6": {
+            "temp": 44.0,
+            "usage": 0.0
+          },
+          "cpu7": {
+            "temp": 44.0,
+            "usage": 0.0
+          },
+          "cpu8": {
+            "temp": 44.0,
+            "usage": 0.0
+          },
+          "cpu9": {
+            "temp": 44.0,
+            "usage": 0.0
+          }
+        },
+        "disks": {
+          "busy": 17.271451842857143,
+          "read_bytes": 0,
+          "read_ops": 0.0,
+          "write_bytes": 404999,
+          "write_ops": 52
+        },
+        "failed_to_connect": false,
+        "interfaces": {
+          "captured0": {
+            "link_state": "LINK_STATE_UP",
+            "received_bytes_rate": 3537,
+            "sent_bytes_rate": 2071,
+            "speed": 1000
+          }
+        },
+        "memory": {
+          "arc_available_memory": 9354301568,
+          "arc_free_memory": 11567124480,
+          "arc_size": 41246923128,
+          "physical_memory_available": 16051470336,
+          "physical_memory_total": 63093960704
+        },
+        "zfs": {
+          "bytes_read_per_second_from_the_l2arc": 0,
+          "bytes_written_per_second_to_the_l2arc": 0,
+          "demand_accesses_per_second": 63,
+          "demand_data_accesses_per_second": 32,
+          "demand_data_hit_percentage": 0,
+          "demand_data_hits_per_second": 32,
+          "demand_data_io_hit_percentage": 0,
+          "demand_data_io_hits_per_second": 0,
+          "demand_data_miss_percentage": 0,
+          "demand_data_misses_per_second": 0,
+          "demand_metadata_accesses_per_second": 31,
+          "demand_metadata_hit_percentage": 0,
+          "demand_metadata_hits_per_second": 31,
+          "demand_metadata_io_hit_percentage": 0,
+          "demand_metadata_io_hits_per_second": 0,
+          "demand_metadata_miss_percentage": 0,
+          "demand_metadata_misses_per_second": 0,
+          "l2arc_access_hit_percentage": 0,
+          "l2arc_hits_per_second": 0,
+          "l2arc_miss_percentage": 0,
+          "l2arc_misses_per_second": 0,
+          "total_l2arc_accesses_per_second": 0
+        }
+      },
+      "msg": "added"
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "method": "collection_update",
+    "params": {
+      "collection": "reporting.realtime:{\"interval\":2}",
+      "fields": {
+        "cpu": {
+          "cpu": {
+            "temp": 45.0,
+            "usage": 8.0
+          },
+          "cpu0": {
+            "temp": 45.0,
+            "usage": 0.0
+          },
+          "cpu1": {
+            "temp": 45.0,
+            "usage": 15.0
+          },
+          "cpu10": {
+            "temp": 45.0,
+            "usage": 1.0
+          },
+          "cpu11": {
+            "temp": 45.0,
+            "usage": 0.0
+          },
+          "cpu2": {
+            "temp": 45.0,
+            "usage": 0.0
+          },
+          "cpu3": {
+            "temp": 45.0,
+            "usage": 0.0
+          },
+          "cpu4": {
+            "temp": 45.0,
+            "usage": 0.0
+          },
+          "cpu5": {
+            "temp": 45.0,
+            "usage": 0.0
+          },
+          "cpu6": {
+            "temp": 45.0,
+            "usage": 2.0
+          },
+          "cpu7": {
+            "temp": 45.0,
+            "usage": 85.0
+          },
+          "cpu8": {
+            "temp": 45.0,
+            "usage": 0.0
+          },
+          "cpu9": {
+            "temp": 45.0,
+            "usage": 0.0
+          }
+        },
+        "disks": {
+          "busy": 3.5486744428571426,
+          "read_bytes": 0,
+          "read_ops": 0.0,
+          "write_bytes": 11752,
+          "write_ops": 4
+        },
+        "failed_to_connect": false,
+        "interfaces": {
+          "captured0": {
+            "link_state": "LINK_STATE_UP",
+            "received_bytes_rate": 1654,
+            "sent_bytes_rate": 2077,
+            "speed": 1000
+          }
+        },
+        "memory": {
+          "arc_available_memory": 8962252928,
+          "arc_free_memory": 11175075840,
+          "arc_size": 41246973704,
+          "physical_memory_available": 15659859968,
+          "physical_memory_total": 63093960704
+        },
+        "zfs": {
+          "bytes_read_per_second_from_the_l2arc": 0,
+          "bytes_written_per_second_to_the_l2arc": 0,
+          "demand_accesses_per_second": 1078,
+          "demand_data_accesses_per_second": 878,
+          "demand_data_hit_percentage": 0,
+          "demand_data_hits_per_second": 878,
+          "demand_data_io_hit_percentage": 0,
+          "demand_data_io_hits_per_second": 0,
+          "demand_data_miss_percentage": 0,
+          "demand_data_misses_per_second": 0,
+          "demand_metadata_accesses_per_second": 199,
+          "demand_metadata_hit_percentage": 0,
+          "demand_metadata_hits_per_second": 199,
+          "demand_metadata_io_hit_percentage": 0,
+          "demand_metadata_io_hits_per_second": 0,
+          "demand_metadata_miss_percentage": 0,
+          "demand_metadata_misses_per_second": 0,
+          "l2arc_access_hit_percentage": 0,
+          "l2arc_hits_per_second": 0,
+          "l2arc_miss_percentage": 0,
+          "l2arc_misses_per_second": 0,
+          "total_l2arc_accesses_per_second": 0
+        }
+      },
+      "msg": "added"
+    }
+  }
+]

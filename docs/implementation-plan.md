@@ -46,7 +46,7 @@ Accepted findings: missing captured fixtures; pin API evidence; enumerate protoc
 - [x] Opt-in automatic per-connection runtime compatibility gate and scheduled system collector, with independent required-group freshness.
 - [x] Source-pinned realtime subscription/recovery, independent group validation and silence expiry with synthetic wire fixtures.
 - [x] Operator-authorized native and local Docker realtime preflight, including owned unsubscribe acknowledgement.
-- [ ] Captured sanitized realtime wire fixtures with provenance and offline replay.
+- [x] Capture four sanitized native/container realtime notifications with provenance and production worker/metric replay.
 - [ ] General scan metrics (SCRUB and RESILVER), verified callable schema.
 - [ ] Container outage/recovery, least privilege and runtime resource validation.
 - [ ] P1 collectors only after P0 contracts are established.
@@ -67,7 +67,7 @@ No implementation milestone is fully validated until its container checks pass. 
 
 ## Delivery status
 
-M1/M2 functional work and all fifteen review findings now have recorded evidence. TN-02 is resolved for the captured pool.query scope; M3-A preflight and M3-B native/container system evidence are complete; M3-C opt-in connection gating/system collection is implemented and verified offline; M3-D realtime implementation is verified offline; native/container realtime preflight now passes, while captured fixtures and integrated runtime acceptance remain open. See validation.md for this milestone and security-validation.md for the preceding security refresh.
+M1/M2 functional work and all fifteen review findings now have recorded evidence. TN-02 is resolved for the captured pool.query scope; M3-A preflight and M3-B native/container system evidence are complete; M3-C opt-in connection gating/system collection is implemented and verified offline; M3-D realtime implementation is verified offline; native/container realtime preflight now passes, and four captured realtime notifications replay offline; numerical and integrated runtime acceptance remain open. See validation.md for this milestone and security-validation.md for the preceding security refresh.
 
 ## MEMORY ALPHA proxy integration and multiple targets
 
@@ -102,7 +102,7 @@ The current gate for starting M3 is satisfied for pools. Broader live calls requ
 - [x] Obtain separate operator authorization and capture sanitized native/container system responses (M3-B); replay through the production preflight offline.
 - [x] Integrate opt-in per-connection runtime version gating and independent required system snapshot/TTL/readiness (M3-C).
 - [x] Implement source-verified opt-in realtime CPU/memory/network/ARC groups with independent freshness (M3-D), verified offline.
-- [ ] Separately authorize live subscription/preflight checks and capture sanitized realtime payloads.
+- [x] Complete authorized native/container preflight and sanitized realtime capture/replay for the observed up-link baseline.
 
 The detailed current source mapping, command behavior, acceptance limits and next slices are in system-contract.md. This milestone does not establish live system.info support or complete M3.
 
@@ -128,4 +128,10 @@ Offline validation covers conversions, up/down/missing fields, partial-group fai
 
 The operator separately authorized check-realtime from macOS and local Docker Desktop against the configured WSS endpoint with the existing dedicated credential. Both completed successfully: verified TLS/authentication/system compatibility, fresh selected CPU/memory/network/ARC groups and confirmed owned unsubscribe. Temporary Docker secrets were removed; no raw payload or captured realtime fixture was saved. See memory-alpha-integration.md.
 
-This closes the one-shot live permission/schema preflight gate. Remaining realtime acceptance is reviewed sanitized captures/replay, observed down/missing cases where available, numerical UI/Graphite equivalence and measured integrated runtime/resource/outage behavior. Normal feature defaults remain off and no production configuration was changed.
+This closes the one-shot live permission/schema preflight gate. The later capture baseline below completes reviewed normal-frame capture/replay. Remaining realtime acceptance is observed down/missing cases where naturally available, numerical UI/Graphite equivalence and measured integrated runtime/resource/outage behavior. Normal feature defaults remain off and no production configuration was changed.
+
+## Captured realtime baseline and replay
+
+Under the continued read-only event authorization, two notifications each were captured from the Mac and UID-10001 Docker runtime, with exact API-reported version 25.04.2.6 and owned cleanup acknowledged before writing. Interfaces are aliased consistently within each capture; full event structure, numeric types/values and existing omissions are preserved. No production code changed. All four frames replay unchanged over loopback TLS through the production worker and metric encoder with independently reviewed expected values.
+
+All interfaces observed were up; down/missing/backend-failure cases remain explicitly synthetic unless naturally observed later. Selected ARC hit percentages are zero in all captured frames, and upstream defaults prevent inferring actual cache efficiency from those zeros alone. Next acceptance work is independent numerical/source-chart verification and integrated resource/outage testing. No failure state should be induced on the appliance to obtain an optional fixture. See captured-fixture provenance and validation.md.

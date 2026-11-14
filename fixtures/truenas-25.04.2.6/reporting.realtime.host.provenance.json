@@ -1,0 +1,11 @@
+{
+  "interface_alias_count": 1,
+  "interval_seconds": 2,
+  "notification_count": 2,
+  "owned_unsubscribe_acknowledged": true,
+  "received_epoch_seconds": [
+    1794635843.242202,
+    1794635845.266949
+  ],
+  "source_version": "25.04.2.6"
+}

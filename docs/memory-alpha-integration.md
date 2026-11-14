@@ -2,6 +2,16 @@
 
 Endpoint: `wss://memory-alpha.home.lab/api/current`. Backend and proxy details, supplied by the operator: TrueNAS SCALE 25.04.2.6 at 10.10.10.7, Caddy at 10.10.10.2. This integration test is explicitly authorized for read-only access; infrastructure changes remain prohibited.
 
+## Authorized realtime captures — November 14, 2026 UTC
+
+The operator continued the read-only realtime workflow after the successful preflights. A temporary source-copy harness reused the production authentication/system gate, exact two-second subscription, event parsing and owned cleanup. It captured two notifications from macOS and two from local Docker Desktop, observed system.info version exactly 25.04.2.6 on each connection, and confirmed unsubscribe acknowledgement before saving. No other method was added and no production code/configuration changed.
+
+Raw text existed only in process memory. Before writing, the helper checked fixed schema names, aliased interface identities consistently within a capture, replaced non-protocol/non-link-state strings, and retained numeric/bool/null values and original structure. Canonical CPU labels and the saved string vocabulary were reviewed before staging. The original interface-name mapping was not saved. Full sanitized envelopes and receipt-time/version/cleanup provenance are in fixtures/truenas-25.04.2.6/.
+
+The captures contain 13 CPU entries and one up interface in each frame. Native aggregate CPU values are 0/0 percent; later Docker values are 9/8 percent. Selected ARC hit percentages are explicit zero throughout. The source may substitute zero for unavailable dimensions, so the ARC values are preserved but do not prove cache efficiency or chart availability. No down/missing/backend-failure or null-temperature variant was observed; those cases remain synthetic. No numerical UI/Graphite comparison was performed.
+
+Docker retained UID/GID 10001:10001, read-only root, dropped capabilities, no-new-privileges and a 128 MiB limit. Its read-only mode-0400 secret mount and temporary containers/volume were removed; final inventories were empty and the Mac key remained mode 0600. The resource limit is not a maximum-target measurement. Production worker/metric replay of all four frames passes offline; full integrated runtime/resource acceptance remains pending.
+
 ## Authorized realtime preflight — November 14, 2026 UTC
 
 The operator explicitly approved check-realtime against wss://memory-alpha.home.lab/api/current from macOS and local Docker Desktop using the existing dedicated credential file. Both invocations completed successfully and printed only the fixed confirmation:
