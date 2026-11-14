@@ -1,6 +1,6 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Tin Ferret — version 0.3.2.
+**Release:** Tin Ferret — version 0.3.3.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
@@ -72,7 +72,7 @@ For an independent image build use `docker build --platform linux/amd64 -f deplo
 ## Prioritized remaining work
 
 1. Pool compatibility is verified through authorized native and local Docker checks, with genuine sanitized captures and offline replay. Extend this evidence to the M3 methods/events as separately authorized. Rust 1.88 and the recorded security gates pass; see docs/security-validation.md.
-2. M3-D realtime collection is implemented behind TRUENAS_REALTIME_ENABLED with independent group freshness. Authorized native/container preflight and four captured-notification replays now pass; next validate numerical/source semantics and integrated operation/resource behavior.
+2. M3-D realtime collection is implemented behind TRUENAS_REALTIME_ENABLED with independent group freshness. Authorized native/container preflight and four captured-notification replays now pass; the offline [numerical source review](docs/realtime-numerical-review.md) confirms conversions and records upstream semantic limits. Paired numerical verification and integrated operation/resource acceptance remain open.
 3. M3: implement general SCRUB/RESILVER metrics after callable-schema validation; retain explicit live/unit-equivalence acceptance for realtime mappings.
 4. M4: measured resource budgets, long outage tests and operator-verified least privilege.
 5. P1 and dashboard migration artifacts after P0 validation; production rollout requires separate authorization.

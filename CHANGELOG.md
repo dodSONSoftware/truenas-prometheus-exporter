@@ -2,6 +2,8 @@
 
 ## Development history
 
+- Trace pinned CPU/memory/ARC chart producers and realtime adapter arithmetic; verify synthetic conversion/default cases and document the unresolved ARC chart-algorithm concern and a concrete independent-comparison procedure. No exporter behavior changes.
+
 - Add four sanitized native/container TrueNAS 25.04.2.6 realtime notifications, version/receipt/cleanup provenance and production-worker metric replay. Preserve explicit zero ARC values and document their upstream-default ambiguity; numerical and sustained integrated runtime acceptance remain open.
 
 - Record successful operator-authorized native and UID-10001 Docker realtime preflights, including selected live group validation and owned unsubscribe acknowledgement. Preserve the distinction from captured fixtures, numerical comparisons and integrated runtime/resource acceptance.
