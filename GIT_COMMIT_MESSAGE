@@ -1,13 +1,12 @@
-fix: read only supported environment settings
+fix: read complete bounded healthcheck status lines
 
-[0.0.8] Iron Ferret
+[0.0.9] Iron Ferret
 
-- config: Reject invalid supported Unicode values without disclosing their contents
-- config: Build file-based targets directly without cloning environment maps
-- cli: Validate textual logging and healthcheck settings consistently
-- tests: Exercise normal, mock and diagnostic startup with binary environment data
-- docs: Describe selective environment loading and redacted errors
-- VERSION: Increment the patch release to 0.0.8
+- healthcheck: Accumulate partial TCP reads through the HTTP status terminator
+- healthcheck: Enforce a 128-byte limit within the existing three-second deadline
+- tests: Cover split success, exact limits, oversized lines, early EOF and stalled peers
+- docs: Document the status-line bounds and deadline
+- VERSION: Increment the patch release to 0.0.9
 - README.md: Update the Iron Ferret release information
 
 developed by Randel Dodson and AI

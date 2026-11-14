@@ -135,9 +135,22 @@ async fn healthcheck() -> Result<()> {
         stream
             .write_all(b"GET /healthz HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
             .await?;
-        let mut status = vec![0; 128];
-        let size = stream.read(&mut status).await?;
-        if !status[..size].starts_with(b"HTTP/1.1 200 ") {
+        let mut status = [0; 128];
+        let mut length = 0;
+        loop {
+            if length == status.len() {
+                bail!("liveness status line exceeds 128 bytes");
+            }
+            status[length] = stream
+                .read_u8()
+                .await
+                .context("incomplete liveness status line")?;
+            length += 1;
+            if status[length - 1] == b'\n' {
+                break;
+            }
+        }
+        if !status[..length].starts_with(b"HTTP/1.1 200 ") || !status[..length].ends_with(b"\r\n") {
             bail!("liveness check failed");
         }
         Ok::<_, anyhow::Error>(())

@@ -110,3 +110,9 @@ Protocol fixtures now use verified WSS with a shared synthetic loopback certific
 Unix child-process tests start normal and mock exporters with invalid Unicode in unrelated environment keys and values and successfully query local liveness before SIGTERM. Supported textual settings produce redacted setting-specific errors, including logging, listen address, username and transport URL. The healthcheck follows the same Unicode handling. The transport diagnostic ignores binary credential-path values, uses only transport settings, and reaches a deliberately unavailable loopback port without an environment panic.
 
 File-based targets now pass parsed fields and the common timeout directly to validated builders. Existing target credential/CA isolation and file-boundary tests still pass. The refactor preserves transport validation before credential-file validation. Formatting, strict Clippy and all 37 tests passed.
+
+## TN-10 healthcheck status line (2026-11-13)
+
+The executable healthcheck now reads through CRLF across partial TCP reads with a fixed 128-byte status buffer. A subprocess regression splits the status prefix across writes, verifies an exactly 128-byte valid line, and rejects a 129-byte line, non-200 status, early EOF and bare LF. A peer holding the socket open triggers the existing three-second overall timeout. The test runs without API credentials.
+
+Formatting, strict Clippy, all 38 tests, the linux/amd64 image build and the local container runtime suite passed.

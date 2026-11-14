@@ -157,3 +157,65 @@ async fn real_process_keeps_http_alive_redacts_trace_and_stops_on_sigterm() {
         .unwrap()
         .unwrap();
 }
+
+#[tokio::test]
+async fn healthcheck_handles_split_bounded_status_lines() {
+    let mut exact = b"HTTP/1.1 200 ".to_vec();
+    exact.resize(126, b'x');
+    exact.extend_from_slice(b"\r\n");
+    let mut oversized = exact.clone();
+    oversized.insert(12, b'x');
+    for (response, expected) in [
+        (b"HTTP/1.1 200 OK\r\n".to_vec(), true),
+        (exact, true),
+        (oversized, false),
+        (b"HTTP/1.1 503 Unavailable\r\n".to_vec(), false),
+        (b"HTTP/1.1 200 OK".to_vec(), false),
+        (b"HTTP/1.1 200 OK\n".to_vec(), false),
+        (Vec::new(), false),
+    ] {
+        let stalled = response.is_empty();
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = tokio::spawn(async move {
+            let (mut stream, _) = listener.accept().await.unwrap();
+            let mut request = Vec::new();
+            while !request.ends_with(b"\r\n\r\n") {
+                request.push(stream.read_u8().await.unwrap());
+            }
+            assert!(request.starts_with(b"GET /healthz HTTP/1.1\r\n"));
+            if response.is_empty() {
+                sleep(Duration::from_secs(5)).await;
+            } else {
+                stream.write_all(&response[..5]).await.unwrap();
+                sleep(Duration::from_millis(25)).await;
+                let _ = stream.write_all(&response[5..]).await;
+            }
+        });
+        let started = tokio::time::Instant::now();
+        let output = timeout(
+            Duration::from_secs(4),
+            Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+                .arg("healthcheck")
+                .env_clear()
+                .env("EXPORTER_LISTEN", address.to_string())
+                .output(),
+        )
+        .await
+        .unwrap()
+        .unwrap();
+        assert_eq!(
+            output.status.success(),
+            expected,
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        assert!(started.elapsed() < Duration::from_secs(4));
+        if stalled {
+            assert!(String::from_utf8_lossy(&output.stderr).contains("liveness check timed out"));
+            assert!(started.elapsed() >= Duration::from_secs(3));
+        }
+        server.abort();
+        let _ = server.await;
+    }
+}
