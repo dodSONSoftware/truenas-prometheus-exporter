@@ -9,10 +9,10 @@ Fourteen findings have implementation fixes. TN-02 awaits a captured, sanitized 
 | TN-01 | 4be109e | Implemented and locally verified |
 | TN-02 | pending | Waiting for appliance evidence |
 | TN-03 | 0bfcab0 | Implemented and locally verified |
-| TN-04 | 82588c3 | Implemented; sustained process validation remains |
+| TN-04 | 82588c3 | Implemented; finite full-process operational validation passed |
 | TN-05 | 4750a91 | Implemented and locally verified |
 | TN-06 | be2b94f | Implemented and locally verified |
-| TN-07 | 8009702 | Implemented; sustained process validation remains |
+| TN-07 | 8009702 | Implemented; finite full-process operational validation passed |
 | TN-08 | 9a0b534 | Implemented and locally verified |
 | TN-09 | b0ec1fe | Implemented and locally verified |
 | TN-10 | b8ae644 | Implemented and locally verified |
@@ -22,7 +22,7 @@ Fourteen findings have implementation fixes. TN-02 awaits a captured, sanitized 
 | TN-14 | a782c14 | Implemented and locally verified |
 | TN-15 | b2e9919 | Implemented and locally verified |
 
-Remaining offline work includes sustained collection with independent connections, full-process shutdown under backpressure, current-tree Rust 1.88 checks and refreshed dependency/image security scans. Hosted CI requires an authorized GitHub run. M3 remains gated on authenticated compatibility under the existing plan.
+The operational continuation verifies sustained independent TLS connections, outage recovery, full-process shutdown under backpressure, Rust 1.88 and refreshed security gates. Hosted CI requires an authorized GitHub run. Real-appliance and eventual deployment acceptance remain open. M3 remains gated on authenticated compatibility under the existing plan.
 
 Accepted findings: missing captured fixtures; pin API evidence; enumerate protocol allowlist; resolve scan names; deterministic readiness/partial failure; complete source mappings; use one root repository. Their contracts are in compatibility.md, api-contract.md, architecture.md and metric-catalog.md.
 
@@ -78,3 +78,5 @@ M1/M2 functional work and fourteen review implementations pass recorded local ch
 - [ ] Repeat authenticated API collection inside Docker; validate real secret-file ownership.
 
 M3 backend/system/realtime implementation is held until authenticated compatibility is established. No credentials were substituted, no API-key file was created, and no infrastructure was modified. See memory-alpha-integration.md.
+
+Offline operational continuation passed on the Mac and its local linux/amd64 Docker runtime. See the final measurements in validation.md and the refreshed signature/security evidence in security-validation.md. TN-02 is the prerequisite still awaiting the operator-guided account and capture workflow.

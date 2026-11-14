@@ -72,9 +72,9 @@ pub(crate) fn bounded_result(raw: &str) -> Result<Value, Reason> {
 }
 
 pub fn parse(value: Value) -> Result<Vec<Pool>, Reason> {
-    if !value
+    if value
         .as_array()
-        .is_some_and(|entries| entries.len() <= MAX_POOLS)
+        .is_none_or(|entries| entries.len() > MAX_POOLS)
     {
         return Err(Reason::Schema);
     }

@@ -1,5 +1,17 @@
 # Item 1 security validation
 
+## Current refresh — November 13, 2026
+
+The runtime digest is now sha256:cb87acc574abe719b6e5c547384defa2f7b1f24af9605d3f618cf852495d8be2. Cosign verified the exact digest with issuer https://accounts.google.com and identity keyless@distroless.iam.gserviceaccount.com, including signature claims and transparency evidence.
+
+A refreshed Trivy 0.76.1 database (updated 2026-11-14 01:05:40 UTC, November 13 locally) reported two HIGH zlib1g package findings against the former runtime digest. The findings were CVE-2026-76844 and CVE-2026-85091, both with a fixed Debian package version identified by the scanner. The replacement runtime removes both HIGH findings with the same database. The final image is sha256:ea5518f6a824f6333e7ed585f20a9b7bc7270e299d4bc422b9a5e5117540c1dc, tagged local/truenas-rust-exporter:operational.
+
+The explicit HIGH/CRITICAL gate passed on the final image without exclusions. Current package findings are 0 CRITICAL, 0 HIGH, 39 MEDIUM, 12 LOW and 2 UNKNOWN across 14 packages. Lower-severity findings remain visible. Full reports were saved locally to /private/tmp/truenas-current-scan.json and /private/tmp/truenas-final-scan.json. Scan findings describe this image/database combination and do not establish exploitability of each package in the exporter.
+
+cargo-audit 0.22.2 passed with --deny warnings against 173 locked dependencies using advisory database commit 4ef2df8e806a65e2f1ecc14f56f51249062b23d6. No dependency version changes or advisory exclusions were introduced.
+
+## Historical October 27 evidence
+
 Date: 2026-10-27 (America/Chicago). Initial security checks used local mocks. Subsequent explicitly authorized transport-only Caddy endpoint tests are recorded in memory-alpha-integration.md; no authenticated NAS API call or production deployment was performed.
 
 ## Current result

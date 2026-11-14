@@ -9,10 +9,10 @@ Fourteen findings have implementation fixes. TN-02 awaits a captured, sanitized 
 | TN-01 | 4be109e | Implemented and locally verified |
 | TN-02 | pending | Waiting for appliance evidence |
 | TN-03 | 0bfcab0 | Implemented and locally verified |
-| TN-04 | 82588c3 | Implemented; sustained process validation remains |
+| TN-04 | 82588c3 | Implemented; finite full-process operational validation passed |
 | TN-05 | 4750a91 | Implemented and locally verified |
 | TN-06 | be2b94f | Implemented and locally verified |
-| TN-07 | 8009702 | Implemented; sustained process validation remains |
+| TN-07 | 8009702 | Implemented; finite full-process operational validation passed |
 | TN-08 | 9a0b534 | Implemented and locally verified |
 | TN-09 | b0ec1fe | Implemented and locally verified |
 | TN-10 | b8ae644 | Implemented and locally verified |
@@ -22,7 +22,7 @@ Fourteen findings have implementation fixes. TN-02 awaits a captured, sanitized 
 | TN-14 | a782c14 | Implemented and locally verified |
 | TN-15 | b2e9919 | Implemented and locally verified |
 
-Remaining offline work includes sustained collection with independent connections, full-process shutdown under backpressure, current-tree Rust 1.88 checks and refreshed dependency/image security scans. Hosted CI requires an authorized GitHub run. M3 remains gated on authenticated compatibility under the existing plan.
+The operational continuation verifies sustained independent TLS connections, outage recovery, full-process shutdown under backpressure, Rust 1.88 and refreshed security gates. Hosted CI requires an authorized GitHub run. Real-appliance and eventual deployment acceptance remain open. M3 remains gated on authenticated compatibility under the existing plan.
 
 Date: 2026-10-27 (America/Chicago). Host: macOS arm64. Toolchain: rustc 1.99.1 and cargo 1.99.1. The one Git root is truenas_metrics_project/; there are no nested repositories. Original handoff preserved.
 
@@ -164,3 +164,39 @@ Six Python regressions cover result ordering, a failed removal followed by anoth
 The shared exporter listen-address parser rejects port zero with a setting-specific error. Parser cases cover IPv4/IPv6 wildcard and loopback addresses, the default port and valid boundary ports. Child-process tests verify both normal startup and the credential-free healthcheck reject zero before attempting service operation. Loopback HTTP tests verify IPv4 and IPv6 wildcard addresses still map to their respective loopback addresses for the healthcheck.
 
 Formatting, strict Clippy, all 45 Rust tests and six Python cleanup tests passed. TN-02 remains pending captured, sanitized appliance response evidence; the capture directory still contains only its README.
+
+## Operational acceptance continuation — November 13, 2026
+
+The current tree passes Rust 1.88 formatting, strict Clippy and the locked 45-test suite, with one additional operational test explicitly ignored by default. Six Python cleanup tests also pass. The MSRV run found a Clippy simplification in the pool-array boundary check; the equivalent is_none_or expression now satisfies both installed stable and Rust 1.88.
+
+application/tests/operational.rs runs the real exporter process with 16 independent synthetic WSS sessions, 256 pools per target and maximum-length pool labels. Four scrape clients run alongside actual polling for 30 seconds. The test interrupts all transports, verifies readiness failure and removal of expired pool measurements while retaining last-success metadata, restores the mock service, verifies all targets recover, and sends SIGTERM with a metrics client holding a 1 KiB receive window open.
+
+The first native run with a five-second outage recorded 190 successful scrapes, 1,876 busy responses, 568 collection requests and 2,050 ms SIGTERM-to-exit. An initial limited-container run recorded 352 successful scrapes, 1,598 busy responses, 580 collection requests, 40 ms maximum health latency and 2,016 ms SIGTERM-to-exit. Its peak cgroup usage was 91,516,928 bytes. These initial runs used the former runtime. The final scenario extends the outage to fifteen seconds against the refreshed runtime.
+
+The test is finite operational evidence for the current pool exporter. Appliance credentials/roles, native Ubuntu deployment and hosted GitHub CI remain separate acceptance work.
+
+To reproduce natively from the repository root:
+
+~~~sh
+cargo +1.88.0 test --locked --manifest-path application/Cargo.toml --test operational -- --ignored --nocapture
+~~~
+
+To export the operational binaries and run with 128 MiB, no swap, 0.5 CPU, loopback-only networking, a read-only runtime and a temporary filesystem:
+
+~~~sh
+validation_dir=$(mktemp -d /tmp/truenas-operational.XXXXXX)
+docker --context desktop-linux build --platform linux/amd64 -f deployment/Dockerfile -t local/truenas-rust-exporter:operational .
+docker --context desktop-linux build --platform linux/amd64 -f deployment/Dockerfile --target operational-test --output "type=local,dest=$validation_dir" .
+docker --context desktop-linux run --rm --platform linux/amd64 \
+  --network none --memory 128m --memory-swap 128m --cpus 0.5 \
+  --read-only --tmpfs /tmp:rw,size=16m --cap-drop ALL \
+  --security-opt no-new-privileges:true \
+  --mount "type=bind,src=$validation_dir,dst=/validation,readonly" \
+  --mount "type=bind,src=$validation_dir/truenas-exporter,dst=/build/application/target/release/truenas-exporter,readonly" \
+  --entrypoint /validation/operational \
+  local/truenas-rust-exporter:operational --ignored --nocapture
+~~~
+
+The operational-test build stage exports test binaries only. The final runtime contains the exporter and license. Real-runtime hardening checks pass with the refreshed base. The exact final image and scanner results are recorded in security-validation.md.
+
+The final refreshed-runtime run used a fifteen-second outage and completed in 64.69 seconds. It recorded 518 successful scrapes, 2,202 encoder-busy responses, 699 collection requests, 35 ms maximum health latency, 2,013 ms SIGTERM-to-exit and 87,453,696 bytes peak cgroup usage (83.4 MiB). All targets recovered, expired measurements were absent, and the child exited successfully while the stalled reader stayed open. The runtime high/critical image gate also passed with zero findings at those severities.

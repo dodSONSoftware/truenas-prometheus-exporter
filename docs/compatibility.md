@@ -18,3 +18,5 @@ Before deployment, separately authorize validation of endpoint/certificate ident
 Captured sanitized payloads belong in `fixtures/truenas-25.04.2.6/` at the repository root. That directory currently contains intake instructions only; it is not evidence of captured-fixture validation.
 
 The operator reconfirmed TrueNAS 25.04.2.6 during proxy setup. Host/container verified WSS upgrade is established, but this does not independently verify backend version, account roles or method response compatibility. The dedicated account/key are not yet provisioned.
+
+On November 13, the operator reconfirmed 25.04.2.6 and selected local macOS Docker Desktop for development. A screenshot of Credentials → Users shows no dedicated monitoring user among the three listed accounts. Account provisioning is being guided by the operator; no authenticated appliance capture has been authorized or performed in this continuation.

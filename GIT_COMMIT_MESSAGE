@@ -1,10 +1,12 @@
-docs: reconcile review milestones and validation status
+test: verify sustained collection and refresh runtime security
 
-[0.0.14] Iron Ferret
+[0.0.15] Iron Ferret
 
-- docs: Map findings to commits and remaining operational evidence
-- docs: Distinguish current checks from historical toolchain and security scans
-- VERSION: Increment the patch release to 0.0.14
+- tests: Exercise 16 independent TLS targets, outage recovery and stalled-reader SIGTERM
+- container: Export operational test binaries and refresh the verified runtime digest
+- rust: Satisfy the Rust 1.88 pool-boundary lint
+- docs: Record current MSRV, security and operational evidence
+- VERSION: Increment the patch release to 0.0.15
 - README.md: Update the Iron Ferret release information
 
 developed by Randel Dodson and AI
