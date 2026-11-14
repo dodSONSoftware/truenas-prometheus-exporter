@@ -966,3 +966,119 @@ async fn malformed_envelope_fails_all_pending_queries_and_reconnects() {
         server.await.unwrap();
     }
 }
+
+// Only the correlation ID is changed when replaying the saved wire envelope.
+#[tokio::test]
+async fn captured_appliance_pool_envelopes_replay_offline() {
+    use axum::{
+        body::Body,
+        http::{Request, StatusCode},
+    };
+    use http_body_util::BodyExt;
+    use tower::ServiceExt;
+    for (fixture, allocated, free) in [
+        (
+            include_str!("../../fixtures/truenas-25.04.2.6/pool.query.host.response.json"),
+            12_573_765_242_880_u64,
+            11_426_512_007_168_u64,
+        ),
+        (
+            include_str!("../../fixtures/truenas-25.04.2.6/pool.query.container.response.json"),
+            12_573_763_424_256_u64,
+            11_426_513_825_792_u64,
+        ),
+    ] {
+        let (listener, url) = listen().await;
+        let mut envelope: Value = serde_json::from_str(fixture).unwrap();
+        let server = tokio::spawn(async move {
+            let mut socket = login(&listener).await;
+            let request = text(&mut socket).await;
+            assert_eq!(request["method"], "pool.query");
+            assert_eq!(request["params"], json!([]));
+            envelope["id"] = request["id"].clone();
+            socket
+                .send(Message::text(envelope.to_string()))
+                .await
+                .unwrap();
+            while let Some(Ok(message)) = socket.next().await {
+                if let Message::Ping(bytes) = message {
+                    let _ = socket.send(Message::Pong(bytes)).await;
+                }
+            }
+        });
+        let state = State::for_target("captured-target".into(), Duration::from_secs(180), false);
+        let stop = CancellationToken::new();
+        let (client, task) = Client::spawn(
+            config(url, Duration::from_secs(2)),
+            state.clone(),
+            stop.clone(),
+        );
+        ready(&state).await;
+        let result = client.pool_query().await.unwrap();
+        assert!(result[0]["fragmentation"].is_string());
+        let pools = truenas_exporter::collectors::pools::parse(result).unwrap();
+        assert_eq!(pools.len(), 1);
+        assert_eq!(pools[0].size, Some(24_000_277_250_048));
+        assert_eq!(pools[0].allocated, Some(allocated));
+        assert_eq!(pools[0].free, Some(free));
+        assert_eq!(pools[0].healthy, Some(true));
+        assert_eq!(pools[0].warning, Some(true));
+        assert_eq!(pools[0].fragmentation, Some(13.0));
+        let now = tokio::time::Instant::now();
+        state.complete(Ok(pools), now, 1000.0, Duration::ZERO);
+        assert!(state.ready_at(now));
+        let app = truenas_exporter::http::router(state.clone());
+        let response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri("/readyz")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/metrics")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let metrics = String::from_utf8(
+            response
+                .into_body()
+                .collect()
+                .await
+                .unwrap()
+                .to_bytes()
+                .to_vec(),
+        )
+        .unwrap();
+        for expected in [
+            "truenas_pool_size_bytes{target=\"captured-target\",pool=\"captured-pool-1\"} 24000277250048",
+            "truenas_pool_healthy{target=\"captured-target\",pool=\"captured-pool-1\"} 1",
+            "truenas_pool_warning{target=\"captured-target\",pool=\"captured-pool-1\"} 1",
+            "truenas_pool_fragmentation_percent{target=\"captured-target\",pool=\"captured-pool-1\"} 13",
+        ] {
+            assert!(metrics.contains(expected), "missing {expected}");
+        }
+        assert!(metrics.contains(&format!("truenas_pool_allocated_bytes{{target=\"captured-target\",pool=\"captured-pool-1\"}} {allocated}")));
+        assert!(metrics.contains(&format!(
+            "truenas_pool_free_bytes{{target=\"captured-target\",pool=\"captured-pool-1\"}} {free}"
+        )));
+        assert!(metrics.contains("FEAT_DISABLED"));
+        assert!(metrics.contains("ONLINE"));
+        assert!(!metrics.contains("truenas_pool_scrub_errors"));
+        stop.cancel();
+        timeout(Duration::from_secs(2), task)
+            .await
+            .unwrap()
+            .unwrap();
+        server.await.unwrap();
+    }
+}

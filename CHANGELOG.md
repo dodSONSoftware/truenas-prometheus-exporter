@@ -2,6 +2,8 @@
 
 ## Unreleased - 0.1.0 development
 
+- Resolve TN-02 with operator-authorized native and UID-10001 Docker authentication/pool checks, sanitized full response captures, provenance and offline production-client/HTTP replay. Backend version remains operator-confirmed; other methods/events are unverified.
+
 - Adopt the MIT license, Copyright (c) 2026 dodson Software ( dodson labs ).
 - Validate the Rust 1.88 MSRV and remove the unmaintained rustls-pemfile wrapper in favor of rustls-pki-types PEM parsing.
 - Add a strict RustSec audit CI gate and reserve fixtures/truenas-25.04.2.6/ for captured sanitized evidence.

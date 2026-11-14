@@ -2,7 +2,21 @@
 
 Endpoint: `wss://memory-alpha.home.lab/api/current`. Backend and proxy details, supplied by the operator: TrueNAS SCALE 25.04.2.6 at 10.10.10.7, Caddy at 10.10.10.2. This integration test is explicitly authorized for read-only access; infrastructure changes remain prohibited.
 
-## Verified in this run
+## Authenticated pool checks — November 13, 2026
+
+The operator explicitly authorized read-only `auth.login_ex` and `pool.query` checks against the endpoint above from the Mac and local Docker Desktop, using the operator-provisioned credential file. The operator reported the dedicated account as Readonly Admin and reconfirmed software version 25.04.2.6 in the UI. No version method was called.
+
+- Native macOS: verified TLS/hostname, typed SUCCESS authentication, pool.query with empty parameters, and pool decoder all passed; one pool returned.
+- Docker Desktop `desktop-linux`, linux/amd64: the same checks passed in the pinned distroless runtime, under UID/GID 10001:10001, a read-only root filesystem, dropped capabilities, no-new-privileges and a 128 MiB memory limit.
+- A temporary Rust probe reused Config, TLS roots, protocol login/request/response/authentication helpers and the pool collector, with 1 MiB WebSocket limits and a 30-second overall deadline. It did not start the HTTP exporter or exercise the production reconnect supervisor against the appliance. The offline replay test exercises the production Client instead.
+- The Mac key remained user-owned mode 0600. A temporary Docker volume received its contents through stdin from a host process (no key in arguments, environment or logs). The helper set mode 0400 before transferring ownership to 10001:10001. The probe mounted that volume read-only. The temporary containers and secret volume were removed after each attempt. An initial helper attempt failed on chmod after ownership transfer; it was cleaned up, and the ordering was corrected before retrying.
+- The CA was mounted read-only. No TLS verification was disabled. No appliance configuration or access controls were changed by these tests.
+- Full pool response structures were sanitized in memory before saving. Original pool names, GUIDs, device identities and paths were not persisted. No authentication exchanges or raw responses were saved. See `fixtures/truenas-25.04.2.6/README.md` for exact transformations.
+- Successful authentication and pool.query demonstrate this account can read pools; the breadth/minimum of its privileges and denial of writes were not tested. All other methods and realtime events remain outside this authorization.
+
+TN-02 now has captured appliance evidence and offline replay. M3 can begin offline design/implementation; live version/system/event validation needs separately scoped operator authorization. Production deployment and dashboard changes remain unauthorized.
+
+## Historical transport-only checks
 
 - HTTPS hostname/certificate verification succeeds (HTTP 302 to the UI).
 - The Rust `check-transport` command completes a verified WSS upgrade (HTTP 101) from the Mac.
@@ -18,7 +32,7 @@ The public certificate was exported from the trusted keychain, validated against
 
 The Rust client uses Mozilla roots plus the explicitly supplied private CA, not macOS Keychain trust. Caddy handles its own upstream TrueNAS certificate verification; that infrastructure configuration is operator-reported and was not modified by this test.
 
-## Authentication and pool.query: pending
+## Historical provisioning gate (superseded below)
 
 The operator selected `prometheus_exporter` and `/Users/randydodson/.config/truenas-exporter/memory-alpha-api-key`, but explicitly states the account/key are not created yet. No placeholder API-key file was created, and no administrator credential was substituted.
 
@@ -29,7 +43,7 @@ The operator selected `prometheus_exporter` and `/Users/randydodson/.config/true
 - Appliance version: operator-confirmed 25.04.2.6; not independently queried by this exporter yet.
 - Captured API fixtures: none; do not label synthetic fixtures as captured.
 
-## Operator provisioning and next test
+## Original operator provisioning sequence
 
 1. Create the dedicated account and API key through the supported TrueNAS interface. Restrict it to the required read-only access; do not use a full-administrator account/key. Exact role mapping on this appliance still needs verification. The current data method is pool.query; auth.login_ex establishes the session.
 2. Save the key directly outside Git at the selected path, owned by the macOS user with mode 0600. Do not put the key in chat, environment values, shell command arguments/history, or logs. Keep the CA separate.

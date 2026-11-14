@@ -1,0 +1,354 @@
+{
+  "id": "captured-pool-query",
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "allocated": 12573765242880,
+      "allocated_str": "sanitized",
+      "autotrim": {
+        "parsed": "sanitized",
+        "rawvalue": "sanitized",
+        "source": "sanitized",
+        "value": "sanitized"
+      },
+      "dedup_table_quota": "sanitized",
+      "dedup_table_size": 0,
+      "expand": null,
+      "fragmentation": "13",
+      "free": 11426512007168,
+      "free_str": "sanitized",
+      "freeing": 0,
+      "freeing_str": "sanitized",
+      "guid": "sanitized",
+      "healthy": true,
+      "id": 0,
+      "name": "captured-pool-1",
+      "path": "sanitized",
+      "scan": {
+        "bytes_issued": 12573691465728,
+        "bytes_processed": 12573762650112,
+        "bytes_to_process": 12732552929280,
+        "end_time": {
+          "$date": 1794568679000
+        },
+        "errors": 0,
+        "function": "SCRUB",
+        "pause": null,
+        "percentage": 99.99960064888,
+        "start_time": {
+          "$date": 1794553201000
+        },
+        "state": "FINISHED",
+        "total_secs_left": null
+      },
+      "size": 24000277250048,
+      "size_str": "sanitized",
+      "status": "ONLINE",
+      "status_code": "FEAT_DISABLED",
+      "status_detail": "sanitized",
+      "topology": {
+        "cache": [],
+        "data": [
+          {
+            "children": [
+              {
+                "children": [],
+                "device": "sanitized",
+                "disk": "sanitized",
+                "guid": "sanitized",
+                "name": "sanitized",
+                "path": "sanitized",
+                "stats": {
+                  "allocated": 0,
+                  "bytes": [
+                    0,
+                    6114847764480,
+                    776529113088,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "checksum_errors": 0,
+                  "configured_ashift": 12,
+                  "fragmentation": 0,
+                  "logical_ashift": 9,
+                  "ops": [
+                    0,
+                    21027043,
+                    42955902,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "physical_ashift": 12,
+                  "read_errors": 0,
+                  "self_healed": 0,
+                  "size": 0,
+                  "timestamp": 8121355228235666,
+                  "write_errors": 0
+                },
+                "status": "ONLINE",
+                "type": "sanitized",
+                "unavail_disk": null
+              },
+              {
+                "children": [],
+                "device": "sanitized",
+                "disk": "sanitized",
+                "guid": "sanitized",
+                "name": "sanitized",
+                "path": "sanitized",
+                "stats": {
+                  "allocated": 0,
+                  "bytes": [
+                    0,
+                    6117830758400,
+                    776925630464,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "checksum_errors": 0,
+                  "configured_ashift": 12,
+                  "fragmentation": 0,
+                  "logical_ashift": 9,
+                  "ops": [
+                    0,
+                    17646569,
+                    43245184,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "physical_ashift": 12,
+                  "read_errors": 0,
+                  "self_healed": 0,
+                  "size": 0,
+                  "timestamp": 8121355228285650,
+                  "write_errors": 0
+                },
+                "status": "ONLINE",
+                "type": "sanitized",
+                "unavail_disk": null
+              },
+              {
+                "children": [],
+                "device": "sanitized",
+                "disk": "sanitized",
+                "guid": "sanitized",
+                "name": "sanitized",
+                "path": "sanitized",
+                "stats": {
+                  "allocated": 0,
+                  "bytes": [
+                    0,
+                    6116725059584,
+                    776892895232,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "checksum_errors": 0,
+                  "configured_ashift": 12,
+                  "fragmentation": 0,
+                  "logical_ashift": 9,
+                  "ops": [
+                    0,
+                    12332987,
+                    43267115,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "physical_ashift": 12,
+                  "read_errors": 0,
+                  "self_healed": 0,
+                  "size": 0,
+                  "timestamp": 8121355228337397,
+                  "write_errors": 0
+                },
+                "status": "ONLINE",
+                "type": "sanitized",
+                "unavail_disk": null
+              },
+              {
+                "children": [],
+                "device": "sanitized",
+                "disk": "sanitized",
+                "guid": "sanitized",
+                "name": "sanitized",
+                "path": "sanitized",
+                "stats": {
+                  "allocated": 0,
+                  "bytes": [
+                    0,
+                    6115719999488,
+                    776477495296,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "checksum_errors": 0,
+                  "configured_ashift": 12,
+                  "fragmentation": 0,
+                  "logical_ashift": 9,
+                  "ops": [
+                    0,
+                    24190134,
+                    43101644,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "physical_ashift": 12,
+                  "read_errors": 0,
+                  "self_healed": 0,
+                  "size": 0,
+                  "timestamp": 8121355228389084,
+                  "write_errors": 0
+                },
+                "status": "ONLINE",
+                "type": "sanitized",
+                "unavail_disk": null
+              },
+              {
+                "children": [],
+                "device": "sanitized",
+                "disk": "sanitized",
+                "guid": "sanitized",
+                "name": "sanitized",
+                "path": "sanitized",
+                "stats": {
+                  "allocated": 0,
+                  "bytes": [
+                    0,
+                    6119288471552,
+                    776816582656,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "checksum_errors": 0,
+                  "configured_ashift": 12,
+                  "fragmentation": 0,
+                  "logical_ashift": 9,
+                  "ops": [
+                    0,
+                    18521489,
+                    43230805,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "physical_ashift": 12,
+                  "read_errors": 0,
+                  "self_healed": 0,
+                  "size": 0,
+                  "timestamp": 8121355228441322,
+                  "write_errors": 0
+                },
+                "status": "ONLINE",
+                "type": "sanitized",
+                "unavail_disk": null
+              },
+              {
+                "children": [],
+                "device": "sanitized",
+                "disk": "sanitized",
+                "guid": "sanitized",
+                "name": "sanitized",
+                "path": "sanitized",
+                "stats": {
+                  "allocated": 0,
+                  "bytes": [
+                    0,
+                    6116993257472,
+                    776796053504,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "checksum_errors": 0,
+                  "configured_ashift": 12,
+                  "fragmentation": 0,
+                  "logical_ashift": 9,
+                  "ops": [
+                    0,
+                    20029207,
+                    43129055,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "physical_ashift": 12,
+                  "read_errors": 0,
+                  "self_healed": 0,
+                  "size": 0,
+                  "timestamp": 8121355228493040,
+                  "write_errors": 0
+                },
+                "status": "ONLINE",
+                "type": "sanitized",
+                "unavail_disk": null
+              }
+            ],
+            "guid": "sanitized",
+            "name": "sanitized",
+            "path": null,
+            "stats": {
+              "allocated": 12573765242880,
+              "bytes": [
+                0,
+                36701405310976,
+                4660437770240,
+                0,
+                0,
+                0,
+                0
+              ],
+              "checksum_errors": 0,
+              "configured_ashift": 12,
+              "fragmentation": 13,
+              "logical_ashift": 9,
+              "ops": [
+                0,
+                113747429,
+                258929705,
+                0,
+                0,
+                0,
+                0
+              ],
+              "physical_ashift": 12,
+              "read_errors": 0,
+              "self_healed": 0,
+              "size": 24000277250048,
+              "timestamp": 8121355228166056,
+              "write_errors": 0
+            },
+            "status": "ONLINE",
+            "type": "sanitized",
+            "unavail_disk": null
+          }
+        ],
+        "dedup": [],
+        "log": [],
+        "spare": [],
+        "special": []
+      },
+      "warning": true
+    }
+  ]
+}

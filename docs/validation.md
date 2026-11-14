@@ -2,12 +2,12 @@
 
 ## Current review status — November 13, 2026
 
-Fourteen findings have implementation fixes. TN-02 awaits a captured, sanitized appliance response. At b2e9919, 45 Rust tests, six Python tests, formatting, strict Clippy and local linux/amd64 container checks passed. Earlier results below retain their original scope. Credential provisioning needs operator confirmation.
+Fourteen findings have implementation fixes. TN-02 now has authorized native/container pool captures and offline replay through the production client and HTTP metrics/readiness. Version 25.04.2.6 is operator-confirmed. Earlier results below retain their original scope.
 
 | Finding | Commit | Disposition |
 | --- | --- | --- |
 | TN-01 | 4be109e | Implemented and locally verified |
-| TN-02 | pending | Waiting for appliance evidence |
+| TN-02 | this milestone | Captured full sanitized responses; offline replay passed |
 | TN-03 | 0bfcab0 | Implemented and locally verified |
 | TN-04 | 82588c3 | Implemented; finite full-process operational validation passed |
 | TN-05 | 4750a91 | Implemented and locally verified |
@@ -22,7 +22,7 @@ Fourteen findings have implementation fixes. TN-02 awaits a captured, sanitized 
 | TN-14 | a782c14 | Implemented and locally verified |
 | TN-15 | b2e9919 | Implemented and locally verified |
 
-The operational continuation verifies sustained independent TLS connections, outage recovery, full-process shutdown under backpressure, Rust 1.88 and refreshed security gates. Hosted CI requires an authorized GitHub run. Real-appliance and eventual deployment acceptance remain open. M3 remains gated on authenticated compatibility under the existing plan.
+The operational continuation verifies sustained independent TLS connections, outage recovery, full-process shutdown under backpressure, Rust 1.88 and refreshed security gates. Hosted CI requires an authorized GitHub run. Authenticated pool compatibility passed. Broader methods/events and eventual deployment acceptance remain open.
 
 Date: 2026-10-27 (America/Chicago). Host: macOS arm64. Toolchain: rustc 1.99.1 and cargo 1.99.1. The one Git root is truenas_metrics_project/; there are no nested repositories. Original handoff preserved.
 
@@ -200,3 +200,17 @@ docker --context desktop-linux run --rm --platform linux/amd64 \
 The operational-test build stage exports test binaries only. The final runtime contains the exporter and license. Real-runtime hardening checks pass with the refreshed base. The exact final image and scanner results are recorded in security-validation.md.
 
 The final refreshed-runtime run used a fifteen-second outage and completed in 64.69 seconds. It recorded 518 successful scrapes, 2,202 encoder-busy responses, 699 collection requests, 35 ms maximum health latency, 2,013 ms SIGTERM-to-exit and 87,453,696 bytes peak cgroup usage (83.4 MiB). All targets recovered, expired measurements were absent, and the child exited successfully while the stalled reader stayed open. The runtime high/critical image gate also passed with zero findings at those severities.
+
+## TN-02 — captured appliance pool compatibility, November 13, 2026
+
+Explicit operator authorization covered only auth.login_ex and pool.query against the configured WSS endpoint, from the Mac and local Docker Desktop. Both native and distroless linux/amd64 checks passed verified TLS, typed SUCCESS authentication, pool.query with empty parameters, and the existing collector schema. One pool was returned each time. The operator confirmed version 25.04.2.6 and Readonly Admin in the UI; neither backend version nor minimum privilege was independently queried.
+
+The temporary probe reused repository configuration/TLS, protocol and pool parsing code. It used 1 MiB message/frame limits and a 30-second outer deadline, without saving raw or authentication responses. Full sanitized host/container envelopes, including ignored topology/scan fields, are checked in under fixtures/truenas-25.04.2.6/. The fixture README records transformations and observed capacities. A preliminary projected capture was replaced by the full sanitized structure before committing.
+
+The container probe used UID/GID 10001:10001, read-only root, dropped capabilities, no-new-privileges, 128 MiB memory and a restricted secret volume mounted read-only. A local helper provisioned that volume via stdin, mode 0400; it was removed in cleanup. The Mac credential remained mode 0600. The probe did not exercise the live exporter supervisor, HTTP server, outage recovery or production deployment against the appliance.
+
+Focused test `captured_appliance_pool_envelopes_replay_offline` passed. Each envelope is replayed over verified loopback TLS through the production Client with only request ID correlation changed. The test checks the original fragmentation string, exact independently recorded size/allocated/free bytes, health/warning, target/pool labels, status metadata, HTTP metrics and readiness, and absence of the deferred ambiguous scrub metric. Missing/null/error cases remain covered by synthetic tests rather than fabricated captures.
+
+`sh scripts/check.sh` passed formatting, strict Clippy, 46 regular Rust tests (one operational test explicitly ignored by default), and six Python tests. The production linux/amd64 image build passed as local/truenas-rust-exporter:captured-pools using existing cached build layers. The preceding operational and security runs were not repeated because no production implementation or dependencies changed. Hosted CI was not run.
+
+No additional appliance methods, infrastructure edits, live dashboard changes, pushes or deployment were performed. M3 can start offline; live system/version/realtime validation needs separately scoped authorization.
