@@ -13,7 +13,7 @@ use tracing::Instrument;
 use tracing_subscriber::{Layer, layer::SubscriberExt, util::SubscriberInitExt};
 use truenas_exporter::{
     api::client::{Client, check_transport},
-    config::{Config, TransportConfig, listen_address},
+    config::{Config, TransportConfig, environment_value, listen_address},
     http, scheduler,
     state::State,
 };
@@ -47,11 +47,10 @@ async fn main() -> Result<()> {
         [] => {}
         _ => bail!("unknown argument; use --help"),
     }
-    let filter = match std::env::var("RUST_LOG") {
-        Ok(value) => {
-            tracing_subscriber::EnvFilter::try_new(value).context("invalid RUST_LOG filter")?
-        }
-        Err(_) => tracing_subscriber::EnvFilter::new("info"),
+    let filter = match environment_value("RUST_LOG")? {
+        Some(value) => tracing_subscriber::EnvFilter::try_new(value)
+            .map_err(|_| anyhow::anyhow!("invalid RUST_LOG filter"))?,
+        None => tracing_subscriber::EnvFilter::new("info"),
     };
     // Dependencies may trace raw WebSocket frames. Only our redacted events may be emitted.
     tracing_subscriber::registry()
@@ -124,7 +123,7 @@ async fn shutdown_signal() {
 }
 
 async fn healthcheck() -> Result<()> {
-    let mut address = listen_address(std::env::var("EXPORTER_LISTEN").ok().as_deref())?;
+    let mut address = listen_address(environment_value("EXPORTER_LISTEN")?.as_deref())?;
     if address.ip().is_unspecified() {
         address.set_ip(match address.ip() {
             IpAddr::V4(_) => Ipv4Addr::LOCALHOST.into(),

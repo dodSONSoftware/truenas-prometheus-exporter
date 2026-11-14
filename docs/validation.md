@@ -104,3 +104,9 @@ A companion test reads a complete 4 MiB response while cancelling the server and
 Authenticated sessions and the credential-free transport diagnostic now use one socket-opening function. It reapplies the production URL policy before TCP connection, even when a Rust caller directly constructs the public configuration structs. Direct-entry tests reject plaintext, URL userinfo, query strings and fragments and verify the loopback listener receives no connection.
 
 Protocol fixtures now use verified WSS with a shared synthetic loopback certificate and explicit test trust roots. Independent TLS cases still reject an untrusted certificate or wrong hostname, and the diagnostic test observes a close frame as its first frame. Formatting, strict Clippy and all 36 Rust tests passed.
+
+## TN-09 selective environment loading (2026-11-13)
+
+Unix child-process tests start normal and mock exporters with invalid Unicode in unrelated environment keys and values and successfully query local liveness before SIGTERM. Supported textual settings produce redacted setting-specific errors, including logging, listen address, username and transport URL. The healthcheck follows the same Unicode handling. The transport diagnostic ignores binary credential-path values, uses only transport settings, and reaches a deliberately unavailable loopback port without an environment panic.
+
+File-based targets now pass parsed fields and the common timeout directly to validated builders. Existing target credential/CA isolation and file-boundary tests still pass. The refactor preserves transport validation before credential-file validation. Formatting, strict Clippy and all 37 tests passed.

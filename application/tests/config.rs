@@ -274,3 +274,104 @@ async fn fifo_configuration_fails_without_waiting_for_a_writer() {
         );
     }
 }
+
+#[cfg(unix)]
+#[tokio::test]
+async fn environment_unicode_errors_are_redacted_and_unrelated_bytes_are_ignored() {
+    use std::{ffi::OsString, os::unix::ffi::OsStringExt};
+    use tokio::{
+        io::{AsyncReadExt, AsyncWriteExt},
+        net::{TcpListener, TcpStream},
+        process::Command,
+        time::{Duration, sleep, timeout},
+    };
+    let invalid = OsString::from_vec(b"PRIVATE_MARKER_\xff".to_vec());
+    let dir = tempfile::tempdir().unwrap();
+    let key = dir.path().join("key");
+    std::fs::write(&key, "synthetic").unwrap();
+    for mock in [true, false] {
+        let reserved = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = reserved.local_addr().unwrap();
+        drop(reserved);
+        let mut child = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+            .env_clear()
+            .kill_on_drop(true)
+            .env("UNRELATED_BINARY", &invalid)
+            .env(&invalid, &invalid)
+            .env("EXPORTER_MOCK", mock.to_string())
+            .env("EXPORTER_LISTEN", address.to_string())
+            .env("TRUENAS_WS_URL", "wss://127.0.0.1:1/api/current")
+            .env("TRUENAS_USERNAME", "synthetic")
+            .env("TRUENAS_API_KEY_FILE", &key)
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
+            .spawn()
+            .unwrap();
+        timeout(Duration::from_secs(3), async {
+            loop {
+                assert!(child.try_wait().unwrap().is_none());
+                if let Ok(mut stream) = TcpStream::connect(address).await {
+                    stream.write_all(b"GET /healthz HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n").await.unwrap();
+                    let mut response = Vec::new();
+                    stream.read_to_end(&mut response).await.unwrap();
+                    assert!(response.starts_with(b"HTTP/1.1 200"));
+                    break;
+                }
+                sleep(Duration::from_millis(10)).await;
+            }
+        }).await.unwrap();
+        assert!(
+            Command::new("/bin/kill")
+                .args(["-TERM", &child.id().unwrap().to_string()])
+                .status()
+                .await
+                .unwrap()
+                .success()
+        );
+        assert!(
+            timeout(Duration::from_secs(3), child.wait())
+                .await
+                .unwrap()
+                .unwrap()
+                .success()
+        );
+    }
+    for (args, setting) in [
+        (vec![], "EXPORTER_LISTEN"),
+        (vec![], "TRUENAS_USERNAME"),
+        (vec![], "RUST_LOG"),
+        (vec!["healthcheck"], "EXPORTER_LISTEN"),
+        (vec!["check-transport"], "TRUENAS_WS_URL"),
+    ] {
+        let output = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+            .env_clear()
+            .args(args)
+            .env(setting, &invalid)
+            .output()
+            .await
+            .unwrap();
+        assert!(!output.status.success());
+        let error = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            error.contains(&format!("{setting} must contain valid Unicode")),
+            "{error}"
+        );
+        assert!(!error.contains("PRIVATE_MARKER") && !error.contains("panicked"));
+    }
+    // Transport-only parsing ignores API credentials and unrelated binary data.
+    let output = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+        .env_clear()
+        .arg("check-transport")
+        .env("TRUENAS_WS_URL", "wss://127.0.0.1:1/api/current")
+        .env("TRUENAS_API_KEY_FILE", &invalid)
+        .env("UNRELATED_BINARY", &invalid)
+        .output()
+        .await
+        .unwrap();
+    let error = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        error.contains("WSS transport check failed: transport"),
+        "{error}"
+    );
+    assert!(!error.contains("PRIVATE_MARKER") && !error.contains("panicked"));
+}

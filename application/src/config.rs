@@ -36,18 +36,19 @@ pub struct TransportConfig {
 
 impl TransportConfig {
     pub fn from_env() -> Result<Self> {
-        Self::from_values(&std::env::vars().collect())
+        Self::from_values(&environment_values(&[
+            "TRUENAS_WS_URL",
+            "TRUENAS_CA_CERT_FILE",
+            "TRUENAS_API_TIMEOUT_SECONDS",
+        ])?)
     }
 
     pub fn from_values(values: &HashMap<String, String>) -> Result<Self> {
-        let url = Url::parse(required(values, "TRUENAS_WS_URL")?)
-            .map_err(|_| anyhow::anyhow!("TRUENAS_WS_URL must be a valid WSS URL"))?;
-        validate_ws_url(&url)?;
-        Ok(Self {
-            url,
-            tls: tls_config(values.get("TRUENAS_CA_CERT_FILE").map(Path::new))?,
-            timeout: api_timeout(values)?,
-        })
+        transport_config(
+            required(values, "TRUENAS_WS_URL")?,
+            values.get("TRUENAS_CA_CERT_FILE").map(Path::new),
+            api_timeout(values)?,
+        )
     }
 }
 
@@ -81,7 +82,19 @@ struct TargetEntry {
 
 impl Config {
     pub fn from_env() -> Result<Self> {
-        Self::from_values(&std::env::vars().collect())
+        Self::from_values(&environment_values(&[
+            "EXPORTER_LISTEN",
+            "EXPORTER_MOCK",
+            "TRUENAS_POLL_INTERVAL_SECONDS",
+            "TRUENAS_API_TIMEOUT_SECONDS",
+            "TRUENAS_CACHE_TTL_SECONDS",
+            "TRUENAS_TARGETS_FILE",
+            "TRUENAS_TARGET",
+            "TRUENAS_WS_URL",
+            "TRUENAS_USERNAME",
+            "TRUENAS_API_KEY_FILE",
+            "TRUENAS_CA_CERT_FILE",
+        ])?)
     }
 
     pub fn from_values(values: &HashMap<String, String>) -> Result<Self> {
@@ -115,7 +128,7 @@ impl Config {
                     "TRUENAS_TARGETS_FILE cannot be combined with legacy target settings"
                 );
             }
-            load_targets(path, values)?
+            load_targets(path, Duration::from_secs(timeout))?
         } else {
             let name = values.get("TRUENAS_TARGET").cloned();
             if let Some(name) = &name {
@@ -135,7 +148,7 @@ impl Config {
     }
 }
 
-fn load_targets(path: &str, global: &HashMap<String, String>) -> Result<Vec<TargetConfig>> {
+fn load_targets(path: &str, timeout: Duration) -> Result<Vec<TargetConfig>> {
     let bytes = read_config_file(Path::new(path), 65536, "TRUENAS_TARGETS_FILE")?;
     let file: TargetsFile = serde_json::from_slice(&bytes)
         .map_err(|_| anyhow::anyhow!("invalid TRUENAS_TARGETS_FILE JSON/schema"))?;
@@ -161,16 +174,17 @@ fn load_targets(path: &str, global: &HashMap<String, String>) -> Result<Vec<Targ
                 "target CA paths must be absolute"
             );
         }
-        let mut values = global.clone();
-        values.insert("TRUENAS_WS_URL".into(), entry.ws_url);
-        values.insert("TRUENAS_USERNAME".into(), entry.username);
-        values.insert("TRUENAS_API_KEY_FILE".into(), entry.api_key_file);
-        if let Some(ca) = entry.ca_cert_file {
-            values.insert("TRUENAS_CA_CERT_FILE".into(), ca);
-        }
         targets.push(TargetConfig {
             name: Some(entry.name),
-            api: Some(load_api(&values)?),
+            api: Some(load_api_fields(
+                transport_config(
+                    &entry.ws_url,
+                    entry.ca_cert_file.as_deref().map(Path::new),
+                    timeout,
+                )?,
+                &entry.username,
+                Path::new(&entry.api_key_file),
+            )?),
         });
     }
     Ok(targets)
@@ -190,18 +204,24 @@ fn validate_name(name: &str) -> Result<()> {
 
 fn load_api(values: &HashMap<String, String>) -> Result<ApiConfig> {
     let transport = TransportConfig::from_values(values)?;
-    let username = required(values, "TRUENAS_USERNAME")?.to_owned();
+    load_api_fields(
+        transport,
+        required(values, "TRUENAS_USERNAME")?,
+        Path::new(required(values, "TRUENAS_API_KEY_FILE")?),
+    )
+}
+
+fn load_api_fields(transport: TransportConfig, username: &str, path: &Path) -> Result<ApiConfig> {
+    ensure!(
+        !username.trim().is_empty(),
+        "missing required TRUENAS_USERNAME"
+    );
     ensure!(
         !username.chars().any(char::is_control),
         "username contains control characters"
     );
-    let path = required(values, "TRUENAS_API_KEY_FILE")?;
-    let key = String::from_utf8(read_config_file(
-        Path::new(path),
-        16384,
-        "TRUENAS_API_KEY_FILE",
-    )?)
-    .map_err(|_| anyhow::anyhow!("TRUENAS_API_KEY_FILE must contain UTF-8"))?;
+    let key = String::from_utf8(read_config_file(path, 16384, "TRUENAS_API_KEY_FILE")?)
+        .map_err(|_| anyhow::anyhow!("TRUENAS_API_KEY_FILE must contain UTF-8"))?;
     let key = key.trim_end_matches(['\r', '\n']).to_owned();
     ensure!(
         !key.is_empty() && !key.chars().any(char::is_control),
@@ -211,8 +231,41 @@ fn load_api(values: &HashMap<String, String>) -> Result<ApiConfig> {
         url: transport.url,
         tls: transport.tls,
         timeout: transport.timeout,
-        credentials: Credentials { username, key },
+        credentials: Credentials {
+            username: username.to_owned(),
+            key,
+        },
     })
+}
+
+fn transport_config(url: &str, ca: Option<&Path>, timeout: Duration) -> Result<TransportConfig> {
+    let url =
+        Url::parse(url).map_err(|_| anyhow::anyhow!("TRUENAS_WS_URL must be a valid WSS URL"))?;
+    validate_ws_url(&url)?;
+    Ok(TransportConfig {
+        url,
+        tls: tls_config(ca)?,
+        timeout,
+    })
+}
+
+/// Read a supported textual setting without including its value in errors.
+pub fn environment_value(key: &str) -> Result<Option<String>> {
+    match std::env::var(key) {
+        Ok(value) => Ok(Some(value)),
+        Err(std::env::VarError::NotPresent) => Ok(None),
+        Err(std::env::VarError::NotUnicode(_)) => bail!("{key} must contain valid Unicode"),
+    }
+}
+
+fn environment_values(keys: &[&str]) -> Result<HashMap<String, String>> {
+    let mut values = HashMap::new();
+    for key in keys {
+        if let Some(value) = environment_value(key)? {
+            values.insert((*key).to_owned(), value);
+        }
+    }
+    Ok(values)
 }
 
 pub fn listen_address(value: Option<&str>) -> Result<SocketAddr> {
