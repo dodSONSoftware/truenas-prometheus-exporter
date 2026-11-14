@@ -869,3 +869,100 @@ async fn direct_transport_entries_reject_unsafe_urls_before_connecting() {
             .is_err()
     );
 }
+
+#[test]
+fn error_and_notification_field_types_are_validated() {
+    for error in [
+        json!({"code":-32601}),
+        json!({"code":-32601,"message":null}),
+        json!({"code":-32601,"message":17}),
+        json!({"code":"-32601","message":"marker"}),
+        json!({"message":"marker"}),
+        json!(null),
+    ] {
+        assert!(matches!(
+            protocol::decode(&json!({"jsonrpc":"2.0","id":"1","error":error}).to_string()),
+            Err(Reason::Protocol)
+        ));
+    }
+    for params in [json!(null), json!(true), json!(1), json!("marker")] {
+        assert!(matches!(
+            protocol::decode(
+                &json!({"jsonrpc":"2.0","method":"notification","params":params}).to_string()
+            ),
+            Err(Reason::Protocol)
+        ));
+    }
+    for text in [
+        r#"{"jsonrpc":"2.0","method":"notification"}"#,
+        r#"{"jsonrpc":"2.0","method":"notification","params":{}}"#,
+        r#"{"jsonrpc":"2.0","method":"notification","params":[]}"#,
+    ] {
+        assert!(matches!(protocol::decode(text), Ok(Incoming::Notification)));
+    }
+    for (error, expected) in [
+        (json!({"code":-32601,"message":""}), Reason::Unsupported),
+        (
+            json!({"code":-32001,"message":"marker","data":{"error":13}}),
+            Reason::Permission,
+        ),
+        (
+            json!({"code":-32001,"message":"marker","data":"any JSON is valid error data"}),
+            Reason::Api,
+        ),
+    ] {
+        assert!(
+            matches!(protocol::decode(&json!({"jsonrpc":"2.0","id":"1","error":error}).to_string()), Ok(Incoming::Response{result:Err(reason),..}) if reason==expected)
+        );
+    }
+}
+
+#[tokio::test]
+async fn malformed_envelope_fails_all_pending_queries_and_reconnects() {
+    for notification in [false, true] {
+        let (listener, url) = listen().await;
+        let server = tokio::spawn(async move {
+            let mut ws = login(&listener).await;
+            let request = text(&mut ws).await;
+            let _second = text(&mut ws).await;
+            let bad = if notification {
+                json!({"jsonrpc":"2.0","method":"notification","params":"PRIVATE_MARKER"})
+            } else {
+                json!({"jsonrpc":"2.0","id":request["id"],"error":{"code":-32601,"message":123}})
+            };
+            ws.send(Message::text(bad.to_string())).await.unwrap();
+            while let Some(Ok(_)) = ws.next().await {}
+            let mut ws = login(&listener).await;
+            let request = text(&mut ws).await;
+            ws.send(Message::text(
+                json!({"jsonrpc":"2.0","id":request["id"],"result":[]}).to_string(),
+            ))
+            .await
+            .unwrap();
+            while let Some(Ok(_)) = ws.next().await {}
+        });
+        let state = State::new(Duration::from_secs(180), false);
+        let stop = CancellationToken::new();
+        let (client, task) = Client::spawn(
+            config(url, Duration::from_secs(3)),
+            state.clone(),
+            stop.clone(),
+        );
+        ready(&state).await;
+        let (first, second) = tokio::join!(client.pool_query(), client.pool_query());
+        assert_eq!(first, Err(Reason::Protocol));
+        assert_eq!(second, Err(Reason::Protocol));
+        timeout(Duration::from_secs(1), async {
+            while state.connected.load(Ordering::Relaxed) {
+                tokio::task::yield_now().await;
+            }
+        })
+        .await
+        .unwrap();
+        ready(&state).await;
+        assert_eq!(client.pool_query().await.unwrap(), json!([]));
+        stop.cancel();
+        task.await.unwrap();
+        server.await.unwrap();
+    }
+}

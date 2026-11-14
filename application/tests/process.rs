@@ -33,6 +33,16 @@ async fn get(address: SocketAddr, path: &str) -> std::io::Result<String> {
 
 #[tokio::test]
 async fn real_process_keeps_http_alive_redacts_trace_and_stops_on_sigterm() {
+    check_process_redaction(false).await;
+}
+
+#[tokio::test]
+async fn malformed_notification_stops_session_without_logging_its_payload() {
+    check_process_redaction(true).await;
+}
+
+async fn check_process_redaction(malformed: bool) {
+    let expected_reason = if malformed { "protocol" } else { "permission" };
     let certificate = rcgen::generate_simple_self_signed(vec!["127.0.0.1".into()]).unwrap();
     let server_config = ServerConfig::builder()
         .with_no_client_auth()
@@ -57,6 +67,8 @@ async fn real_process_keeps_http_alive_redacts_trace_and_stops_on_sigterm() {
                     let request: Value = serde_json::from_str(&text).unwrap();
                     let response = if request["method"] == "auth.login_ex" {
                         json!({"jsonrpc":"2.0","id":request["id"],"result":{"response_type":"SUCCESS"}})
+                    } else if malformed {
+                        json!({"jsonrpc":"2.0","method":"notification","params":marker})
                     } else {
                         json!({"jsonrpc":"2.0","id":request["id"],"error":{"code":-32001,"message":marker,"data":{"error":13,"reason":marker}}})
                     };
@@ -99,7 +111,7 @@ async fn real_process_keeps_http_alive_redacts_trace_and_stops_on_sigterm() {
         loop {
             if get(address, "/metrics")
                 .await
-                .is_ok_and(|text| text.contains("reason=\"permission\""))
+                .is_ok_and(|text| text.contains(&format!("reason=\"{expected_reason}\"")))
             {
                 break;
             }
@@ -148,7 +160,7 @@ async fn real_process_keeps_http_alive_redacts_trace_and_stops_on_sigterm() {
         String::from_utf8_lossy(&output.stdout),
         String::from_utf8_lossy(&output.stderr)
     );
-    assert!(logs.contains("permission"));
+    assert!(logs.contains(expected_reason));
     assert!(!logs.contains(marker));
     assert!(!logs.contains("API_KEY_PLAIN"));
     assert!(!logs.contains("auth.login_ex"));

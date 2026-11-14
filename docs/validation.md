@@ -122,3 +122,9 @@ Formatting, strict Clippy, all 38 tests, the linux/amd64 image build and the loc
 Each connection attempt starts without a stability timestamp. The client sets it only after open_authenticated succeeds, and the retry calculation resets after 120 seconds from that timestamp. A controlled-time unit test advances through repeated 300-second unsuccessful-attempt intervals, verifies exponential jitter ranges through the 60-second cap, retains backoff at 119 seconds of authenticated uptime and verifies reset at exactly 120 seconds. Existing loopback reconnect and cancellation-during-authentication/backoff tests pass.
 
 Formatting, strict Clippy and all 39 Rust tests passed.
+
+## TN-12 RPC envelope validation (2026-11-13)
+
+Errors now require a string message as well as an integer code. Notifications accept omitted parameters, objects and arrays; scalar or null parameters fail the session as protocol errors. Decoder tests retain valid permission/unsupported/API categories and arbitrary valid error data.
+
+Loopback TLS regressions verify malformed errors and notifications fail both pending callers with Protocol, close the affected session and recover after reauthentication. A process-level trace test confirms malformed payload content and synthetic credentials stay redacted while HTTP remains live. Formatting, strict Clippy and all 42 tests passed.

@@ -67,6 +67,9 @@ fn decode_with(
         }
         let result = if let Some(raw) = object.get("error") {
             let error: Value = serde_json::from_str(raw.get()).map_err(|_| Reason::Protocol)?;
+            if error.get("message").and_then(Value::as_str).is_none() {
+                return Err(Reason::Protocol);
+            }
             let code = error
                 .get("code")
                 .and_then(Value::as_i64)
@@ -88,6 +91,14 @@ fn decode_with(
         && !object.contains_key("result")
         && !object.contains_key("error")
     {
+        if object.get("params").is_some_and(|params| {
+            !matches!(
+                params.get().trim_start().as_bytes().first(),
+                Some(b'{' | b'[')
+            )
+        }) {
+            return Err(Reason::Protocol);
+        }
         Ok(Incoming::Notification)
     } else {
         Err(Reason::Protocol)
