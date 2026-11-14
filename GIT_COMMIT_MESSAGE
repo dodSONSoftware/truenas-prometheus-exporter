@@ -1,12 +1,11 @@
-fix: verify the packaged license against the repository copy
+test: verify WebSocket frame and message size limits
 
-[0.0.0] Iron Ferret
+[0.0.1] Iron Ferret
 
-- validation: Compare the installed LICENSE bytes with a read-only source mount
-- license: Include the updated MIT license naming Randy Dodson
-- docs: Refer operators to the source license for current attribution
-- workflow: Include the repository milestone commit instructions
-- VERSION: Initialize the repository release at 0.0.0
-- README.md: Record the Iron Ferret release
+- tests: Exercise valid single-frame and fragmented responses around the 1 MiB boundary
+- tests: Verify oversized frame headers fail before their payload arrives
+- tests: Distinguish malformed JSON from a stalled response
+- VERSION: Increment the patch release to 0.0.1
+- README.md: Update the Iron Ferret release information
 
 developed by Randel Dodson and AI

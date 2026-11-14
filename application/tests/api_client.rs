@@ -194,11 +194,10 @@ async fn connection_loss_reauthenticates_and_recovers() {
 }
 
 #[tokio::test]
-async fn malformed_oversized_and_stalled_servers_fail_boundedly() {
-    for payload in [
-        Some("not-json".to_owned()),
-        Some("x".repeat(1024 * 1024 + 1)),
-        None,
+async fn malformed_and_stalled_servers_report_distinct_errors() {
+    for (payload, expected) in [
+        (Some("not-json"), Reason::Protocol),
+        (None, Reason::Timeout),
     ] {
         let (listener, url) = listen().await;
         let server = tokio::spawn(async move {
@@ -220,7 +219,7 @@ async fn malformed_oversized_and_stalled_servers_fail_boundedly() {
         let result = timeout(Duration::from_secs(1), client.pool_query())
             .await
             .unwrap();
-        assert!(matches!(result, Err(Reason::Protocol | Reason::Timeout)));
+        assert_eq!(result, Err(expected));
         stop.cancel();
         timeout(Duration::from_secs(1), task)
             .await
@@ -229,6 +228,112 @@ async fn malformed_oversized_and_stalled_servers_fail_boundedly() {
         server.abort();
         let _ = server.await;
     }
+}
+
+const WIRE_LIMIT: usize = 1024 * 1024;
+
+#[tokio::test]
+async fn websocket_response_size_boundaries() {
+    use tokio_tungstenite::tungstenite::protocol::frame::{
+        Frame,
+        coding::{Data, OpCode},
+    };
+
+    for fragmented in [false, true] {
+        for length in [WIRE_LIMIT - 1, WIRE_LIMIT, WIRE_LIMIT + 1] {
+            let (listener, url) = listen().await;
+            let server = tokio::spawn(async move {
+                let mut ws = login(&listener).await;
+                let request = text(&mut ws).await;
+                let mut bytes = json!({"jsonrpc":"2.0","id":request["id"],"result":[]})
+                    .to_string()
+                    .into_bytes();
+                bytes.resize(length, b' '); // Trailing whitespace keeps the JSON valid.
+                if fragmented {
+                    let tail = bytes.split_off(length / 2);
+                    ws.send(Message::Frame(Frame::message(
+                        bytes,
+                        OpCode::Data(Data::Text),
+                        false,
+                    )))
+                    .await
+                    .unwrap();
+                    ws.send(Message::Frame(Frame::message(
+                        tail,
+                        OpCode::Data(Data::Continue),
+                        true,
+                    )))
+                    .await
+                    .unwrap();
+                } else {
+                    // The receiver may reject the oversized frame as soon as it reads its header.
+                    let sent = ws
+                        .send(Message::text(String::from_utf8(bytes).unwrap()))
+                        .await;
+                    if length <= WIRE_LIMIT {
+                        sent.unwrap();
+                    }
+                }
+                while let Some(Ok(_)) = ws.next().await {}
+            });
+            let state = State::new(Duration::from_secs(180), false);
+            let stop = CancellationToken::new();
+            let (client, task) = Client::spawn(
+                config(url, Duration::from_secs(3)),
+                state.clone(),
+                stop.clone(),
+            );
+            ready(&state).await;
+            let expected = if length <= WIRE_LIMIT {
+                Ok(json!([]))
+            } else {
+                Err(Reason::Protocol)
+            };
+            assert_eq!(
+                client.pool_query().await,
+                expected,
+                "fragmented={fragmented}, length={length}"
+            );
+            stop.cancel();
+            task.await.unwrap();
+            timeout(Duration::from_secs(1), server)
+                .await
+                .unwrap()
+                .unwrap();
+        }
+    }
+}
+
+#[tokio::test]
+async fn oversized_frame_header_is_rejected_before_payload() {
+    use tokio::io::AsyncWriteExt;
+
+    let (listener, url) = listen().await;
+    let server = tokio::spawn(async move {
+        let mut ws = login(&listener).await;
+        let _request = text(&mut ws).await;
+        // Final unmasked text frame with a 64-bit payload length. Withhold the body
+        // so the aggregate message limit cannot mask a missing frame limit.
+        let mut header = vec![0x81, 127];
+        header.extend_from_slice(&((WIRE_LIMIT + 1) as u64).to_be_bytes());
+        ws.get_mut().write_all(&header).await.unwrap();
+        while let Some(Ok(_)) = ws.next().await {}
+    });
+    let state = State::new(Duration::from_secs(180), false);
+    let stop = CancellationToken::new();
+    let (client, task) = Client::spawn(
+        config(url, Duration::from_secs(2)),
+        state.clone(),
+        stop.clone(),
+    );
+    ready(&state).await;
+    assert_eq!(client.pool_query().await, Err(Reason::Protocol));
+    stop.cancel();
+    task.await.unwrap();
+    timeout(Duration::from_secs(1), server)
+        .await
+        .unwrap()
+        .unwrap();
 }
 
 #[tokio::test]
