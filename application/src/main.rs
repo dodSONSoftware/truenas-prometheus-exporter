@@ -80,7 +80,7 @@ async fn main() -> Result<()> {
             return Ok(());
         }
         [arg] if arg == "--version" => {
-            println!("truenas-exporter {}", env!("CARGO_PKG_VERSION"));
+            println!("truenas-exporter {}", include_str!("../../VERSION").trim());
             return Ok(());
         }
         [] => {}

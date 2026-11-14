@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.2 - 2026-11-14
+
+- Report root VERSION from the executable and include it in container builds.
+- Require an explicit reviewed image for the production Compose example; use a development tag for synthetic local builds.
+
+
 ## 0.4.1 - 2026-11-14
 
 - Reverify captured CPU, memory, network and ARC conversions against pinned source and specify bounded live comparison windows.

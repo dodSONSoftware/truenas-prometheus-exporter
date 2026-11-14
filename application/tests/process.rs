@@ -269,3 +269,22 @@ async fn healthcheck_maps_wildcard_listen_addresses_to_loopback() {
         server.await.unwrap();
     }
 }
+
+#[tokio::test]
+async fn version_reports_root_release_without_configuration() {
+    let output = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+        .env_clear()
+        .arg("--version")
+        .output()
+        .await
+        .unwrap();
+    assert!(output.status.success());
+    assert_eq!(
+        String::from_utf8(output.stdout).unwrap(),
+        format!(
+            "truenas-exporter {}\n",
+            include_str!("../../VERSION").trim()
+        )
+    );
+    assert!(output.stderr.is_empty());
+}

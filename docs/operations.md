@@ -30,3 +30,5 @@ The [phased memory profile](operational-memory-profile.md) adds integrated_memor
 
 
 [Separate-cgroup validation](isolated-cgroup-validation.md) uses scripts/profile-isolated-cgroups.py to run the fixture and exporter in separate containers/cgroups sharing only the network-disabled loopback namespace. It requires an explicit local Docker context and rejects real endpoints/credentials. Invoke this fourth sustained scenario through that controller; select exact test names for the three in-process scenarios instead of running every ignored operational test indiscriminately.
+
+The executable --version reports the root VERSION release. For the observability Compose example, set TRUENAS_EXPORTER_IMAGE to the reviewed immutable image digest or release tag. The local synthetic Compose build uses the dev tag.

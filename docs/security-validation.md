@@ -130,3 +130,7 @@ After the transport diagnostic and multi-target implementation, the new image ID
 A full fresh scan invocation of Trivy 0.76.1 again detects 14 OS packages and 0 critical/0 high/23 medium/8 low package findings. Strict cargo-audit again returns 0 vulnerabilities and 0 warnings. No scan exclusions or inline secrets were added. The earlier distroless comparison remains historical evidence for the initial runtime replacement.
 
 Transport-only live tests mount the verified public Caddy CA read-only and never provide API credentials. Positive host/container WSS upgrades and the container's negative trust test establish client TLS behavior independently of macOS native trust. They do not establish authentication, account permissions, backend version or pool schema compatibility.
+
+## November 14 — local 0.4.2 candidate
+
+Local image identity sha256:a658f618c61293f675c4f20847a7cc5e545aff506b40bbd0a087bfcb2fb796cc passed the existing synthetic hardening controller on desktop-linux. cargo-audit loaded 1509 advisories and scanned 173 locked dependencies with --deny warnings successfully. Trivy 0.76.1 HIGH,CRITICAL image gate found zero selected-severity findings across 14 Debian 13.7 packages. This filtered run makes no updated medium/low count claim. It detected no language-specific files. These results apply to this local image/database snapshot.

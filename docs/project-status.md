@@ -1,6 +1,6 @@
 # Current project status
 
-Release 0.4.1, Bronze Ferret, follows documentation checkpoint 3ac2903. Root VERSION is the release authority.
+Release 0.4.2, Bronze Ferret, follows documentation checkpoint 3ac2903. Root VERSION is the release authority.
 
 ## Implemented and evidenced
 

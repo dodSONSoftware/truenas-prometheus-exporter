@@ -1,10 +1,9 @@
-docs: verify captured numerical mappings and bound live acceptance
+fix: align executable and container examples with release authority
 
-[0.4.1] Bronze Ferret
+[0.4.2] Bronze Ferret
 
-- Record exact captured values and fresh pinned producer review
-- Specify bounded numerical and combined daemon observation proposals
-- Include operator LICENSE and commit workflow updates
-- VERSION, README.md and CHANGELOG.md: record release 0.4.1
+- Report root VERSION through the CLI and copy it into container builds
+- Require a reviewed observability image and add a version regression check
+- VERSION, README.md and CHANGELOG.md: record release 0.4.2
 
 developed by Randel Dodson and AI

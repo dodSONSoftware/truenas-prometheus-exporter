@@ -1,5 +1,6 @@
 # Build from the repository root: docker build -f deployment/Dockerfile .
 FROM rust:1.88.0-bookworm@sha256:af306cfa71d987911a781c37b59d7d67d934f49684058f96cf72079c3626bfe0 AS build
+COPY VERSION /build/VERSION
 WORKDIR /build/application
 COPY application/Cargo.toml application/Cargo.lock ./
 COPY application/src ./src

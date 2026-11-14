@@ -2,7 +2,7 @@
 # Use deployment/targets.example.json as the target-file starting point.
 services:
   truenas-exporter:
-    image: local/truenas-rust-exporter:0.1.0
+    image: "${TRUENAS_EXPORTER_IMAGE:?Set the reviewed exporter image tag or digest}"
     restart: unless-stopped
     init: true
     user: "10001:10001"

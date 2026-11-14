@@ -4,7 +4,7 @@ services:
     build:
       context: ..
       dockerfile: deployment/Dockerfile
-    image: local/truenas-rust-exporter:0.1.0-dev
+    image: local/truenas-rust-exporter:dev
     environment:
       TRUENAS_REALTIME_ENABLED: "${TRUENAS_REALTIME_ENABLED:-false}"
       TRUENAS_REALTIME_INTERVAL_SECONDS: "${TRUENAS_REALTIME_INTERVAL_SECONDS:-2}"
