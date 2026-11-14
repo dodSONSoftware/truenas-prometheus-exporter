@@ -1,10 +1,12 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Tin Ferret — version 0.3.6.
+**Release:** Tin Ferret — version 0.3.7.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
-**Development status:** Pool collection and opt-in system/CPU/memory/network/ARC collection are implemented. Authorized native and local Docker preflights and sanitized captured-response replay establish selected TrueNAS 25.04.2.6 compatibility. Numerical comparisons and sustained integrated runtime/resource acceptance remain open; production readiness is not established. Scan metrics and disks/services/alerts remain planned. The existing Graphite pipeline remains independent.
+**Development status:** Pool collection and opt-in system/CPU/memory/network/ARC collection are implemented. Authorized native and local Docker preflights and sanitized captured-response replay establish selected TrueNAS 25.04.2.6 compatibility. Finite synthetic integrated/repeated-recovery and separate-cgroup profiles pass. Independent live numerical/combined-daemon acceptance and production readiness remain open. Scan metrics and disks/services/alerts remain planned. The existing Graphite pipeline remains independent.
+
+Start with the [current project status](docs/project-status.md), [remaining-work plan](docs/implementation-plan.md), [conversation handoff](docs/handoffs/2026-11-14-handoff.md) and [restart prompt](docs/handoffs/2026-11-14-restart-prompt.md). Dated evidence records preserve their original scope.
 
 ## Build, test and run (Debian-based Linux)
 
@@ -31,38 +33,40 @@ For offline development after dependencies have been fetched, add `--offline` to
 
 - `/metrics`: OpenMetrics text with HELP/TYPE, exporter status and unexpired measurements; never queries TrueNAS. Overlapping scrapes during encoding receive 503 with an encoder-busy response.
 - `/healthz`: process liveness; container healthcheck target.
-- `/readyz`: 200 while the required pool snapshot is fresh, otherwise 503. A failed attempt can leave readiness 200 during the finite cache grace period.
+- `/readyz`: 200 while every configured target has all enabled required snapshots fresh and any enabled compatibility gate accepted, otherwise 503. Pool-only mode requires pools; system mode adds system; realtime mode adds CPU/memory/network/ARC. A failed attempt can leave readiness 200 during the finite cache grace period.
 
 Mock mode is labeled `truenas_exporter_mock_mode=1` and keeps `truenas_api_connected=0`. It publishes fictional data to exercise the process, not to simulate an authenticated NAS.
 
-Normal mode requires TRUENAS_WS_URL, TRUENAS_USERNAME and TRUENAS_API_KEY_FILE; WSS verification cannot be disabled. Do not run normal mode against MEMORY ALPHA without explicit operator authorization. Use docs/configuration.md for defaults and validation, not live credentials in shell history.
+Normal mode requires either a validated TRUENAS_TARGETS_FILE or the legacy TRUENAS_WS_URL, TRUENAS_USERNAME and TRUENAS_API_KEY_FILE settings; WSS verification cannot be disabled. Do not run normal mode against MEMORY ALPHA without explicit operator authorization. Use docs/configuration.md for defaults and validation, not live credentials in shell history.
 
 ## Containers
 
 With Docker installed: `docker compose -f deployment/compose.yaml config`, then `docker compose -f deployment/compose.yaml up --build`. The standalone file always uses mock mode, publishes no host port and builds with repository-root context. Its built-in liveness command is available through `docker compose -f deployment/compose.yaml exec truenas-exporter truenas-exporter healthcheck`.
 
-For an independent image build use `docker build --platform linux/amd64 -f deployment/Dockerfile -t local/truenas-rust-exporter:0.1.0 .`. Both base images are digest-pinned. The runtime is a signed, verified distroless cc-debian13 image with no shell or package manager. Local linux/amd64 runtime checks and the high/critical vulnerability gate pass; medium/low findings remain tracked in docs/security-validation.md. No production files are changed by these examples.
+For an independent image build use `docker build --platform linux/amd64 -f deployment/Dockerfile -t local/truenas-rust-exporter:review .`. Both base images are digest-pinned. The runtime uses a digest-pinned distroless cc-debian13 base with no shell or package manager. Recorded base-signature verification and security scan results are dated in docs/security-validation.md; refresh gates for a final candidate rather than treating old counts as current. No production files are changed by these examples.
 
 ## File inventory
 
 | Path | Responsibility |
 | --- | --- |
-| TrueNAS_Codex_Handoff.md | Authoritative brief, historical evidence and operating boundaries |
+| TrueNAS_Codex_Handoff.md | Original brief and operating boundaries; current status/contracts are in docs/ |
 | AGENTS.md | Concise repository-wide development instructions |
 | application/Cargo.toml, Cargo.lock | One package, dependencies and reproducible resolution |
 | application/src/main.rs | Process lifecycle, signals and local healthcheck command |
 | application/src/config.rs | Typed settings, secret-file input and trusted TLS configuration |
 | application/src/api/protocol.rs | Closed method allowlist, JSON-RPC and authentication decoding |
 | application/src/api/client.rs | Bounded connection actor, request correlation and reconnect |
-| application/src/collectors/pools.rs | Typed pool validation and explicit synthetic data |
-| application/src/state.rs | Atomic pool snapshot, monotonic expiry and metric encoding |
+| application/src/collectors/pools.rs, system.rs, realtime.rs | Typed selected-field validation and explicit synthetic data |
+| application/src/api/realtime.rs | Separate authenticated event stream and owned subscription lifecycle |
+| application/src/state.rs | Independent typed group snapshots, monotonic expiry and metric encoding |
 | application/src/scheduler.rs | Periodic reads without overlapping collection attempts |
 | application/src/http.rs | Cached metrics, liveness and readiness routes |
 | fixtures/truenas-25.04.2.6/ | Captured sanitized pool/system/realtime evidence with provenance |
 | application/tests/ | Synthetic fixture, protocol, state, HTTP and loopback TLS tests |
 | deployment/ | Dockerfile, offline Compose, integration/scrape examples and test-only runtime probe |
 | docs/ | Architecture, protocol, compatibility, metrics, configuration and operations contracts |
-| scripts/check.sh | Local Rust quality gates |
+| scripts/check.sh | Local Rust and Python quality gates |
+| scripts/profile-isolated-cgroups.py | Bounded synthetic two-container resource controller |
 | scripts/check-container.py | Local-daemon-only container runtime and security checks |
 | .github/workflows/ci.yaml | Secret-free Rust checks and Docker build if hosted on GitHub |
 | dashboards/ | Reserved for future review artifacts; no live imports |
@@ -71,11 +75,11 @@ For an independent image build use `docker build --platform linux/amd64 -f deplo
 
 ## Prioritized remaining work
 
-1. Pool compatibility is verified through authorized native and local Docker checks, with genuine sanitized captures and offline replay. Extend this evidence to the M3 methods/events as separately authorized. Rust 1.88 and the recorded security gates pass; see docs/security-validation.md.
-2. M3-D realtime collection is implemented behind TRUENAS_REALTIME_ENABLED with independent group freshness. Authorized native/container preflight and four captured-notification replays now pass; the offline [numerical source review](docs/realtime-numerical-review.md) confirms conversions and records upstream semantic limits. The finite synthetic [integrated operational baseline](docs/integrated-operational-validation.md) now passes; the [longer phased profile](docs/operational-memory-profile.md) now records scrape/cooldown and repeated recovery behavior. The [separate-cgroup baseline](docs/isolated-cgroup-validation.md) passed with 63.3 MiB maximum sampled exporter charge under 128 MiB. Paired live numerical verification and production-representative soak/budget confidence remain open.
-3. M3: implement general SCRUB/RESILVER metrics after callable-schema validation; retain explicit live/unit-equivalence acceptance for realtime mappings.
-4. M4: measured resource budgets, long outage tests and operator-verified least privilege.
-5. P1 and dashboard migration artifacts after P0 validation; production rollout requires separate authorization.
+1. Verify and implement the callable SCRUB/RESILVER scan contract and bounded errors/progress/state metrics. Current captures show finished SCRUB only; scans are not yet exposed.
+2. Complete independent numerical/source-chart verification, especially ARC hit-ratio semantics, and separately scoped combined live-daemon/minimum-role acceptance.
+3. Resolve intermittent process/configuration test failures, run hosted final-candidate CI and refresh relevant security/hardening evidence.
+4. Prepare reviewed monitoring artifacts and an operator-approved Linux rollout with parallel Graphite/rollback; production-representative soaks can refine finite resource confidence.
+5. Expand P1 disks/services/alerts and later P2 applications/tasks/VMs after P0 contracts and acceptance. See [implementation-plan.md](docs/implementation-plan.md) for exit criteria.
 
 Licensed under the [MIT License](LICENSE). See docs/implementation-plan.md and docs/validation.md for actual validation and remaining acceptance gates.
 

@@ -83,7 +83,7 @@ The fixture checks every owned unsubscribe request against that connection's ID 
 
 The finite functional gate passes only when readiness/expiry/isolation/recovery/owned-cleanup assertions succeed. Resource observations retain their platform/workload scope. A capped run finishing without OOM does not establish comfortable headroom or long-term stability. In particular, the high native sampled RSS requires profiling before asserting a general low-memory claim; the earlier container run also approached the 128 MiB cgroup cap.
 
-Next resource work is a longer steady-state and repeated recovery profile, distinguishing allocator retention from growth and attributing response/snapshot buffers with controlled scrape pressure. Use child measurements and cgroup measurements separately. Do not change production resource limits or collector defaults based solely on this single finite workload. Independent appliance numerical/chart semantics, least privilege, hosted CI and eventual deployment remain separate gates; see realtime-numerical-review.md.
+At this baseline checkpoint, the next resource work was a longer steady-state and repeated recovery profile (subsequently completed; see the continuation below), distinguishing allocator retention from growth and attributing response/snapshot buffers with controlled scrape pressure. Use child measurements and cgroup measurements separately. Do not change production resource limits or collector defaults based solely on this single finite workload. Independent appliance numerical/chart semantics, least privilege, hosted CI and eventual deployment remain separate gates; see realtime-numerical-review.md.
 
 
 ## Longer phased continuation

@@ -1,10 +1,10 @@
-# Metric catalog (M1/M2 and opt-in M3-C)
+# Implemented metric catalog and deferred scan contract
 
 Prometheus/OpenMetrics encoding includes HELP and TYPE. All unsupported/null measurements are absent. No NaN/Inf. Labels include collector=pools/system/cpu/memory/network/arc, bounded reason categories, validated pool identity/status values, and the explicitly enabled system metadata/finite load windows below. Prometheus supplies job/instance. There is no implicit host label in pool-only mode. Enabled system identity exposes a validated host/version tuple only on truenas_system_info, not on every series.
 
 | Metric | Type | Source / semantics |
 | --- | --- | --- |
-| truenas_api_connected | gauge | 1 only after successful authentication, 0 on disconnect |
+| truenas_api_connected | gauge | 1 only after successful authentication and any enabled compatibility gate, 0 on disconnect |
 | truenas_exporter_connection_errors_total{reason} | counter | Polling-client transport/authentication/gate failures, using bounded reasons; realtime lifecycle failures appear in its group error rows |
 | truenas_exporter_mock_mode | gauge | Explicit synthetic mode 0/1 |
 | truenas_exporter_collection_success{collector} | gauge | Last attempt succeeded AND snapshot remains fresh |
@@ -23,7 +23,7 @@ Prometheus/OpenMetrics encoding includes HELP and TYPE. All unsupported/null mea
 
 Scrub/resilver decision: future metrics use truenas_pool_scan_errors{pool,function}, truenas_pool_scan_progress_ratio{pool,function}, and truenas_pool_scan_state{pool,function,state}; bounded function SCRUB/RESILVER and state SCANNING/FINISHED/CANCELED. Errors is a gauge, not a lifetime counter. No scan means absence. Do not implement the ambiguous truenas_pool_scrub_errors name. Scan metrics are deferred to M3 until the complete callable response contract is verified; M2 ignores scan content.
 
-M3 mapping gate: document exact supported methods/fields for hostname, version, numeric uptime, physical total/available memory and load. Reporting CPU percentage converts once to ratio; link Mbps converts once to bits/s; receive/transmit byte rates remain gauges. Missing down-link rates do not become zero by default. Event documentation does not prove callable method shape. Realtime failure isolation is per CPU/memory/network group; validating one group must not refresh another group's timestamp. Each group needs its own TTL and required/unsupported readiness decision before implementation.
+Implemented system/realtime mappings and required-group freshness are described below and in system-contract.md/realtime-contract.md. CPU percent converts once to ratio; link Mbps once to bits/s; byte rates remain gauges. Callable scan schema is the next mapping gate. Independent numerical/source semantics remain an acceptance boundary even where parsing/replay succeeds.
 
 Tests cover exposition metadata, label escaping, units, expiry boundaries, absent optional fields, invalid ranges, empty results and simultaneous healthy/warning. Pools are capped at 256 and names/codes bounded in length. No GUIDs, paths, messages or timestamps as labels.
 
@@ -70,7 +70,7 @@ These families require TRUENAS_REALTIME_ENABLED=true and TRUENAS_SYSTEM_ENABLED=
 
 Operational collector labels are cpu, memory, network and arc, using the existing attempt/success/duration/last-success/age/error families and bounded reason categories. Each group needs a valid snapshot to start; missing groups never fabricate zeros or timestamps. Optional ARC ratios do not block a valid ARC-size snapshot. Source-defined zero defaults can already erase upstream missing-data provenance; the exporter cannot recover that distinction from an explicit zero. No disk IDs, license/model/serial strings, raw event messages or subscription identifiers are exposed.
 
-Wire/schema/unit evidence is pinned in realtime-contract.md. The application/tests/fixtures/realtime.synthetic.json envelope remains explicitly synthetic; four genuine sanitized notifications now live in fixtures/truenas-25.04.2.6/ with provenance and worker/metric replay. Native/container preflight now verifies effective event-read permission and selected live schema validity. Selected captured-frame values and conversions now replay offline. Exact role inventory, numerical UI/Graphite comparison and integrated resource budgets remain unverified; a capture/replay pass is not full daemon acceptance.
+Wire/schema/unit evidence is pinned in realtime-contract.md. The application/tests/fixtures/realtime.synthetic.json envelope remains explicitly synthetic; four genuine sanitized notifications now live in fixtures/truenas-25.04.2.6/ with provenance and worker/metric replay. Native/container preflight now verifies effective event-read permission and selected live schema validity. Selected captured-frame values and conversions now replay offline. Exact role inventory, numerical UI/Graphite comparison and universal production resource bounds remain unverified; finite integrated/separate-cgroup profiles now pass within documented scope; a capture/replay pass is not full daemon acceptance.
 
 Realtime processing duration measures selected-frame parsing, attributed to each affected group. A single lifecycle/backend failure can increment all four group error counters; summing them does not count unique connection failures. The existing connection-error counter remains owned by the polling client.
 

@@ -1,13 +1,12 @@
-test: isolate exporter and fixture cgroup accounting
+docs: reconcile project status and add conversation handoff
 
-[0.3.6] Tin Ferret
+[0.3.7] Tin Ferret
 
-- tests: Add a controller-driven external exporter mode to the phased operational fixture
-- tooling: Run separately capped containers on shared loopback with bounded Docker statistics and owned cleanup
-- guards: Reject non-loopback targets, real key material, escaped paths and remote Docker endpoints
-- evidence: Record sampled exporter headroom independently of fixture cost and kernel-peak limits
-- docs: Document reproducible isolation, passed checks and remaining production acceptance
-- VERSION: Increment version from 0.3.5 to 0.3.6
-- README.md: Link separate-cgroup validation and update Tin Ferret release information
+- handoff: Add a comprehensive continuation record and pasteable restart prompt
+- status: Consolidate completed evidence and remaining scan, acceptance and delivery work
+- docs: Reconcile stale summaries while preserving dated evidence and archived plan history
+- validation: Record passed ordinary checks, container build and local documentation links
+- VERSION: Increment version from 0.3.6 to 0.3.7
+- README.md: Add current status and handoff navigation and update Tin Ferret release information
 
 developed by Randel Dodson and AI

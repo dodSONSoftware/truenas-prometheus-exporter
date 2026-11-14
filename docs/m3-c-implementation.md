@@ -1,5 +1,7 @@
 # M3-C implementation approach
 
+Historical implementation rationale for the M3-C slice. Later realtime/capture/operational milestones are summarized in [project-status.md](project-status.md); current contracts remain in configuration.md and architecture.md.
+
 Status: implemented and verified offline. No live daemon run or production deployment was performed in this slice.
 
 1. Add TRUENAS_SYSTEM_ENABLED=false as an explicit global switch. Enabled targets require both pool and system snapshots for readiness. Use the configured poll/TTL defaults independently for each group's timestamps; a successful group never refreshes another. Disabled mode keeps the existing pool-only wire behavior and labels.

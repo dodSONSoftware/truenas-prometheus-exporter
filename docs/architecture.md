@@ -1,6 +1,6 @@
 # Architecture and failure contract
 
-One executable and Cargo package. Config validates local inputs before starting. A connection task owns the WebSocket and bounded request map. The pool scheduler performs asynchronous reads. HTTP shares immutable pool data under a short lock and encodes outside the lock; it never calls TrueNAS.
+One executable and Cargo package. Config validates local inputs before starting. Each target has one polling connection actor with a bounded request map, plus an optional separate realtime socket. Pool/system loops and realtime delivery publish independently fresh typed snapshots. HTTP reads cached state under short locks and encodes outside those locks; it never calls TrueNAS.
 
 ## Deterministic state
 
@@ -54,4 +54,4 @@ Enabled targets have a second independently authenticated/version-checked socket
 
 The realtime worker owns exactly one acknowledged subscription ID and one optional pre-ack typed frame. A message publishes independently into four typed latest snapshots under short group locks. No per-event tasks or unbounded application queue are created. All four event groups use a separate configured realtime TTL with independent monotonic timestamps; neither pongs nor a sibling's valid fields refresh a failed group. HTTP remains cache-only, and combined readiness includes all enabled required groups.
 
-Stream silence, remote unsubscribe and transport failures retry with existing capped jittered backoff. Shutdown attempts only the owned unsubscribe and has a one-second cleanup budget, concurrent with the existing HTTP drain. Synthetic mode uses no sockets and is explicitly marked. Offline protocol/process/container checks cover this implementation; authorized live preflight and four captured frames now support the observed schema, while numerical/source equivalence, alternate live variants and full two-sockets-per-target resource measurements remain separate gates.
+Stream silence, remote unsubscribe and transport failures retry with existing capped jittered backoff. Shutdown attempts only the owned unsubscribe and has a one-second cleanup budget, concurrent with the existing HTTP drain. Synthetic mode uses no sockets and is explicitly marked. Offline protocol/process/container checks cover this implementation; authorized live preflight and four captured frames now support the observed schema, while numerical/source equivalence and alternate/combined live variants remain separate gates. Finite two-socket maximum-cardinality and separate-cgroup measurements now pass within the scopes in isolated-cgroup-validation.md; universal production bounds are not established.

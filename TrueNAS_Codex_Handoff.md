@@ -1,5 +1,7 @@
 # TrueNAS SCALE Rust Prometheus Exporter — Codex Development Handoff
 
+**Current navigation (November 14, 2026):** This is the original brief and historical design evidence. Preserve its operating boundaries; use [current status](docs/project-status.md), [implementation plan](docs/implementation-plan.md), [conversation handoff](docs/handoffs/2026-11-14-handoff.md) and [restart prompt](docs/handoffs/2026-11-14-restart-prompt.md) for implemented behavior, clarified defaults/contracts and the next task. Proposed names/defaults below are not claims of current implementation.
+
 **Status:** Implementation specification / initial development brief  
 **Target release:** v0.1.0  
 **Revised:** 2026-10-27 (Codex monorepo and API contract review)  

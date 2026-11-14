@@ -53,7 +53,7 @@ See [capture provenance](../fixtures/truenas-25.04.2.6/README.md) for values/tim
 2. Match version, time window, sampling interval, averaging and chart identity. Use real interface identity only in memory; save aliases and a minimal sanitized report. Historical Graphite examples in the handoff are not contemporary paired evidence.
 3. Compare CPU percentage points with ratio x100, memory with consistent binary/decimal units, signed network kilobits/s with absolute bytes/s x8/1000, and speed with event Mbps. Account for source rounding and differing windows; do not invent a universal tolerance.
 4. For ARC, inspect chart presence/nullness and dimension IDs versus display names. Record installed chart algorithm/runtime version and compare independently derived counter deltas with a declared denominator/interval. UI agreement alone cannot prove correctness if both paths share the same algorithm. Do not induce faults or change appliance configuration.
-5. Close only comparisons supported by paired evidence. Leave unavailable ARC semantics unresolved. Integrated sustained/outage/resource checks can proceed independently with controlled loopback fixtures; no live daemon or production deployment is implied.
+5. Close only comparisons supported by paired evidence. Leave unavailable ARC semantics unresolved. Finite integrated sustained/outage/resource checks subsequently passed with controlled loopback fixtures; see isolated-cgroup-validation.md. Independent numerical acceptance remains open, and no live daemon or production deployment is implied.
 
 ## Additional pinned source identities
 

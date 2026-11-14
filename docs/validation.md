@@ -1,13 +1,15 @@
 # Local validation record
 
-## Current review status — November 13, 2026
+**Current evidence index:** [project-status.md](project-status.md) and [implementation-plan.md](implementation-plan.md). This is a dated ledger; later entries supersede earlier pending statements. Latest functional baseline 069450d passed 77 regular Rust tests and 11 Python tests, with four sustained scenarios ignored by default. Hosted CI, combined live-daemon/numerical/minimum-role acceptance and universal resource guarantees remain unestablished.
+
+## Original review ledger — November 13, 2026 snapshot
 
 Fourteen findings have implementation fixes. TN-02 now has authorized native/container pool captures and offline replay through the production client and HTTP metrics/readiness. Version 25.04.2.6 was initially operator-confirmed; the later M3-B system captures also report it through the API. Earlier results below retain their original scope.
 
 | Finding | Commit | Disposition |
 | --- | --- | --- |
 | TN-01 | 4be109e | Implemented and locally verified |
-| TN-02 | this milestone | Captured full sanitized responses; offline replay passed |
+| TN-02 | 4d7a29f | Captured full sanitized responses; offline replay passed |
 | TN-03 | 0bfcab0 | Implemented and locally verified |
 | TN-04 | 82588c3 | Implemented; finite full-process operational validation passed |
 | TN-05 | 4750a91 | Implemented and locally verified |
@@ -354,3 +356,12 @@ All expiry/recovery/session/owned-shutdown assertions passed: 840 successful scr
 Maximum sampled exporter cgroup charge was 63.30 MiB under 128 MiB, versus fixture 53.42 MiB under 256 MiB. Exporter sampled margin was 64.70 MiB; true kernel high-water and memory-event history were not available from Docker stats. The fixture independently printed a 54.84 MiB kernel peak, showing the limitations of sampling. No universal production budget or optimization is claimed. Exact workload, limits, source/image identities, phase summaries and selected time series are in isolated-cgroup-validation.md and evidence/isolated-cgroup-profile-2026-11-14.json.
 
 Final sh scripts/check.sh passed formatting, strict Clippy, all 77 regular Rust tests and eleven Python tests (six existing cleanup cases plus five new controller-boundary cases). Four sustained scenarios are now ignored by default. The isolated profile ran under pinned Linux Rust 1.88 release; the existing local-child integrated scenario also passed natively on Rust 1.88 after the launch refactoring. Native Rust 1.88 all-target strict Clippy and Linux operational-target strict Clippy passed. The production image build passed; dependencies/base pins are unchanged. Full ordinary-suite MSRV tests, hosted CI and new security scans were not repeated. Historical intermittent configuration/process-test failures retain their unresolved status; the final ordinary suite passed on its first run this milestone.
+
+
+## Documentation and conversation handoff checkpoint — November 14, 2026
+
+Documentation-only release 0.3.7 reconciles current status against functional/tooling baseline 069450d (0.3.6). Added project-status.md, a current implementation plan, an archived prior plan, comprehensive conversation handoff and pasteable restart prompt. Updated current-facing API/architecture/configuration/metric/compatibility/operations summaries; preserved dated capture, operational and security evidence with explicit scope/navigation. External action-plan indexes are reconciled, prior narratives archived and handoff/prompt mirrored there. No production source, tests, runtime configuration, dependencies or base pins changed.
+
+sh scripts/check.sh passed formatting, strict Clippy, 77 regular Rust tests and 11 Python tests; four sustained tests remain ignored by default. The linux/amd64 production build tagged local/truenas-rust-exporter:handoff passed using unchanged production layers. Local Markdown targets across 37 repository/external documentation files were checked with zero missing links. Live appliance calls, sustained resource reruns, full MSRV-suite reruns, hosted CI and new security scans were not performed for this documentation checkpoint. Existing evidence retains its recorded scope.
+
+The next conversation should read project-status.md, implementation-plan.md and handoffs/2026-11-14-handoff.md, then begin offline callable SCRUB/RESILVER contract work. No push, tag, production deployment, dashboard/infrastructure/access-control change or credential-content read occurred.

@@ -1,6 +1,6 @@
 # Operations and deployment boundaries
 
-Development uses synthetic fixtures and loopback servers only. MEMORY ALPHA (10.10.10.7) is strictly off-limits until an operator explicitly authorizes a specific interaction. No test is allowed to use production credentials. Automated tests remain offline. An explicit operator-authorized transport-only command is available; see memory-alpha-integration.md. Authenticated calls must wait for provisioned dedicated credentials.
+Development uses synthetic fixtures and loopback servers only. MEMORY ALPHA (10.10.10.7) is strictly off-limits until an operator explicitly authorizes a specific interaction. No test is allowed to use production credentials. Automated tests remain offline. An explicit operator-authorized transport-only command is available; see memory-alpha-integration.md. The operator has provisioned dedicated credentials and completed the specifically recorded checks; any broader live action still requires matching authorization.
 
 Local: `docker compose -f deployment/compose.yaml config` then `docker compose -f deployment/compose.yaml up --build`. This explicit mock service exposes 9110 only inside its Docker network. Use docker compose exec with the built-in healthcheck for liveness; attach a local Prometheus service to that network to scrape truenas-exporter:9110. A developer may explicitly add a loopback host port mapping for local inspection. The mock stack is not a competing production stack.
 
@@ -8,9 +8,9 @@ Production examples are opt-in artifacts. Use a built, reviewed image and merge 
 
 Run `docker compose config` on the eventual merged configuration before rollout. Verify its actual network name and service DNS. Append the sample scrape job to existing scrape_configs; never replace the existing file. No 9108/9109 port reuse, no Graphite removal or automatic dashboard import. Both jobs must remain during a separately authorized comparison.
 
-Container is non-root, read-only, all capabilities dropped, no-new-privileges, with /healthz healthcheck. /readyz is not a restart trigger. Resource limits are illustrative until measured. TLS failures emit a safe category and trust/name guidance; keys, URLs, frames and remote errors are not logged. Repeated failures use bounded retries.
+Container is non-root, read-only, all capabilities dropped, no-new-privileges, with /healthz healthcheck. /readyz is not a restart trigger. Finite synthetic resource profiles are recorded in isolated-cgroup-validation.md; their sampled values do not establish universal production bounds. TLS failures emit a safe category and trust/name guidance; keys, URLs, frames and remote errors are not logged. Repeated failures use bounded retries.
 
-License: MIT. See the root LICENSE. Local linux/amd64 runtime checks pass through TN-15. RustSec and image scan results are historical until refreshed; medium/low findings remain tracked and captured appliance fixtures are still outstanding; see security-validation.md and validation.md.
+License: MIT. See the root LICENSE. Local linux/amd64 runtime checks pass through TN-15. RustSec and image scan results are historical until refreshed; medium/low findings remain tracked. Captured pool/system/realtime fixtures and scoped live checks now exist; see security-validation.md and validation.md.
 
 The runtime has no shell or package manager. Use logs/metrics and `truenas-exporter healthcheck` for diagnosis; do not add tools to the deployed image. The runtime validation probe is exported and mounted only during local/CI tests. OpenSSL/Python are host-side test requirements, not runtime dependencies.
 
@@ -24,7 +24,7 @@ Container validation reports success after removing its temporary containers. A 
 
 ## Integrated offline operational validation
 
-The opt-in sustained system/realtime test and its container reproduction are documented in [integrated-operational-validation.md](integrated-operational-validation.md). It uses generated synthetic credentials and loopback TLS only, with two sockets per target, silence/outage/recovery and stalled-reader shutdown. Four sustained tests are intentionally ignored by ordinary cargo test and require explicit --ignored invocation. Child CPU/RSS and whole-cgroup resources have different scopes; neither a finite pass nor a capped run certifies long-term memory stability or production readiness.
+The opt-in sustained system/realtime test and its container reproduction are documented in [integrated-operational-validation.md](integrated-operational-validation.md). It uses generated synthetic credentials and loopback TLS only, with two sockets per target, silence/outage/recovery and stalled-reader shutdown. Four sustained tests are intentionally ignored by ordinary cargo test. Select exact --ignored test names for local-child cases; launch the isolated case through its controller. Child CPU/RSS and whole-cgroup resources have different scopes; neither a finite pass nor a capped run certifies long-term memory stability or production readiness.
 
 The [phased memory profile](operational-memory-profile.md) adds integrated_memory_profile, including 30 seconds of warmed baseline, two minutes of scrape pressure, 45 seconds of cooldown and three recovery cycles under a 900-second deadline. It uses the same synthetic fixture; no appliance authorization or production key is needed.
 

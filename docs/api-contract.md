@@ -1,4 +1,4 @@
-# API protocol contract (M2 baseline and M3-A preflight)
+# API protocol contract (implemented pool/system/realtime scope)
 
 Established before M2 implementation. Transport is JSON-RPC 2.0 on a persistent verified WSS connection; no legacy /websocket protocol. Normal mode rejects ws://, URL credentials, queries and fragments. A private CA extends Mozilla roots. Both connection entry points revalidate the same WSS URL constraints before opening a socket, including for directly constructed Rust configurations. Loopback protocol fixtures use synthetic certificates and explicit private trust roots.
 
@@ -20,11 +20,11 @@ Limits: 32 queued commands, 32 in-flight calls, 1 MiB frame/message size. Admiss
 
 Connect/auth/write/read waits are bounded by the API deadline. Authenticated idle sockets receive WebSocket pings; missing inbound traffic closes the connection after two deadlines. Ping frames are answered. Reconnect uses exponential capped backoff (1 to 60 seconds) with jitter and resets only after at least 120 seconds of continuous authenticated uptime. Connection and authentication waits do not contribute to stability; each retry starts without an authenticated timestamp. Cancellation interrupts connect, authentication, polling and backoff. Persistent authentication failures keep HTTP alive and retry with backoff. Logs contain only bounded categories; TLS errors instruct the operator to check trust, validity and DNS/IP certificate identity.
 
-Future subscription demultiplexing must parse method=collection_update with params.collection, params.msg and params.fields, and method=notify_unsubscribed. Slow consumers need bounded latest-value delivery. No subscription freshness is claimed by M2. Runtime version discovery and full realtime envelopes remain explicit M3 gates.
+Implemented realtime demultiplexing parses collection_update with params.collection/msg/fields and notify_unsubscribed on its isolated socket; see the lifecycle section below. Runtime version gating is implemented when system/realtime mode is enabled. Captured envelopes and finite synthetic operational evidence exist; numerical and combined live-daemon acceptance remain separate.
 
 ## Integration transport and scope
 
-The approved MEMORY ALPHA URL is now wss://memory-alpha.home.lab/api/current, through Caddy. The optional CA file extends trusted roots without disabling name checks. check-transport performs only verified WSS upgrade/close and does not send login or JSON-RPC method frames. Authenticated appliance tests remain gated on operator-provisioned read-only credentials. See memory-alpha-integration.md for actual outcomes.
+The approved MEMORY ALPHA URL is now wss://memory-alpha.home.lab/api/current, through Caddy. The optional CA file extends trusted roots without disabling name checks. check-transport performs only verified WSS upgrade/close and does not send login or JSON-RPC method frames. Dedicated credentials and the recorded selected-method checks are now established; additional live actions remain limited to their specifically authorized scope. See memory-alpha-integration.md for actual outcomes.
 
 Multi-target mode gives each target its own client instance; the closed method allowlist is unchanged. No user-supplied method names, arbitrary API discovery, mutating operations or runtime HTTP target routing are exposed.
 

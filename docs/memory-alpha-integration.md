@@ -1,5 +1,7 @@
 # MEMORY ALPHA integration status
 
+Evidence ledger: sections retain the scope of their named milestones. For current aggregate implementation/acceptance use [project-status.md](project-status.md); earlier pending statements do not undo later scoped checks or synthetic profiles.
+
 Endpoint: `wss://memory-alpha.home.lab/api/current`. Backend and proxy details, supplied by the operator: TrueNAS SCALE 25.04.2.6 at 10.10.10.7, Caddy at 10.10.10.2. This integration test is explicitly authorized for read-only access; infrastructure changes remain prohibited.
 
 ## Authorized realtime captures — November 14, 2026 UTC
@@ -10,7 +12,7 @@ Raw text existed only in process memory. Before writing, the helper checked fixe
 
 The captures contain 13 CPU entries and one up interface in each frame. Native aggregate CPU values are 0/0 percent; later Docker values are 9/8 percent. Selected ARC hit percentages are explicit zero throughout. The source may substitute zero for unavailable dimensions, so the ARC values are preserved but do not prove cache efficiency or chart availability. No down/missing/backend-failure or null-temperature variant was observed; those cases remain synthetic. No numerical UI/Graphite comparison was performed.
 
-Docker retained UID/GID 10001:10001, read-only root, dropped capabilities, no-new-privileges and a 128 MiB limit. Its read-only mode-0400 secret mount and temporary containers/volume were removed; final inventories were empty and the Mac key remained mode 0600. The resource limit is not a maximum-target measurement. Production worker/metric replay of all four frames passes offline; full integrated runtime/resource acceptance remains pending.
+Docker retained UID/GID 10001:10001, read-only root, dropped capabilities, no-new-privileges and a 128 MiB limit. Its read-only mode-0400 secret mount and temporary containers/volume were removed; final inventories were empty and the Mac key remained mode 0600. The resource limit is not a maximum-target measurement. Production worker/metric replay of all four frames passes offline; combined live-daemon acceptance remains pending. Finite synthetic integrated/repeated-recovery and separate-cgroup profiles subsequently passed; see project-status.md.
 
 ## Authorized realtime preflight — November 14, 2026 UTC
 
@@ -24,7 +26,7 @@ The Mac ran the repository binary through cargo run --quiet --locked. Docker Des
 
 The existing Mac key remained mode 0600. A temporary Docker volume received the key through stdin, with mode 0400 and ownership 10001:10001, and was mounted read-only. The CA was also mounted read-only. The temporary helper/probe containers and secret volume were removed; subsequent inventories were empty for their names. Credentials, raw responses, source identities, event payloads and subscription IDs were not printed or saved. No captured realtime fixture was created by these preflights.
 
-This establishes successful read subscription and owned unsubscribe with this credential, plus live acceptance of the selected group schemas. It does not independently inventory its role list, establish minimum privilege or denial of writes, record the current exact patch version beyond the supported-family check, compare UI/Graphite values, or validate a long-running integrated daemon. Existing system fixtures retain their earlier exact 25.04.2.6 provenance. Captured realtime envelopes and full enabled-mode resource/outage acceptance remain pending. No infrastructure, live dashboard or production deployment was changed.
+This establishes successful read subscription and owned unsubscribe with this credential, plus live acceptance of the selected group schemas. It does not independently inventory its role list, establish minimum privilege or denial of writes, record the current exact patch version beyond the supported-family check, compare UI/Graphite values, or validate a long-running integrated daemon. Existing system fixtures retain their earlier exact 25.04.2.6 provenance. At this preflight checkpoint captures/resource work was pending; later sections and project-status.md record completed captured replay and finite synthetic profiles. No infrastructure, live dashboard or production deployment was changed.
 
 ## Authorized system checks — November 14, 2026 UTC
 
@@ -32,7 +34,7 @@ The operator separately authorized read-only auth.login_ex and system.info check
 
 - The actual production check-system command passed on native macOS and the local linux/amd64 distroless image local/truenas-rust-exporter:system-preflight. Both verified TLS/hostname, typed authentication, selected system.info fields and 25.04.2.x compatibility. The command printed only fixed success text.
 - A separate temporary Rust capture harness reused configuration/TLS/protocol/authentication helpers and the system parser. It requested system.info with params=[] once per capture, under 1 MiB frame/message bounds and a 30-second outer timeout. It sanitized successful replies in memory before writing anything; raw responses and authentication exchanges were never saved.
-- The API-reported short version is 25.04.2.6 in both captures. This is an API observation through the verified configured endpoint, beyond the preceding operator-only version evidence. Automatic per-connection daemon version gating is still not implemented.
+- The API-reported short version is 25.04.2.6 in both captures. This is an API observation through the verified configured endpoint, beyond the preceding operator-only version evidence. At this M3-B checkpoint automatic daemon gating was not implemented; M3-C subsequently implemented the opt-in gate.
 - Both Docker runs used UID/GID 10001:10001, read-only root, dropped capabilities, no-new-privileges and a 128 MiB memory limit. The key was provisioned over stdin into a temporary volume as mode 0400, owned by UID 10001 and mounted read-only. The CA was also mounted read-only. Temporary containers and secret volumes were removed, and final inventory checks found none remaining. The Mac key remains mode 0600.
 - Full sanitized host/container system envelopes are saved beside the pool captures. The fixture README records local UTC output timestamps, aliasing, preserved measurement fields and limitations. Serial/model/product/manufacturer/timezone strings were replaced; the hostname is aliased, and license is null in both captures.
 - Offline captured_system_envelopes_replay_through_preflight_offline replays each full envelope through the production check_system path over loopback TLS, changing only the mock request ID. It asserts API version, hostname alias, physical-memory bytes, fractional uptime and load values. The existing decoder accepted the genuine responses without changes.
@@ -51,7 +53,7 @@ The operator explicitly authorized read-only `auth.login_ex` and `pool.query` ch
 - Full pool response structures were sanitized in memory before saving. Original pool names, GUIDs, device identities and paths were not persisted. No authentication exchanges or raw responses were saved. See `fixtures/truenas-25.04.2.6/README.md` for exact transformations.
 - Successful authentication and pool.query demonstrate this account can read pools; the breadth/minimum of its privileges and denial of writes were not tested. All other methods and realtime events remain outside this authorization.
 
-TN-02 now has captured appliance evidence and offline replay. M3 can begin offline design/implementation; live version/system/event validation needs separately scoped operator authorization. Production deployment and dashboard changes remain unauthorized.
+TN-02 now has captured appliance evidence and offline replay. At this TN-02 checkpoint M3 could begin offline; the later system/realtime records describe subsequent implementation and separately authorized evidence. Production deployment and dashboard changes remain unauthorized.
 
 ## Historical transport-only checks
 

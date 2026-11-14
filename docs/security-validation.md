@@ -1,6 +1,8 @@
 # Item 1 security validation
 
-## Current refresh — November 13, 2026
+**Scope notice (November 14, 2026):** Security results below belong to their recorded image/database/date. Current runtime base is pinned in deployment/Dockerfile; later tooling/docs milestones have not changed dependencies/base pins or performed new scans. Captured pool/system/realtime evidence now exists; minimum-role, final-candidate CI/security and deployment acceptance remain open. See [project-status.md](project-status.md).
+
+## Latest recorded refresh — November 13, 2026
 
 The runtime digest is now sha256:cb87acc574abe719b6e5c547384defa2f7b1f24af9605d3f618cf852495d8be2. Cosign verified the exact digest with issuer https://accounts.google.com and identity keyless@distroless.iam.gserviceaccount.com, including signature claims and transparency evidence.
 
@@ -14,7 +16,7 @@ cargo-audit 0.22.2 passed with --deny warnings against 173 locked dependencies u
 
 Date: 2026-10-27 (America/Chicago). Initial security checks used local mocks. Subsequent explicitly authorized transport-only Caddy endpoint tests are recorded in memory-alpha-integration.md; no authenticated NAS API call or production deployment was performed.
 
-## Current result
+## Historical October result (base superseded by the later recorded refresh)
 
 The runtime now uses `gcr.io/distroless/cc-debian13:nonroot`, pinned to `sha256:3ee00291cf386ec52a552e6a858d555debd74776eb4bfa53fa3df2cd6677515e`. The linux/amd64 image passes the explicit **HIGH/CRITICAL vulnerability gate with no exclusions**. Medium/low findings remain visible below. This is not a guarantee of vulnerability absence or permission to deploy.
 
@@ -119,7 +121,7 @@ CI runs the shell-free runtime script and a Trivy 0.76.1 HIGH/CRITICAL gate thro
 
 Digest pinning fixes the runtime filesystem, including certificates and packaged libraries. It also means security updates require an intentional digest refresh, signature verification, rebuild, regression checks and re-scan. The Rust builder remains separately pinned. No mutable APT install remains in the runtime stage.
 
-The container high/critical gate is closed for this image/database snapshot. Captured sanitized 25.04.2.6 fixtures, actual appliance roles and deployment validation remain separate outstanding work. Production rollout still requires explicit authorization.
+The container high/critical gate is closed for this image/database snapshot. Captured fixtures were outstanding at this historical checkpoint and subsequently completed for pool/system/realtime; minimum appliance roles and deployment acceptance remain open. Production rollout still requires explicit authorization.
 
 ## Multi-target rebuild
 

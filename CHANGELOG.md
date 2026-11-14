@@ -1,6 +1,10 @@
 # Changelog
 
+Entries below describe their milestone at the time, including then-pending work. For current disposition see [project-status.md](docs/project-status.md).
+
 ## Development history
+
+- Consolidate current implementation/acceptance status, archive superseded plan snapshots, reconcile stale summaries and add a comprehensive conversation handoff plus pasteable restart prompt. Preserve dated evidence and live authorization limits.
 
 - Add an opt-in two-container cgroup profile with loopback-only synthetic fixtures, a separately capped production exporter, bounded read-only Docker statistics, controller guards and owned cleanup. Record finite sampled headroom separately from fixture cost and kernel-peak/production-budget limits.
 
