@@ -2,6 +2,8 @@
 
 ## Development history
 
+- Add an opt-in two-container cgroup profile with loopback-only synthetic fixtures, a separately capped production exporter, bounded read-only Docker statistics, controller guards and owned cleanup. Record finite sampled headroom separately from fixture cost and kernel-peak/production-budget limits.
+
 - Add an opt-in phased memory profile with cross-platform child CPU/RSS sampling, baseline/load/cooldown and three recovery cycles. Preserve synthetic evidence and separate scrape-associated native peaks from quiet recovery and whole-cgroup pressure; no production behavior changes.
 
 - Add an opt-in full-process maximum-cardinality system/realtime operational scenario, shared with the existing pool-only fixture. Verify silence isolation, full outage recovery, final owned unsubscribe requests and stalled-reader shutdown; record native and capped-container child/cgroup resource observations without claiming long-term memory stability.

@@ -178,7 +178,7 @@ The test is finite operational evidence for the current pool exporter. Appliance
 To reproduce natively from the repository root:
 
 ~~~sh
-cargo +1.88.0 test --locked --manifest-path application/Cargo.toml --test operational -- --ignored --nocapture
+cargo +1.88.0 test --locked --manifest-path application/Cargo.toml --test operational sustained_collection_outage_recovery_and_stalled_sigterm -- --ignored --nocapture
 ~~~
 
 To export the operational binaries and run with 128 MiB, no swap, 0.5 CPU, loopback-only networking, a read-only runtime and a temporary filesystem:
@@ -194,7 +194,7 @@ docker --context desktop-linux run --rm --platform linux/amd64 \
   --mount "type=bind,src=$validation_dir,dst=/validation,readonly" \
   --mount "type=bind,src=$validation_dir/truenas-exporter,dst=/build/application/target/release/truenas-exporter,readonly" \
   --entrypoint /validation/operational \
-  local/truenas-rust-exporter:operational --ignored --nocapture
+  local/truenas-rust-exporter:operational sustained_collection_outage_recovery_and_stalled_sigterm --ignored --nocapture
 ~~~
 
 The operational-test build stage exports test binaries only. The final runtime contains the exporter and license. Real-runtime hardening checks pass with the refreshed base. The exact final image and scanner results are recorded in security-validation.md.
@@ -343,3 +343,14 @@ The whole Docker cgroup reached its exact 128 MiB cap while both processes compl
 Final sh scripts/check.sh passed formatting, strict Clippy, 77 regular Rust tests and six Python tests; three sustained scenarios are now intentionally ignored by default. This milestone separately executed the new profile on both platforms; the two older sustained scenarios retain the preceding milestone's results. The first ordinary-suite run failed in the pre-existing configuration process test environment_unicode_errors_are_redacted_and_unrelated_bytes_are_ignored with ConnectionReset at tests/config.rs:316. Its isolated rerun and full-suite rerun passed; the cause remains unresolved, and this is not claimed as a fixed regression.
 
 Native Rust 1.88 all-target strict Clippy passed. The Linux operational target also passed strict Clippy under pinned Rust 1.88 after adding that component only to a temporary validation build stage. Initial Linux-lint setup failed on unrelated temporary-directory metadata, then on the missing builder component; neither was a source diagnostic. The production container build passed; its source/dependencies/base pins are unchanged. Hosted CI, new security scans and full ordinary-suite MSRV tests were not repeated. Temporary profile containers were removed; no push, tag, production deployment or infrastructure/dashboard change occurred.
+
+
+## Separate exporter/fixture cgroup profile — November 14, 2026
+
+The new controller-driven ignored scenario passed the same finite phased workload in 328.26 seconds. The actual production image entrypoint ran in its own UID-10001, read-only, no-capabilities, no-new-privileges cgroup at 128 MiB/no swap/half a CPU; the fixture had a separate 256 MiB/no swap/one-core cgroup. They shared only the fixture's network-none loopback namespace. Native external Docker stats observed 323 paired samples; no observer process or Docker socket entered either container. Normal exporter image healthchecks remained enabled.
+
+All expiry/recovery/session/owned-shutdown assertions passed: 840 successful scrapes, 6100 expected encoder-busy responses, 4384 pool requests, 45 ms maximum sampled health latency, 32 active sockets after each recovery and 16 final owned unsubscribe requests. Controller-coordinated stop took 2189 ms including polling/API overhead; it is not an isolated SIGTERM latency. Both containers exited zero, exporter OOMKilled=false, and owned containers/control files were removed. Only generated synthetic credentials/CA/configuration were used. No appliance, Prometheus/Grafana, production source, deployment or infrastructure change occurred.
+
+Maximum sampled exporter cgroup charge was 63.30 MiB under 128 MiB, versus fixture 53.42 MiB under 256 MiB. Exporter sampled margin was 64.70 MiB; true kernel high-water and memory-event history were not available from Docker stats. The fixture independently printed a 54.84 MiB kernel peak, showing the limitations of sampling. No universal production budget or optimization is claimed. Exact workload, limits, source/image identities, phase summaries and selected time series are in isolated-cgroup-validation.md and evidence/isolated-cgroup-profile-2026-11-14.json.
+
+Final sh scripts/check.sh passed formatting, strict Clippy, all 77 regular Rust tests and eleven Python tests (six existing cleanup cases plus five new controller-boundary cases). Four sustained scenarios are now ignored by default. The isolated profile ran under pinned Linux Rust 1.88 release; the existing local-child integrated scenario also passed natively on Rust 1.88 after the launch refactoring. Native Rust 1.88 all-target strict Clippy and Linux operational-target strict Clippy passed. The production image build passed; dependencies/base pins are unchanged. Full ordinary-suite MSRV tests, hosted CI and new security scans were not repeated. Historical intermittent configuration/process-test failures retain their unresolved status; the final ordinary suite passed on its first run this milestone.

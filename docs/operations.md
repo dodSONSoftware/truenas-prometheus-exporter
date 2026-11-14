@@ -24,6 +24,9 @@ Container validation reports success after removing its temporary containers. A 
 
 ## Integrated offline operational validation
 
-The opt-in sustained system/realtime test and its container reproduction are documented in [integrated-operational-validation.md](integrated-operational-validation.md). It uses generated synthetic credentials and loopback TLS only, with two sockets per target, silence/outage/recovery and stalled-reader shutdown. Three sustained tests are intentionally ignored by ordinary cargo test and require explicit --ignored invocation. Child CPU/RSS and whole-cgroup resources have different scopes; neither a finite pass nor a capped run certifies long-term memory stability or production readiness.
+The opt-in sustained system/realtime test and its container reproduction are documented in [integrated-operational-validation.md](integrated-operational-validation.md). It uses generated synthetic credentials and loopback TLS only, with two sockets per target, silence/outage/recovery and stalled-reader shutdown. Four sustained tests are intentionally ignored by ordinary cargo test and require explicit --ignored invocation. Child CPU/RSS and whole-cgroup resources have different scopes; neither a finite pass nor a capped run certifies long-term memory stability or production readiness.
 
 The [phased memory profile](operational-memory-profile.md) adds integrated_memory_profile, including 30 seconds of warmed baseline, two minutes of scrape pressure, 45 seconds of cooldown and three recovery cycles under a 900-second deadline. It uses the same synthetic fixture; no appliance authorization or production key is needed.
+
+
+[Separate-cgroup validation](isolated-cgroup-validation.md) uses scripts/profile-isolated-cgroups.py to run the fixture and exporter in separate containers/cgroups sharing only the network-disabled loopback namespace. It requires an explicit local Docker context and rejects real endpoints/credentials. Invoke this fourth sustained scenario through that controller; select exact test names for the three in-process scenarios instead of running every ignored operational test indiscriminately.

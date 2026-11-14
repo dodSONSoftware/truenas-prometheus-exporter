@@ -156,6 +156,13 @@ See integrated-operational-validation.md and validation.md for results. Producti
 
 - [x] Run a longer warmed-baseline/load/cooldown comparison and three outage/recovery cycles on native macOS and capped network-disabled Docker, with per-phase child CPU/RSS and durable synthetic evidence.
 - [x] Record the scrape-associated native RSS peak, cooldown reduction and nearly flat quiet-recovery minima without inferring allocation ownership or indefinite leak freedom.
-- [ ] Establish production headroom with separate exporter/fixture cgroup accounting: the combined profile reached its 128 MiB cap despite successful completion. Do not infer exporter requirements from whole-harness peak or silently change production limits.
+- [x] Complete finite separate exporter/fixture cgroup accounting; the later isolated baseline records 63.30 MiB maximum sampled exporter charge under 128 MiB. True kernel high-water/long-term production budget confidence remains outside this finite result.
 
 See operational-memory-profile.md and docs/evidence/operational-memory-profile-2026-11-14.json. Independent live numerical/role acceptance and the historical intermittent process-fixture reliability issue remain open. Callable SCRUB/RESILVER schema work remains the next feature milestone; no production collector change is justified by this profile alone.
+
+
+## Separate-cgroup resource baseline — November 14, 2026
+
+The phased workload passed with the production exporter in its own 128 MiB/half-core cgroup and the fixture in a separate 256 MiB/one-core cgroup. External read-only Docker stats recorded a 63.30 MiB highest sampled exporter charge (64.70 MiB sampled margin) and 53.42 MiB fixture charge. All recovery/shutdown assertions passed; exporter exit was zero and OOMKilled=false. No production code, limits or infrastructure changed.
+
+This closes the finite attribution milestone, not a universal production budget. The exporter kernel high-water mark was unavailable; memory-event history, sampling gaps, payload variation and longer soaks remain explicit limits. See isolated-cgroup-validation.md and its durable evidence. Next feature work is callable SCRUB/RESILVER contract review using pinned source and captured evidence; live numerical/role/CI/deployment gates remain separate.

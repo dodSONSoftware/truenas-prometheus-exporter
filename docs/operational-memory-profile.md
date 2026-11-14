@@ -67,3 +67,8 @@ No production correction was made: the profile did not reproduce a functional fa
 Interpret the warmed baseline, load, cooldown and restored phases separately. A load-associated increase that remains during cooldown is consistent with retention but does not identify its cause. Flat/reduced RSS during a few recovery cycles is evidence against per-cycle resident growth in this run, not proof that every object is freed or that longer runs cannot grow. First/last/peak phase summaries are coarse observations, not continuous allocation traces or a statistically established steady-state plateau.
 
 This profile can identify where a follow-up heap/allocator experiment is warranted. Do not add a new allocator, adjust production limits, reduce supported cardinalities or change response semantics without a demonstrated cause and focused verification. Existing independent live numerical/chart, least-privilege, hosted CI and deployment gates remain separate. The next feature milestone is callable SCRUB/RESILVER contract review; any resource issue demonstrated here must retain an explicit disposition alongside that work.
+
+
+## Separate-accounting continuation
+
+The later [isolated cgroup baseline](isolated-cgroup-validation.md) separates the production exporter from fixtures/clients. The same finite phased workload passed with a 63.30 MiB sampled exporter charge under 128 MiB. This resolves the preceding combined-cgroup attribution gap within its measured scope; it does not turn sampled values into kernel high-water marks or diagnose native heap ownership. Four sustained scenarios are now ignored by ordinary cargo test; the isolated scenario is launched only through its controller.

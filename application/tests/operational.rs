@@ -59,11 +59,23 @@ async fn integrated_memory_profile() {
         .unwrap();
 }
 
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "Explicit two-container exporter/fixture cgroup profile; requires local controller"]
+async fn isolated_cgroup_memory_profile() {
+    timeout(
+        Duration::from_secs(900),
+        exercise(Scenario::IsolatedProfile),
+    )
+    .await
+    .unwrap();
+}
+
 #[derive(Clone, Copy)]
 enum Scenario {
     Pool,
     Integrated,
     MemoryProfile,
+    IsolatedProfile,
 }
 
 struct ActiveSession(Arc<AtomicUsize>);
@@ -161,7 +173,19 @@ fn set_phase(phase: &std::sync::Mutex<&'static str>, label: &'static str) {
 
 async fn exercise(scenario: Scenario) {
     let realtime = !matches!(scenario, Scenario::Pool);
-    let profile = matches!(scenario, Scenario::MemoryProfile);
+    let external = matches!(scenario, Scenario::IsolatedProfile);
+    let profile = matches!(
+        scenario,
+        Scenario::MemoryProfile | Scenario::IsolatedProfile
+    );
+    let control = external.then(|| {
+        let path = std::path::PathBuf::from(
+            std::env::var_os("OPERATIONAL_CONTROL_DIR")
+                .expect("isolated profile requires a local control directory"),
+        );
+        assert!(path.is_absolute() && path.is_dir());
+        path
+    });
     let phase = Arc::new(std::sync::Mutex::new("startup"));
     let experiment_start = Instant::now();
     let active = Arc::new(AtomicUsize::new(0));
@@ -295,7 +319,10 @@ async fn exercise(scenario: Scenario) {
             }
         }
     });
-    let directory = tempfile::tempdir().unwrap();
+    let directory = match &control {
+        Some(path) => tempfile::tempdir_in(path).unwrap(),
+        None => tempfile::tempdir().unwrap(),
+    };
     let key = directory.path().join("key");
     let ca = directory.path().join("ca");
     let file = directory.path().join("targets.json");
@@ -313,37 +340,75 @@ async fn exercise(scenario: Scenario) {
     let reserve = TcpListener::bind("127.0.0.1:0").await.unwrap();
     let address = reserve.local_addr().unwrap();
     drop(reserve);
-    let mut child = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
-        .env_clear()
-        .env("TRUENAS_TARGETS_FILE", &file)
-        .env("EXPORTER_LISTEN", address.to_string())
-        .env("TRUENAS_POLL_INTERVAL_SECONDS", "1")
-        .env("TRUENAS_API_TIMEOUT_SECONDS", "1")
-        .env("TRUENAS_CACHE_TTL_SECONDS", "3")
-        .env("TRUENAS_SYSTEM_ENABLED", realtime.to_string())
-        .env("TRUENAS_REALTIME_ENABLED", realtime.to_string())
-        .env("TRUENAS_REALTIME_TTL_SECONDS", "3")
-        .env("RUST_LOG", "error")
-        .stdout(Stdio::null())
-        .stderr(Stdio::inherit())
-        .kill_on_drop(true)
-        .spawn()
+    let mut child = if external {
+        None
+    } else {
+        Some(
+            Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+                .env_clear()
+                .env("TRUENAS_TARGETS_FILE", &file)
+                .env("EXPORTER_LISTEN", address.to_string())
+                .env("TRUENAS_POLL_INTERVAL_SECONDS", "1")
+                .env("TRUENAS_API_TIMEOUT_SECONDS", "1")
+                .env("TRUENAS_CACHE_TTL_SECONDS", "3")
+                .env("TRUENAS_SYSTEM_ENABLED", realtime.to_string())
+                .env("TRUENAS_REALTIME_ENABLED", realtime.to_string())
+                .env("TRUENAS_REALTIME_TTL_SECONDS", "3")
+                .env("RUST_LOG", "error")
+                .stdout(Stdio::null())
+                .stderr(Stdio::inherit())
+                .kill_on_drop(true)
+                .spawn()
+                .unwrap(),
+        )
+    };
+    if let Some(control) = &control {
+        let launch = json!({"environment":{
+            "TRUENAS_TARGETS_FILE":file,"EXPORTER_LISTEN":address.to_string(),
+            "TRUENAS_POLL_INTERVAL_SECONDS":"1","TRUENAS_API_TIMEOUT_SECONDS":"1",
+            "TRUENAS_CACHE_TTL_SECONDS":"3","TRUENAS_SYSTEM_ENABLED":"true",
+            "TRUENAS_REALTIME_ENABLED":"true","TRUENAS_REALTIME_TTL_SECONDS":"3",
+            "RUST_LOG":"error"
+        }});
+        std::fs::write(control.join("launch.tmp"), launch.to_string()).unwrap();
+        std::fs::rename(control.join("launch.tmp"), control.join("launch.json")).unwrap();
+        timeout(Duration::from_secs(30), async {
+            while !control.join("started").exists() {
+                assert!(
+                    !control.join("exit.json").exists(),
+                    "external exporter exited before startup"
+                );
+                sleep(Duration::from_millis(20)).await;
+            }
+        })
+        .await
         .unwrap();
+    }
     #[cfg(any(target_os = "linux", target_os = "macos"))]
     let resources_stop = tokio_util::sync::CancellationToken::new();
     #[cfg(any(target_os = "linux", target_os = "macos"))]
-    let resources = tokio::spawn(sample_child(
-        child.id().unwrap(),
-        phase.clone(),
-        resources_stop.clone(),
-    ));
-    println!(
-        "operational_exporter_pid={} realtime={realtime}",
-        child.id().unwrap()
-    );
+    let resources = child.as_ref().map(|child| {
+        tokio::spawn(sample_child(
+            child.id().unwrap(),
+            phase.clone(),
+            resources_stop.clone(),
+        ))
+    });
+    if let Some(child) = &child {
+        println!(
+            "operational_exporter_pid={} realtime={realtime}",
+            child.id().unwrap()
+        );
+    } else {
+        println!("operational_exporter=external_isolated_cgroup");
+    }
     timeout(Duration::from_secs(15), async {
         loop {
-            assert!(child.try_wait().unwrap().is_none());
+            if let Some(child) = &mut child {
+                assert!(child.try_wait().unwrap().is_none());
+            } else {
+                assert!(!control.as_ref().unwrap().join("exit.json").exists());
+            }
             if TcpStream::connect(address).await.is_ok()
                 && get(address, "/readyz").await.starts_with("HTTP/1.1 200")
             {
@@ -585,20 +650,41 @@ async fn exercise(scenario: Scenario) {
     #[cfg(any(target_os = "linux", target_os = "macos"))]
     {
         resources_stop.cancel();
-        resources.await.unwrap();
+        if let Some(resources) = resources {
+            resources.await.unwrap();
+        }
     }
     let started = Instant::now();
-    // SAFETY: kill takes no pointers. The positive PID belongs to this live child;
-    // kill_on_drop covers assertion failures.
-    assert_eq!(
-        unsafe { libc::kill(child.id().unwrap() as libc::pid_t, libc::SIGTERM) },
-        0
-    );
-    let status = timeout(Duration::from_secs(5), child.wait())
+    if let Some(child) = &mut child {
+        // SAFETY: kill takes no pointers. This positive PID belongs to the live child;
+        // kill_on_drop covers assertion failures.
+        assert_eq!(
+            unsafe { libc::kill(child.id().unwrap() as libc::pid_t, libc::SIGTERM) },
+            0
+        );
+        let status = timeout(Duration::from_secs(5), child.wait())
+            .await
+            .unwrap()
+            .unwrap();
+        assert!(status.success());
+    } else {
+        let control = control.as_ref().unwrap();
+        std::fs::write(control.join("stop"), "SIGTERM").unwrap();
+        timeout(Duration::from_secs(15), async {
+            while !control.join("exit.json").exists() {
+                sleep(Duration::from_millis(20)).await;
+            }
+        })
         .await
-        .unwrap()
         .unwrap();
-    assert!(status.success());
+        let exit: Value =
+            serde_json::from_str(&std::fs::read_to_string(control.join("exit.json")).unwrap())
+                .unwrap();
+        assert_eq!(
+            exit["code"], 0,
+            "external exporter did not shut down successfully"
+        );
+    }
     if realtime {
         assert_eq!(cleanups.load(Ordering::SeqCst) - cleanup_before, 16);
     }
