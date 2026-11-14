@@ -422,3 +422,17 @@ async fn startup_and_healthcheck_reject_port_zero() {
         }
     }
 }
+
+#[test]
+fn system_collection_is_explicit_and_boolean() {
+    let mut vars = HashMap::from([("EXPORTER_MOCK".into(), "true".into())]);
+    assert!(!Config::from_values(&vars).unwrap().system_enabled);
+    for (setting, expected) in [("true", true), ("false", false)] {
+        vars.insert("TRUENAS_SYSTEM_ENABLED".into(), setting.into());
+        assert_eq!(Config::from_values(&vars).unwrap().system_enabled, expected);
+    }
+    for invalid in ["", "1", "TRUE", "yes"] {
+        vars.insert("TRUENAS_SYSTEM_ENABLED".into(), invalid.into());
+        assert!(Config::from_values(&vars).is_err());
+    }
+}

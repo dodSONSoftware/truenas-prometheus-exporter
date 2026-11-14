@@ -2,7 +2,7 @@
 
 ## Current review status — November 13, 2026
 
-Fourteen findings have implementation fixes. TN-02 now has sanitized full pool response captures, dedicated-account native/container authentication and pool checks, and offline replay coverage. The operator confirmed version 25.04.2.6; M3-B now also records that version from system.info. Automatic version gating remains M3-C. Earlier results below retain their original scope.
+Fourteen findings have implementation fixes. TN-02 now has sanitized full pool response captures, dedicated-account native/container authentication and pool checks, and offline replay coverage. The operator confirmed version 25.04.2.6; M3-B now also records that version from system.info. M3-C now implements opt-in automatic version gating and independently fresh system metrics; integrated live polling remains unverified. Earlier results below retain their original scope.
 
 | Finding | Commit | Disposition |
 | --- | --- | --- |
@@ -43,7 +43,7 @@ Accepted findings: missing captured fixtures; pin API evidence; enumerate protoc
 
 ## M3 and later
 - [x] Exact system/version/uptime/memory/load sources and explicit M3-A compatibility preflight.
-- [ ] Automatic per-connection runtime compatibility gate and scheduled system collector.
+- [x] Opt-in automatic per-connection runtime compatibility gate and scheduled system collector, with independent required-group freshness.
 - [ ] Realtime wire fixtures, subscription recovery, per-group validation and silence expiry.
 - [ ] General scan metrics (SCRUB and RESILVER), verified callable schema.
 - [ ] Container outage/recovery, least privilege and runtime resource validation.
@@ -65,7 +65,7 @@ No implementation milestone is fully validated until its container checks pass. 
 
 ## Delivery status
 
-M1/M2 functional work and all fifteen review findings now have recorded evidence. TN-02 is resolved for the captured pool.query scope; M3-A preflight and M3-B native/container system evidence are complete; automatic collector integration remains open. See validation.md for this milestone and security-validation.md for the preceding security refresh.
+M1/M2 functional work and all fifteen review findings now have recorded evidence. TN-02 is resolved for the captured pool.query scope; M3-A preflight and M3-B native/container system evidence are complete; M3-C opt-in connection gating/system collection is implemented and verified offline; realtime remains open. See validation.md for this milestone and security-validation.md for the preceding security refresh.
 
 ## MEMORY ALPHA proxy integration and multiple targets
 
@@ -98,7 +98,7 @@ The current gate for starting M3 is satisfied for pools. Broader live calls requ
 - [x] Implement typed version/hostname/uptime/memory/load validation and an explicit, bounded check-system command.
 - [x] Keep ordinary pool polling, metrics and readiness unchanged; test the new path only with synthetic fixtures and loopback TLS.
 - [x] Obtain separate operator authorization and capture sanitized native/container system responses (M3-B); replay through the production preflight offline.
-- [ ] Integrate per-connection runtime version gating and independent required system snapshot/TTL/readiness (M3-C).
+- [x] Integrate opt-in per-connection runtime version gating and independent required system snapshot/TTL/readiness (M3-C).
 - [ ] Implement source-verified realtime CPU/memory/network/ARC groups and their independent freshness (M3-D).
 
 The detailed current source mapping, command behavior, acceptance limits and next slices are in system-contract.md. This milestone does not establish live system.info support or complete M3.
@@ -107,4 +107,10 @@ The detailed current source mapping, command behavior, acceptance limits and nex
 
 The actual check-system command passed from macOS and local Docker Desktop under UID/GID 10001:10001 using the dedicated read-only credential and verified TLS. Separate memory-sanitized full system.info envelopes report version 25.04.2.6 and pass offline preflight replay with independently reviewed memory/uptime/load assertions. All live methods in this milestone were auth.login_ex and system.info. No decoder change was needed. See fixture provenance and memory-alpha-integration.md.
 
-The next implementation slice is M3-C: integrate per-connection version gating and scheduled system snapshots with independent monotonic TTL, operational metrics and a documented required-group readiness policy. Current normal pool collection still retains its existing behavior; no system metric is published yet. Realtime authorization remains separate.
+At completion of M3-B, the next slice was automatic version gating and scheduled system snapshots. M3-C below implements that slice behind an explicit opt-in flag. Realtime authorization remains separate.
+
+## M3-C — opt-in system collector
+
+TRUENAS_SYSTEM_ENABLED defaults false. Enabled targets gate every connection/reconnect before request admission, poll system and pools independently, and require both fresh snapshots plus compatibility for readiness. System info/uptime/physical total memory/load metrics and per-group operational history are implemented. Version rejection immediately masks measurements while keeping historical timestamps; ordinary per-group errors retain bounded cache grace. A scheduler completion cannot reopen a rejected gate. Mock mode remains network-free.
+
+Focused unit/TLS/process tests, full Rust/MSRV checks and the enhanced container mock/hardening validator pass; see validation.md for commands, the transient existing test failure and scope limits. No live scheduled polling, new appliance method, infrastructure edit or deployment occurred. Detailed design decisions are in m3-c-implementation.md. Next: M3-D realtime contracts and per-group event handling, then callable scan metrics after schema validation. Previously recorded live acceptance covers individual pool/system calls, not the new integrated daemon mode.

@@ -91,10 +91,12 @@ async fn main() -> Result<()> {
             "target",
             target = target.name.as_deref().unwrap_or("default")
         );
-        let state = match target.name {
-            Some(name) => State::for_target(name, config.ttl, target.api.is_none()),
-            None => State::new(config.ttl, target.api.is_none()),
-        };
+        let state = State::configured(
+            target.name,
+            config.ttl,
+            target.api.is_none(),
+            config.system_enabled,
+        );
         let client = match target.api {
             Some(api) => {
                 let (client, connection) =

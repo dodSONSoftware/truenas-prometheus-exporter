@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased - 0.1.0 development
+## Development history
+
+- Add opt-in M3-C system collection: per-connection/reconnect compatibility checks, independently fresh system/pool snapshots, system identity/uptime/memory/load metrics, method-aware result bounds and required-group readiness. Preserve pool-only defaults and keep realtime disabled. Verify with unit, loopback TLS, two-target process, Rust 1.88 and hardened container mock checks.
 
 - Complete M3-B with operator-authorized native and UID-10001 Docker system.info preflights, API-reported 25.04.2.6 version evidence, sanitized full system captures and offline production-preflight replay. Automatic system polling/version gating remains pending.
 

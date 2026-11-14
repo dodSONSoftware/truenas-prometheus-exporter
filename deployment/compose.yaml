@@ -6,6 +6,7 @@ services:
       dockerfile: deployment/Dockerfile
     image: local/truenas-rust-exporter:0.1.0-dev
     environment:
+      TRUENAS_SYSTEM_ENABLED: "${TRUENAS_SYSTEM_ENABLED:-false}"
       EXPORTER_MOCK: "true"
       EXPORTER_LISTEN: "0.0.0.0:9110"
       RUST_LOG: info

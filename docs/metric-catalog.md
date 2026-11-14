@@ -1,6 +1,6 @@
-# Metric catalog (M1/M2)
+# Metric catalog (M1/M2 and opt-in M3-C)
 
-Prometheus/OpenMetrics encoding includes HELP and TYPE. All unsupported/null measurements are absent. No NaN/Inf. Labels are limited to collector=pools, bounded reason categories, and validated pool identity/status values. Prometheus supplies job/instance. There is no implicit host label in M2.
+Prometheus/OpenMetrics encoding includes HELP and TYPE. All unsupported/null measurements are absent. No NaN/Inf. Labels include collector=pools/system, bounded reason categories, validated pool identity/status values, and the explicitly enabled system metadata/finite load windows below. Prometheus supplies job/instance. There is no implicit host label in pool-only mode. Enabled system identity exposes a validated host/version tuple only on truenas_system_info, not on every series.
 
 | Metric | Type | Source / semantics |
 | --- | --- | --- |
@@ -34,3 +34,19 @@ New source status codes require a reviewed mapping before becoming label values.
 File-configured targets and named single targets add a stable `target` label to every row in this catalog. It comes only from a validated configuration ID, never from credentials, URLs or API data. The existing collector/pool/reason/status labels remain. Queries intended for one NAS should select `{target="memory-alpha"}` to avoid mixing servers with identical pool/interface names. Legacy unnamed single-target mode preserves old labels.
 
 A failed target's success/error/age series retain its own target label, and its expired measurements disappear independently. There is no duplicate HELP/TYPE metadata when multiple targets expose the same metric family.
+
+## Enabled system metrics
+
+These families are present only when TRUENAS_SYSTEM_ENABLED=true. The required system snapshot uses the configured monotonic TTL independently of pools. Expired/compatibility-rejected system measurements disappear; operational timestamps/errors remain. Mock samples are labeled by the existing exporter mock-mode gauge.
+
+| Metric | Type | Source / semantics |
+| --- | --- | --- |
+| truenas_api_compatible | gauge | 1 when the connection gate is accepted and a validated system snapshot remains fresh; 0 before validation, after rejection/expiry, and always in mock mode. Omitted in pool-only mode. Does not imply a currently connected socket. |
+| truenas_system_info{host,version} | gauge 1 | system.info hostname and manifest short version. At most one tuple per current fresh target snapshot; host 1..253 bytes with no whitespace/controls, version bounded to the supported numeric family. No serial/model/license identifiers. |
+| truenas_system_uptime_seconds | gauge | system.info uptime_seconds, finite nonnegative seconds since boot, including the captured fractional component. Cached sample, not extrapolated time. |
+| truenas_memory_total_bytes | gauge | system.info physmem, the server's kernel MemTotal multiplied by 1024. Integer byte value is not converted again. Missing/null is absent; not an installed-module capacity claim or available-memory estimate. |
+| truenas_system_load_average{minutes} | gauge | system.info loadavg[0/1/2] over 1/5/15 minutes. Finite nonnegative load counts; not CPU percentage. Entire family absent for missing/null loadavg. Only minutes=1,5,15. |
+
+System operational metrics reuse the catalog's existing attempt/success/duration/error/age families with collector=system. Success requires the last attempt to succeed, an unexpired snapshot and accepted compatibility; a failed latest attempt is zero even during cache/readiness grace. Both required groups and all configured targets must be fresh and compatible for readyz=200 in enabled mode. A system field/permission error does not reset a pool timestamp; a pool error does not reset system freshness. A version rejection immediately suppresses both measurement groups for the affected target. Other targets remain independent.
+
+The source mapping and preserved units are recorded in system-contract.md and the captured fixture provenance. Captures are used in offline preflight and mock-daemon replay; M3-C did not start the new scheduled mode against MEMORY ALPHA.

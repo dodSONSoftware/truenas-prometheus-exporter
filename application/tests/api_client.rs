@@ -1316,3 +1316,239 @@ async fn captured_system_envelopes_replay_through_preflight_offline() {
             .unwrap();
     }
 }
+
+fn captured_system_result() -> Value {
+    serde_json::from_str::<Value>(include_str!(
+        "../../fixtures/truenas-25.04.2.6/system.info.host.response.json"
+    ))
+    .unwrap()["result"]
+        .clone()
+}
+async fn system_gate(socket: &mut Socket, result: Value) {
+    let request = text(socket).await;
+    assert_eq!(request["method"], "system.info");
+    assert_eq!(request["id"], "version");
+    assert_eq!(request["params"], json!([]));
+    socket
+        .send(Message::text(
+            json!({"jsonrpc":"2.0","id":request["id"],"result":result}).to_string(),
+        ))
+        .await
+        .unwrap();
+}
+
+#[tokio::test]
+async fn enabled_session_routes_out_of_order_collectors_and_isolates_field_errors() {
+    let (listener, url) = listen().await;
+    let server = tokio::spawn(async move {
+        let mut socket = login(&listener).await;
+        system_gate(&mut socket, captured_system_result()).await;
+        let first = text(&mut socket).await;
+        let second = text(&mut socket).await;
+        assert_ne!(first["method"], second["method"]);
+        for request in [second, first] {
+            let result = if request["method"] == "system.info" {
+                let mut value = captured_system_result();
+                value["uptime_seconds"] = json!(-1);
+                value
+            } else {
+                assert_eq!(request["method"], "pool.query");
+                json!([{"name":"synthetic-pool","size":1024}])
+            };
+            socket
+                .send(Message::text(
+                    json!({"jsonrpc":"2.0","id":request["id"],"result":result}).to_string(),
+                ))
+                .await
+                .unwrap();
+        }
+        let request = text(&mut socket).await;
+        assert_eq!(request["method"], "pool.query");
+        socket
+            .send(Message::text(
+                json!({"jsonrpc":"2.0","id":request["id"],"result":[]}).to_string(),
+            ))
+            .await
+            .unwrap();
+        while let Some(Ok(_)) = socket.next().await {}
+    });
+    let state = State::configured(Some("alpha".into()), Duration::from_secs(30), false, true);
+    let stop = CancellationToken::new();
+    let (client, task) = Client::spawn(
+        config(url, Duration::from_secs(2)),
+        state.clone(),
+        stop.clone(),
+    );
+    ready(&state).await;
+    let (pool, system) = tokio::join!(client.pool_query(), client.system_info());
+    assert_eq!(pool.unwrap()[0]["size"], 1024);
+    assert_eq!(system.err(), Some(Reason::Schema));
+    assert_eq!(client.pool_query().await.unwrap(), json!([]));
+    assert!(
+        state
+            .metrics_at(tokio::time::Instant::now())
+            .unwrap()
+            .contains("truenas_api_compatible{target=\"alpha\"} 1")
+    );
+    stop.cancel();
+    task.await.unwrap();
+    server.await.unwrap();
+}
+
+#[tokio::test]
+async fn reconnect_rechecks_version_before_any_pool_call_and_recovers() {
+    let (listener, url) = listen().await;
+    let (rejected, rejection) = tokio::sync::oneshot::channel();
+    let (resume, resumed) = tokio::sync::oneshot::channel();
+    let server = tokio::spawn(async move {
+        let mut socket = login(&listener).await;
+        system_gate(&mut socket, captured_system_result()).await;
+        let request = text(&mut socket).await;
+        assert_eq!(request["method"], "pool.query");
+        socket.send(Message::text(json!({"jsonrpc":"2.0","id":request["id"],"result":[{"name":"synthetic-pool","size":1024}]}).to_string())).await.unwrap();
+        socket.close(None).await.unwrap();
+        let mut socket = login(&listener).await;
+        let mut info = captured_system_result();
+        info["version"] = json!("25.10.2");
+        system_gate(&mut socket, info).await;
+        while let Some(Ok(message)) = socket.next().await {
+            assert!(
+                !matches!(message, Message::Text(_)),
+                "pool call escaped incompatible gate"
+            );
+        }
+        rejected.send(()).unwrap();
+        resumed.await.unwrap();
+        let mut socket = login(&listener).await;
+        system_gate(&mut socket, captured_system_result()).await;
+        let request = text(&mut socket).await;
+        assert_eq!(request["method"], "pool.query");
+        socket
+            .send(Message::text(
+                json!({"jsonrpc":"2.0","id":request["id"],"result":[]}).to_string(),
+            ))
+            .await
+            .unwrap();
+        while let Some(Ok(_)) = socket.next().await {}
+    });
+    let state = State::configured(None, Duration::from_secs(30), false, true);
+    let stop = CancellationToken::new();
+    let (client, task) = Client::spawn(
+        config(url, Duration::from_secs(2)),
+        state.clone(),
+        stop.clone(),
+    );
+    ready(&state).await;
+    let pools =
+        truenas_exporter::collectors::pools::parse(client.pool_query().await.unwrap()).unwrap();
+    state.complete(
+        Ok(pools),
+        tokio::time::Instant::now(),
+        100.0,
+        Duration::ZERO,
+    );
+    timeout(Duration::from_secs(5), rejection)
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(!state.ready_at(tokio::time::Instant::now()));
+    let metrics = state.metrics_at(tokio::time::Instant::now()).unwrap();
+    assert!(
+        !metrics
+            .lines()
+            .any(|line| line.starts_with("truenas_pool_size_bytes{"))
+    );
+    assert!(metrics.contains("reason=\"unsupported\""));
+    resume.send(()).unwrap();
+    ready(&state).await;
+    assert_eq!(client.pool_query().await.unwrap(), json!([]));
+    assert!(state.ready_at(tokio::time::Instant::now()));
+    stop.cancel();
+    task.await.unwrap();
+    server.await.unwrap();
+}
+
+#[tokio::test]
+async fn scheduled_incompatible_version_closes_session_and_hides_cached_values() {
+    let (listener, url) = listen().await;
+    let server = tokio::spawn(async move {
+        let mut socket = login(&listener).await;
+        system_gate(&mut socket, captured_system_result()).await;
+        let request = text(&mut socket).await;
+        assert_eq!(request["method"], "system.info");
+        let mut value = captured_system_result();
+        value["version"] = json!("25.10.2");
+        socket
+            .send(Message::text(
+                json!({"jsonrpc":"2.0","id":request["id"],"result":value}).to_string(),
+            ))
+            .await
+            .unwrap();
+        while let Some(Ok(message)) = socket.next().await {
+            assert!(!matches!(message, Message::Text(_)));
+        }
+    });
+    let state = State::configured(None, Duration::from_secs(30), false, true);
+    let stop = CancellationToken::new();
+    let (client, task) = Client::spawn(
+        config(url, Duration::from_secs(2)),
+        state.clone(),
+        stop.clone(),
+    );
+    ready(&state).await;
+    state.complete(
+        Ok(truenas_exporter::collectors::pools::synthetic()),
+        tokio::time::Instant::now(),
+        100.0,
+        Duration::ZERO,
+    );
+    assert!(state.ready_at(tokio::time::Instant::now()));
+    assert_eq!(client.system_info().await.err(), Some(Reason::Unsupported));
+    assert!(!state.ready_at(tokio::time::Instant::now()));
+    let metrics = state.metrics_at(tokio::time::Instant::now()).unwrap();
+    assert!(
+        !metrics
+            .lines()
+            .any(|line| line.starts_with("truenas_system_info{"))
+    );
+    assert!(
+        !metrics
+            .lines()
+            .any(|line| line.starts_with("truenas_pool_size_bytes{"))
+    );
+    stop.cancel();
+    task.await.unwrap();
+    server.await.unwrap();
+}
+
+#[tokio::test]
+async fn cancellation_interrupts_the_connection_version_gate() {
+    let (listener, url) = listen().await;
+    let (observed, observation) = tokio::sync::oneshot::channel();
+    let server = tokio::spawn(async move {
+        let mut socket = login(&listener).await;
+        assert_eq!(text(&mut socket).await["method"], "system.info");
+        observed.send(()).unwrap();
+        while let Some(Ok(message)) = socket.next().await {
+            assert!(!matches!(message, Message::Text(_)));
+        }
+    });
+    let state = State::configured(None, Duration::from_secs(30), false, true);
+    let stop = CancellationToken::new();
+    let (_client, task) = Client::spawn(
+        config(url, Duration::from_secs(30)),
+        state.clone(),
+        stop.clone(),
+    );
+    timeout(Duration::from_secs(2), observation)
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(!state.connected.load(Ordering::Relaxed));
+    stop.cancel();
+    timeout(Duration::from_secs(1), task)
+        .await
+        .unwrap()
+        .unwrap();
+    server.await.unwrap();
+}

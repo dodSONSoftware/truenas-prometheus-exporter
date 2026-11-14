@@ -10,7 +10,7 @@ Established before M2 implementation. Transport is JSON-RPC 2.0 on a persistent 
 | pool.query | Empty positional array; full list result required | M2 |
 | core.subscribe | Exactly reporting.realtime:{"interval":N}, integer N >= 2 | M3, denied until implemented |
 | core.unsubscribe | Subscription ID owned by this connection | M3, denied until implemented |
-| system.info | Empty positional array; selected version/identity/uptime fields validated | M3-A explicit check-system only; not scheduled |
+| system.info | Empty positional array; selected version/identity/uptime/memory/load validated | Explicit check-system and opt-in M3-C connection gate/scheduler |
 
 Authentication is session establishment, not a NAS administrative write. Only typed method selection is exposed; no arbitrary method string or recursive discovery. Authentication never follows REDIRECT URLs. AUTH_ERR, EXPIRED, OTP_REQUIRED and REDIRECT are bounded error categories. JSON-RPC success alone does not authenticate a session.
 
@@ -30,4 +30,6 @@ Multi-target mode gives each target its own client instance; the closed method a
 
 ## M3-A system preflight
 
-The closed SystemInfo variant is used only by check-system, through the same verified socket/authentication helpers. It validates the selected source fields and 25.04.2.x compatibility under one API-timeout budget, with no retries or subscriptions. Normal Client pool sessions retain their bounded pool-result decoder; no generic response decoding was introduced into that path. See system-contract.md for pinned source evidence, exact field rules, catalog omissions and the still-unimplemented automatic runtime gate. M3-B subsequently verified separately authorized native and UID-10001 Docker system.info calls and captured full sanitized responses; see memory-alpha-integration.md. No subscription or additional method is implied by those checks.
+The closed SystemInfo variant was introduced by check-system, through the shared verified socket/authentication helpers. It validates the selected source fields and 25.04.2.x compatibility under one API-timeout budget, with no retries or subscriptions. M3-C routes results by pending method, retaining the bounded pool decoder and adding a 64 KiB object-only system result decoder. See system-contract.md for pinned source evidence, exact field rules, catalog omissions and the opt-in automatic runtime gate. M3-B subsequently verified separately authorized native and UID-10001 Docker system.info calls and captured full sanitized responses; see memory-alpha-integration.md. No subscription or additional method is implied by those checks.
+
+M3-C enables scheduled system.info only with TRUENAS_SYSTEM_ENABLED=true, default false. Every enabled connection checks the version/selected core fields before setting connected=1 or admitting requests; reconnects repeat the gate. Unsupported or unvalidated versions fail closed, with immediate measurement/readiness suppression for the target. System methods return typed data to the independent scheduler; optional field/permission failures retain per-group bounded freshness. No subscription method has been added. See configuration.md for the exact readiness/grace and gate-failure policy.

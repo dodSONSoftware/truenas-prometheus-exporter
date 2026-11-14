@@ -4,13 +4,39 @@ use serde_json::Value;
 use crate::state::Reason;
 
 /// Fields used by the system preflight. Serial numbers and license data are ignored.
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 pub struct SystemInfo {
     pub version: String,
     pub hostname: String,
     pub uptime_seconds: f64,
     pub physmem: Option<u64>,
     pub loadavg: Option<[f64; 3]>,
+}
+
+pub(crate) fn bounded_result(raw: &str) -> Result<Value, Reason> {
+    if raw.len() > 65_536 || !raw.trim_start().starts_with('{') {
+        return Err(Reason::Schema);
+    }
+    serde_json::from_str(raw).map_err(|_| Reason::Schema)
+}
+
+pub(crate) fn validate_version(value: &Value) -> Result<(), Reason> {
+    supported_version(
+        value
+            .get("version")
+            .and_then(Value::as_str)
+            .ok_or(Reason::Schema)?,
+    )
+}
+
+pub fn synthetic() -> SystemInfo {
+    SystemInfo {
+        version: "25.04.2.6".into(),
+        hostname: "synthetic-nas.example.invalid".into(),
+        uptime_seconds: 12345.75,
+        physmem: Some(34_359_738_368),
+        loadavg: Some([0.25, 1.5, 2.75]),
+    }
 }
 
 pub fn parse(value: Value) -> Result<SystemInfo, Reason> {

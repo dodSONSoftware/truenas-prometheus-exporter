@@ -242,3 +242,25 @@ sh scripts/check.sh passed formatting, strict Clippy, 53 regular Rust tests and 
 The Docker preflight and capture used a read-only root filesystem, dropped capabilities, no-new-privileges, 128 MiB memory and a mode-0400 UID-10001 secret mounted read-only. The secret was copied over stdin into temporary volumes and removed in cleanup. Final container/volume inventories were empty for these temporary names; the original Mac key remains mode 0600.
 
 This verifies successful system.info read permission for the dedicated credential and its current API-reported version. It does not establish minimum privileges, denial of writes, automatic per-connection version gating, scheduled system metrics, realtime subscriptions or production deployment. No method beyond auth.login_ex and system.info was invoked in this milestone.
+
+## M3-C — opt-in system collection and connection gate, November 14, 2026 UTC
+
+TRUENAS_SYSTEM_ENABLED=true enables system.info gating on every authenticated connection/reconnection, independent system/pool polling and required-group freshness. The default false retains the existing pool-only behavior. The new state shares typed snapshot/operational metric logic, not timestamps or payloads. Known incompatible/unvalidated versions reject the session and immediately suppress measurements/readiness for that target while retaining historical timestamps/errors. Only the connection gate can restore compatibility. Ordinary transport outages and collector field/permission failures retain bounded per-group cache grace.
+
+Unit tests cover independent exact-boundary expiry/recovery, preserved error/last-success history, absent optional values, compatibility rejection and late completion, method-aware response routing, the 64 KiB system result limit and the existing 256-pool bound, and unknown IDs without result expansion. Loopback TLS tests cover out-of-order system/pool replies, system field errors without pool interruption, reconnection through supported/incompatible/supported versions, scheduled incompatible-version invalidation and cancellation during the connection gate.
+
+A real exporter-process test uses two independent TLS targets with the saved system fixture. It verifies enabled-mode gate/poll/metrics wiring, target isolation and a fresh system snapshot while one target's pool snapshot expires. Existing default-mode credential/CA isolation, health, shutdown and trace-redaction checks also pass. Controlled-time unit tests cover the reciprocal case of system expiry with fresh pools.
+
+Validation completed:
+
+- sh scripts/check.sh: formatting, strict Clippy, 62 regular Rust tests and six Python tests passed. One sustained operational test remains explicitly ignored by default.
+- cargo +1.88.0 clippy --locked --manifest-path application/Cargo.toml --all-targets -- -D warnings: passed.
+- cargo +1.88.0 test --locked --manifest-path application/Cargo.toml: all 62 regular tests passed, one operational test ignored.
+- docker --context desktop-linux build --platform linux/amd64 -f deployment/Dockerfile -t local/truenas-rust-exporter:system-collector .: passed, linux/amd64.
+- python3 -B scripts/check-container.py --context desktop-linux --image local/truenas-rust-exporter:system-collector: passed default mock, system-enabled mock metrics/readiness, hardened UID/GID-10001 runtime, synthetic secret/CA mounts, multi-target/outage and SIGTERM checks. The enabled mock explicitly retains API connected/compatible zero and uses synthetic system data. No real appliance was contacted.
+
+The first full required-suite run stopped on an existing configuration/process fixture's ConnectionReset while reading its local /healthz response. The full Rust 1.88 run and subsequent required-suite rerun passed. The intermittent reset was not diagnosed or fixed, and no unrelated production or test behavior was weakened to obtain a pass.
+
+This milestone introduced no dependency/base-image changes. Prior security scans and sustained resource measurements retain their historical workloads; the maximum-target resource benchmark was not rerun with system mode enabled. Hosted CI and live scheduled-mode acceptance were not run. Earlier individually authorized pool/system checks and captured 25.04.2.6 replies remain the scope of appliance evidence. No new live method, subscription, infrastructure edit or production deployment occurred.
+
+Compose configuration checks passed for the local mock project and for the observability integration fragment combined with a temporary synthetic network definition. The fragment intentionally requires its enclosing project to define that network; it is not a standalone deployable project. No services or networks were created by these parser checks.

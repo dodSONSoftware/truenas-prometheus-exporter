@@ -6,6 +6,7 @@ No secret values belong in environment files, logs or Git. Config reads supporte
 | --- | --- | --- |
 | EXPORTER_LISTEN | 0.0.0.0:9110 | Numeric socket address with port 1..65535 |
 | EXPORTER_MOCK | false | true/false; true bypasses all API config and makes no network connections |
+| TRUENAS_SYSTEM_ENABLED | false | true/false; enable system polling, per-connection compatibility gate and required system freshness for every target |
 | TRUENAS_POLL_INTERVAL_SECONDS | 60 | Integer 1..86400 |
 | TRUENAS_API_TIMEOUT_SECONDS | 10 | Integer 1..300 |
 | TRUENAS_CACHE_TTL_SECONDS | 3 x poll interval | Greater than poll interval + API timeout |
@@ -39,3 +40,15 @@ Legacy single-target environment configuration remains supported. Without TRUENA
 ## System preflight
 
 `truenas-exporter check-system` uses normal configuration and requires exactly one non-mock target. It authenticates, issues only system.info with empty parameters, checks selected fields and 25.04.2.x compatibility, closes and exits. The configured API timeout bounds the whole operation. It reports fixed success text or a bounded failure reason, without emitting returned identity or raw data. It does not start HTTP, poll pools, subscribe, or change daemon readiness. See system-contract.md before authorizing any live invocation; existing pool-query authorization does not cover this method.
+
+## Opt-in system collection (M3-C)
+
+Set TRUENAS_SYSTEM_ENABLED=true to enable the system collector for all configured targets. Its default false preserves the existing pool-only wire behavior and readiness policy. The flag is global, including file-based targets; it is not a per-target JSON property. Example env/Compose files pass it through with a false default; editing an example does not deploy it.
+
+Enabled connections authenticate, then query system.info and validate the selected fields and 25.04.2.x family before admitting scheduled requests or marking the API connected. This gate repeats on every reconnect. Connect/authentication retain their existing individual deadlines; the additional gate has one API-timeout budget and is cancellation-aware. check-system remains a separate one-shot command with a single overall budget.
+
+System and pool polling use independent loops with the same configured poll interval and TTL value, but independent snapshots, timestamps, attempts and errors. Both groups are required for readiness in enabled mode; default mode requires only pools. A failed attempt retains its group's last valid snapshot only until its own exact monotonic expiry, and cannot refresh another group's age. A transient field/permission failure can leave readiness true during the existing TTL grace period. Missing optional physical memory/load does not invalidate otherwise valid system identity/uptime; those measurements are absent.
+
+A failed reconnect gate immediately revokes compatibility. Scheduled replies with invalid/missing versions, an unparseable/oversized system result or an unsupported system method also revoke it and end the session. Compatibility rejection hides both groups' measurements and makes readiness false immediately, while historical timestamps/errors remain available. An ordinary transport outage keeps the normal bounded cache grace. A later successful connection gate restores compatibility; a scheduler completion alone cannot do so.
+
+EXPORTER_MOCK=true with this flag produces explicitly synthetic pool/system snapshots without network access. API connected and API compatible stay zero in mock mode, while readiness may become true from synthetic required snapshots. Scheduled real-appliance runtime acceptance was not performed in M3-C; prior dedicated-account checks/captures remain the live evidence scope. Realtime is not enabled by this flag.

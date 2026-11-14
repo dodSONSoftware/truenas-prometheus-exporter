@@ -58,6 +58,7 @@ pub struct TargetConfig {
 }
 
 pub struct Config {
+    pub system_enabled: bool,
     pub listen: SocketAddr,
     pub poll_interval: Duration,
     pub ttl: Duration,
@@ -85,6 +86,7 @@ impl Config {
         Self::from_values(&environment_values(&[
             "EXPORTER_LISTEN",
             "EXPORTER_MOCK",
+            "TRUENAS_SYSTEM_ENABLED",
             "TRUENAS_POLL_INTERVAL_SECONDS",
             "TRUENAS_API_TIMEOUT_SECONDS",
             "TRUENAS_CACHE_TTL_SECONDS",
@@ -98,6 +100,11 @@ impl Config {
     }
 
     pub fn from_values(values: &HashMap<String, String>) -> Result<Self> {
+        let system_enabled = match values.get("TRUENAS_SYSTEM_ENABLED").map(String::as_str) {
+            None | Some("false") => false,
+            Some("true") => true,
+            _ => bail!("TRUENAS_SYSTEM_ENABLED must be true or false"),
+        };
         let listen = listen_address(values.get("EXPORTER_LISTEN").map(String::as_str))?;
         let mock = match values.get("EXPORTER_MOCK").map(String::as_str) {
             None | Some("false") => false,
@@ -140,6 +147,7 @@ impl Config {
             }]
         };
         Ok(Self {
+            system_enabled,
             listen,
             poll_interval: Duration::from_secs(poll),
             ttl: Duration::from_secs(ttl),

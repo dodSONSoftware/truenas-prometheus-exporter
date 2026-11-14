@@ -54,6 +54,13 @@ async fn mock_server(
                         assert_eq!(request["params"][0]["api_key"], key);
                         authenticated = true;
                         json!({"jsonrpc":"2.0","id":request["id"],"result":{"response_type":"SUCCESS"}})
+                    } else if request["method"] == "system.info" {
+                        let result = serde_json::from_str::<Value>(include_str!(
+                            "../../fixtures/truenas-25.04.2.6/system.info.host.response.json"
+                        ))
+                        .unwrap()["result"]
+                            .clone();
+                        json!({"jsonrpc":"2.0","id":request["id"],"result":result})
                     } else {
                         assert_eq!(request["method"], "pool.query");
                         if collected && deny_after_first {
@@ -90,6 +97,15 @@ async fn get(address: SocketAddr, path: &str) -> String {
 
 #[tokio::test]
 async fn two_real_workers_isolate_credentials_tls_snapshots_and_failures() {
+    check_workers(false).await;
+}
+
+#[tokio::test]
+async fn enabled_workers_keep_system_fresh_when_one_targets_pool_expires() {
+    check_workers(true).await;
+}
+
+async fn check_workers(system_enabled: bool) {
     let (alpha_url, alpha_ca, alpha) =
         mock_server("alpha-user", "ALPHA_TEST_KEY", 1_000_000, false).await;
     let (beta_url, beta_ca, beta) =
@@ -114,6 +130,7 @@ async fn two_real_workers_isolate_credentials_tls_snapshots_and_failures() {
     let mut child = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
         .env_clear()
         .env("TRUENAS_TARGETS_FILE", config)
+        .env("TRUENAS_SYSTEM_ENABLED", system_enabled.to_string())
         .env("EXPORTER_LISTEN", address.to_string())
         .env("TRUENAS_POLL_INTERVAL_SECONDS", "1")
         .env("TRUENAS_API_TIMEOUT_SECONDS", "1")
@@ -166,6 +183,12 @@ async fn two_real_workers_isolate_credentials_tls_snapshots_and_failures() {
                 assert!(text.contains(
                     "truenas_exporter_collection_success{target=\"beta\",collector=\"pools\"} 0"
                 ));
+                if system_enabled {
+                    assert!(text.contains("truenas_exporter_collection_success{target=\"beta\",collector=\"system\"} 1"));
+                    assert!(text.contains("truenas_memory_total_bytes{target=\"beta\"} 63093960704"));
+                    assert!(text.contains("truenas_api_compatible{target=\"alpha\"} 1"));
+                    assert_eq!(text.matches("# HELP truenas_system_info ").count(), 1);
+                }
                 assert_eq!(text.matches("# HELP truenas_pool_size_bytes ").count(), 1);
                 break;
             }

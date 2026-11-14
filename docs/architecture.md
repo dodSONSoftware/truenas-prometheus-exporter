@@ -4,7 +4,7 @@ One executable and Cargo package. Config validates local inputs before starting.
 
 ## Deterministic state
 
-Only pools is an implemented required collector in M1/M2. System/realtime are not registered and do not silently count as successful. M3 must explicitly define required groups when enabling them.
+Default mode requires pools only. M3-C adds an explicit system-enabled mode requiring both pool and system snapshots, with separate state/timestamps/errors and shared configured poll/TTL defaults. Realtime is not registered and never silently counts as successful.
 
 - Startup: connected=0, collection_success=0, no attempt/success timestamp, no measurement snapshot, readiness 503.
 - Valid complete response: atomically replace the pool snapshot (including an empty list), record attempt/success/duration, success=1. Deleted pools disappear immediately on a valid replacement.
@@ -38,4 +38,12 @@ SIGINT/SIGTERM cancels collector and connection workers and starts a two-second 
 
 ## M3-A preflight boundary
 
-The explicit check-system command uses the shared validated WSS/authentication helpers for one source-pinned system.info call. Its typed decoder and compatibility check are independent of the pool supervisor/scheduler and never refresh pool state. No system collector is registered for metrics or readiness in this slice. Live system permission/schema evidence and per-group state integration remain later acceptance gates; see system-contract.md.
+The explicit check-system command retains its one-shot behavior and does not refresh daemon state. M3-B added live method/capture evidence, and M3-C integrates the same source-pinned decoder into optional system collection; see system-contract.md.
+
+## M3-C connection gate and independent snapshots
+
+When enabled, the supervisor validates system.info after authentication and before exposing connected=1 or admitting requests, on every connection. A successful gate seeds a system snapshot; system and pool scheduler loops then poll independently on the same bounded client. The existing initial unavailable tick behavior can still delay pool readiness by up to a poll interval.
+
+Typed Collection<T> state shares attempt/success/error/TTL metric semantics without sharing timestamps or payloads. Snapshots hold Arc data; a scrape clones the small state and Arc references rather than cloning pool vectors. Optional system fields remain absent. A compatibility flag belongs to each target and can be reopened only by its connection gate, so late scheduler completions cannot bypass rejection.
+
+Replies select a result decoder from the pending request's closed method variant. Pool results retain the 256-entry preallocation guard; system results must be objects of at most 64 KiB. Unknown IDs are validated as envelopes but do not expand result trees. Existing frame/message/request/queue limits remain. Scheduled invalid-version or unreadable/unsupported system results reject compatibility and terminate the session; ordinary selected-field validation or permission errors stay collector failures. Disconnects retain bounded cache grace; a failed gate masks both target measurement groups immediately while preserving operational history. HTTP never contacts the NAS.

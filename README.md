@@ -1,6 +1,6 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Zinc Ferret — version 0.1.1.
+**Release:** Aluminum Ferret — version 0.2.0.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
@@ -72,7 +72,7 @@ For an independent image build use `docker build --platform linux/amd64 -f deplo
 ## Prioritized remaining work
 
 1. Pool compatibility is verified through authorized native and local Docker checks, with genuine sanitized captures and offline replay. Extend this evidence to the M3 methods/events as separately authorized. Rust 1.88 and the recorded security gates pass; see docs/security-validation.md.
-2. M3: the explicit `check-system` preflight now passes native/container appliance checks and captured-envelope replay. Next, integrate automatic runtime version gating, scheduled system data and per-group freshness. Source mappings and evidence limits are documented in docs/system-contract.md.
+2. M3-D: implement reporting.realtime CPU/memory/network/ARC groups with independent freshness after source/fixture validation. M3-C system collection and connection gating are implemented behind TRUENAS_SYSTEM_ENABLED; its new daemon mode remains offline-validated.
 3. M3: CPU/memory/network/ARC mappings and general SCRUB/RESILVER metrics after schema validation.
 4. M4: measured resource budgets, long outage tests and operator-verified least privilege.
 5. P1 and dashboard migration artifacts after P0 validation; production rollout requires separate authorization.
@@ -88,3 +88,7 @@ Distroless troubleshooting uses exporter logs, metrics and the built-in healthch
 Use TRUENAS_TARGETS_FILE with deployment/targets.example.json to configure independent targets in one process. Add a second entry with its own name, URL, key file and optional CA file; no code change is required. Metrics include target="configured-name" and readiness requires all configured targets to be fresh. Legacy single-target environment settings remain supported.
 
 The new endpoint wss://memory-alpha.home.lab/api/current passes verified Rust WSS transport on the host and distroless container with an explicit, read-only Caddy CA file. The operator provisioned the dedicated prometheus_exporter account/key with Readonly Admin. Authorized native and UID-10001 container authentication and pool.query checks passed, with sanitized captured envelopes replayed offline. Separately authorized `check-system` runs also passed from the Mac and UID-10001 container; captured system.info replies report version 25.04.2.6. Other methods and realtime remain unverified. See docs/memory-alpha-integration.md for scope, evidence and operator steps. check-transport is a manual transport diagnostic, not an authentication test.
+
+## Optional system collection
+
+Set `TRUENAS_SYSTEM_ENABLED=true` to add scheduled system identity/version, uptime, physical total memory and 1/5/15-minute load metrics. Each connection must pass the 25.04.2.x compatibility gate before admitting requests. Pools and system retain independent snapshots/expiry; both are required for readiness in this mode. Unsupported or unvalidated versions suppress the affected target's measurements immediately. The default false preserves pool-only collection. See [configuration](docs/configuration.md), [metric catalog](docs/metric-catalog.md), and [system contract](docs/system-contract.md) for optional-value and failure policies. Realtime is not enabled by this switch. No live daemon or production deployment was performed for M3-C.

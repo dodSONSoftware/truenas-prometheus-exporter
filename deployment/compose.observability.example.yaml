@@ -7,6 +7,7 @@ services:
     init: true
     user: "10001:10001"
     environment:
+      TRUENAS_SYSTEM_ENABLED: "${TRUENAS_SYSTEM_ENABLED:-false}"
       TRUENAS_TARGETS_FILE: /run/config/truenas-targets.json
       EXPORTER_LISTEN: "0.0.0.0:9110"
       RUST_LOG: "${RUST_LOG:-info}"

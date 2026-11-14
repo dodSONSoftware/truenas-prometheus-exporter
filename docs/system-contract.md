@@ -1,6 +1,6 @@
 # M3-A system preflight contract
 
-Status: implemented, tested offline and verified by operator-authorized native/container system.info checks; full sanitized responses are captured and replayed offline. This is a manual preflight, not a scheduled collector or daemon-wide runtime gate. Normal pool polling, metrics and readiness retain the M2 contract.
+Status: preflight and captured native/container method checks are complete. M3-C adds opt-in scheduled system collection and per-connection compatibility gating, verified offline. Default pool-only behavior is preserved. The new scheduled mode has not been run against a live appliance; see configuration.md for required-group readiness and cache policy.
 
 ## Exact source evidence
 
@@ -40,7 +40,11 @@ A live invocation requires explicit authorization for auth.login_ex and system.i
 
 - M3-A: source mappings, closed SystemInfo method, typed selected-field parser, explicit bounded check-system and offline CLI/TLS tests. Implemented.
 - M3-B: separately authorized native and UID-10001 Docker system.info checks passed. Full responses were sanitized in memory and replayed offline with capture/version provenance; see fixtures/truenas-25.04.2.6/README.md. API-reported version is 25.04.2.6. Completed for this observed response scope.
-- M3-C: integrate per-connection compatibility checks with scheduled system polling, finite system TTL and independent operational metrics. Define required/unsupported group readiness before enabling the collector; test version changes on reconnect and failure/expiry isolation from pools. No system metric or automatic runtime gate is delivered by M3-A.
+- M3-C: implemented behind TRUENAS_SYSTEM_ENABLED=false by default. Enabled targets gate every connection/reconnect, poll system and pools independently, require both snapshots for readiness, and publish bounded system/operational metrics. Unit, loopback client, real-process multi-target and container mock checks cover version changes, failure isolation, expiry and recovery. Live scheduled-mode acceptance is not claimed.
 - M3-D: exact reporting.realtime subscription/event contract, bounded latest-value delivery and CPU/memory/network/ARC group validation with independent freshness. Missing/down-link rates remain absent. Separately authorize live subscribe/unsubscribe only after the concrete path is ready.
 
 Synthetic fixtures remain in application/tests/fixtures/. Captured fixtures remain in the root fixtures/truenas-25.04.2.6/ directory. The new system fixture is explicitly synthetic and contains fictional identity/serial markers for output-redaction tests.
+
+## M3-C integration limits
+
+The system result has a 64 KiB object bound, within the shared 1 MiB wire limit. Replies are decoded by their pending method; pool responses keep their separate count bound. Version validation runs before admitting each connection and on scheduled system responses. Invalid versions revoke compatibility; non-version field validation failures remain system-only errors. The source-selected hostname/version appear on one bounded info tuple only when explicitly enabled. No hardware identifiers or source error strings become labels or logs. Captured 25.04.2.6 replies support the observed mapping, not every future patch or realtime schema.

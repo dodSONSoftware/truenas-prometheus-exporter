@@ -94,34 +94,41 @@ pub async fn check_transport(config: TransportConfig) -> Result<(), Reason> {
 pub async fn check_system(config: ApiConfig) -> Result<SystemInfo, Reason> {
     timeout(config.timeout, async {
         let mut socket = open_authenticated(&config).await?;
-        socket
-            .send(Message::Text(
-                Method::SystemInfo.request("system").to_string().into(),
-            ))
-            .await
-            .map_err(transport_reason)?;
-        loop {
-            match socket.next().await {
-                Some(Ok(Message::Text(text))) => match protocol::decode(&text)? {
-                    Incoming::Response { id, result } if id == "system" => {
-                        let info = system::parse(result?)?;
-                        socket.close(None).await.map_err(transport_reason)?;
-                        return Ok(info);
-                    }
-                    _ => {}
-                },
-                Some(Ok(Message::Ping(bytes))) => socket
-                    .send(Message::Pong(bytes))
-                    .await
-                    .map_err(transport_reason)?,
-                Some(Ok(Message::Pong(_))) => {}
-                Some(Err(error)) => return Err(transport_reason(error)),
-                _ => return Err(Reason::Transport),
-            }
-        }
+        let info = read_system(&mut socket, "system").await?;
+        socket.close(None).await.map_err(transport_reason)?;
+        Ok(info)
     })
     .await
     .map_err(|_| Reason::Timeout)?
+}
+
+async fn read_system(socket: &mut Socket, request_id: &str) -> Result<SystemInfo, Reason> {
+    socket
+        .send(Message::Text(
+            Method::SystemInfo.request(request_id).to_string().into(),
+        ))
+        .await
+        .map_err(transport_reason)?;
+    loop {
+        match socket.next().await {
+            Some(Ok(Message::Text(text))) => match protocol::decode_response(&text, |id| {
+                (id == request_id).then_some(Method::SystemInfo)
+            })? {
+                Incoming::Response { id, result } if id == request_id => {
+                    let info = system::parse(result?)?;
+                    return Ok(info);
+                }
+                _ => {}
+            },
+            Some(Ok(Message::Ping(bytes))) => socket
+                .send(Message::Pong(bytes))
+                .await
+                .map_err(transport_reason)?,
+            Some(Ok(Message::Pong(_))) => {}
+            Some(Err(error)) => return Err(transport_reason(error)),
+            _ => return Err(Reason::Transport),
+        }
+    }
 }
 
 impl Client {
@@ -143,6 +150,12 @@ impl Client {
     }
     pub async fn pool_query(&self) -> Result<Value, Reason> {
         self.request(Method::PoolQuery).await
+    }
+    pub async fn system_info(&self) -> Result<SystemInfo, Reason> {
+        if !self.state.system_enabled() {
+            return Err(Reason::Unsupported);
+        }
+        system::parse(self.request(Method::SystemInfo).await?)
     }
     async fn request(&self, method: Method) -> Result<Value, Reason> {
         if !self.state.connected.load(Ordering::Relaxed) {
@@ -228,15 +241,36 @@ async fn connect_and_run(
     stop: &CancellationToken,
     authenticated_since: &mut Option<Instant>,
 ) -> Result<(), Reason> {
-    let socket = tokio::select! {
+    let mut socket = tokio::select! {
         biased;
         _ = stop.cancelled() => return Ok(()),
         result = open_authenticated(config) => result?,
     };
+    if state.system_enabled() {
+        let started = Instant::now();
+        let epoch = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs_f64();
+        let result = tokio::select! {
+            biased;
+            _ = stop.cancelled() => return Ok(()),
+            result = timeout(config.timeout, read_system(&mut socket, "version")) => result.map_err(|_| Reason::Timeout).and_then(|r| r),
+        };
+        let error = result.as_ref().err().copied();
+        if error.is_some() {
+            state.reject_compatibility();
+        }
+        state.complete_system(result, Instant::now(), epoch, started.elapsed());
+        if let Some(reason) = error {
+            return Err(reason);
+        }
+        state.accept_compatibility();
+    }
     *authenticated_since = Some(Instant::now());
     state.connected.store(true, Ordering::Relaxed);
     tracing::info!("API authenticated");
-    run_session(socket, config.timeout, receiver, stop).await
+    run_session(socket, config.timeout, receiver, stop, state).await
 }
 
 async fn open_authenticated(config: &ApiConfig) -> Result<Socket, Reason> {
@@ -304,6 +338,7 @@ async fn run_session(
     deadline: Duration,
     receiver: &mut mpsc::Receiver<Request>,
     stop: &CancellationToken,
+    state: &State,
 ) -> Result<(), Reason> {
     let (sink, mut stream) = socket.split();
     let (write, outgoing) = mpsc::channel(CAPACITY);
@@ -325,9 +360,21 @@ async fn run_session(
             message = stream.next() => {
                 last_received = Instant::now();
                 let result = match message {
-                    Some(Ok(Message::Text(text))) => match protocol::decode_pool_response(&text) {
+                    Some(Ok(Message::Text(text))) => match protocol::decode_response(&text, |id| pending.get(id).map(|request| request.method)) {
                         Ok(Incoming::Response { id, result }) => {
                             if let Some(request) = pending.remove(&id) {
+                                if matches!(request.method, Method::SystemInfo) {
+                                    let invalid_version = match &result {
+                                        Ok(value) => system::validate_version(value).err(),
+                                        Err(reason @ (Reason::Schema | Reason::Unsupported)) => Some(*reason),
+                                        _ => None,
+                                    };
+                                    if let Some(reason) = invalid_version {
+                                        state.reject_compatibility();
+                                        request.complete(Err(reason));
+                                        break Err(reason);
+                                    }
+                                }
                                 request.complete(result);
                             }
                             Ok(())

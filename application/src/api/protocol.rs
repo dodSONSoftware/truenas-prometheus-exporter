@@ -38,19 +38,25 @@ impl Method {
 }
 
 pub fn decode(text: &str) -> Result<Incoming, Reason> {
-    decode_with(text, |raw| {
+    decode_with(text, |_, raw| {
         serde_json::from_str(raw).map_err(|_| Reason::Protocol)
     })
 }
 
-// Pool replies are the only data responses admitted on an authenticated M2 session.
-pub(super) fn decode_pool_response(text: &str) -> Result<Incoming, Reason> {
-    decode_with(text, crate::collectors::pools::bounded_result)
+pub(super) fn decode_response(
+    text: &str,
+    method_for_id: impl Fn(&str) -> Option<Method>,
+) -> Result<Incoming, Reason> {
+    decode_with(text, |id, raw| match method_for_id(id) {
+        Some(Method::PoolQuery) => crate::collectors::pools::bounded_result(raw),
+        Some(Method::SystemInfo) => crate::collectors::system::bounded_result(raw),
+        None => Ok(Value::Null),
+    })
 }
 
 fn decode_with(
     text: &str,
-    result_decoder: impl FnOnce(&str) -> Result<Value, Reason>,
+    result_decoder: impl FnOnce(&str, &str) -> Result<Value, Reason>,
 ) -> Result<Incoming, Reason> {
     let object: BTreeMap<String, &RawValue> =
         serde_json::from_str(text).map_err(|_| Reason::Protocol)?;
@@ -88,7 +94,7 @@ fn decode_with(
                 _ => Reason::Api,
             })
         } else {
-            result_decoder(object.get("result").ok_or(Reason::Protocol)?.get())
+            result_decoder(&id, object.get("result").ok_or(Reason::Protocol)?.get())
         };
         Ok(Incoming::Response { id, result })
     } else if string_field("method").is_some()
@@ -123,5 +129,42 @@ pub fn authenticate(value: Value) -> Result<(), Reason> {
         "OTP_REQUIRED" => Err(Reason::Otp),
         "REDIRECT" => Err(Reason::Redirect),
         _ => Err(Reason::Protocol),
+    }
+}
+
+#[cfg(test)]
+mod routing_tests {
+    use super::*;
+    #[test]
+    fn per_method_result_bounds_and_unknown_ids() {
+        let object = |length| format!("{{\"padding\":\"{}\"}}", "x".repeat(length - 14));
+        for (length, valid) in [(65536, true), (65537, false)] {
+            let raw = object(length);
+            assert_eq!(raw.len(), length);
+            let frame = format!("{{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{raw}}}");
+            let Incoming::Response { result, .. } =
+                decode_response(&frame, |_| Some(Method::SystemInfo)).unwrap()
+            else {
+                panic!("response expected")
+            };
+            assert_eq!(result.is_ok(), valid);
+        }
+        let pools = serde_json::json!({"jsonrpc":"2.0","id":"unknown","result":vec![serde_json::json!({"name":"synthetic"});257]}).to_string();
+        let Incoming::Response { result, .. } = decode_response(&pools, |_| None).unwrap() else {
+            panic!("response expected")
+        };
+        assert_eq!(result.unwrap(), Value::Null);
+        let Incoming::Response { result, .. } =
+            decode_response(&pools, |_| Some(Method::PoolQuery)).unwrap()
+        else {
+            panic!("response expected")
+        };
+        assert_eq!(result.unwrap_err(), Reason::Schema);
+        let Incoming::Response { result, .. } =
+            decode_response(&pools, |_| Some(Method::SystemInfo)).unwrap()
+        else {
+            panic!("response expected")
+        };
+        assert_eq!(result.unwrap_err(), Reason::Schema);
     }
 }

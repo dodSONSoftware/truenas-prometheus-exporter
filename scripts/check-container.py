@@ -157,6 +157,21 @@ def main():
             docker("exec", mock, PROBE, KEY, CA)
             stop(mock)
 
+            # The system-enabled mock exercises the real scheduler without NAS traffic.
+            system_mock = start({"EXPORTER_MOCK": "true", "TRUENAS_SYSTEM_ENABLED": "true"})
+            healthy(system_mock)
+            address = docker("port", system_mock, "9110/tcp")
+            get("/readyz")
+            system_metrics = get("/metrics")
+            for expected in ('truenas_api_compatible 0',
+                             'truenas_system_uptime_seconds 12345.75',
+                             'truenas_memory_total_bytes 34359738368',
+                             'truenas_system_load_average{minutes="5"} 1.5',
+                             'truenas_exporter_collection_success{collector="system"} 1'):
+                if expected not in system_metrics:
+                    raise RuntimeError("Missing synthetic system metric: " + expected)
+            stop(system_mock)
+
             # No network access: validate real-mode file configuration and outage behavior.
             outage = start({"TRUENAS_WS_URL": "wss://127.0.0.1:1/api/current",
                             "TRUENAS_USERNAME": "synthetic-user", "TRUENAS_API_KEY_FILE": KEY,
@@ -174,7 +189,7 @@ def main():
                           "Docker healthcheck", "non-root UID/GID", "read-only filesystem",
                           "zero capability sets", "no-new-privileges", "license and CA bundle",
                           "no shell/package manager", "credential/private-CA mounts",
-                          "network-isolated outage readiness", "multi-target configuration/metrics", "SIGTERM"]}, indent=2))
+                          "network-isolated outage readiness", "multi-target configuration/metrics", "system-enabled mock metrics/readiness", "SIGTERM"]}, indent=2))
 
 
 if __name__ == "__main__":

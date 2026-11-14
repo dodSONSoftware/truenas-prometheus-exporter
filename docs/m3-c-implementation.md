@@ -1,0 +1,11 @@
+# M3-C implementation approach
+
+Status: implemented and verified offline. No live daemon run or production deployment was performed in this slice.
+
+1. Add TRUENAS_SYSTEM_ENABLED=false as an explicit global switch. Enabled targets require both pool and system snapshots for readiness. Use the configured poll/TTL defaults independently for each group's timestamps; a successful group never refreshes another. Disabled mode keeps the existing pool-only wire behavior and labels.
+2. Gate each enabled connection/reconnection with typed system.info before admitting requests. Retry with existing backoff on gate failures. A version validation failure invalidates compatibility immediately, suppresses measurements/readiness without losing historical timestamps, and ends the session. Ordinary disconnects retain bounded cache grace. Scheduled system replies also validate the version so an incompatible response cannot be followed by continued polling on that session.
+3. Route responses using the method of the pending request, preserving the 256-pool preallocation bound and adding a 64 KiB system result bound. Unknown IDs do not allocate result trees. Keep the 1 MiB wire and shared absolute request deadlines.
+4. Share the existing snapshot/attempt/error metric behavior through a typed Collection<T>. Add system info, uptime, physical total memory and 1/5/15-minute load gauges. Only one bounded hostname/version info tuple per fresh target snapshot; no hardware serial, license or model labels. Preserve integer bytes and fractional seconds. Optional missing values remain absent.
+5. Use independent polling loops on one authenticated client. Mock mode uses explicit synthetic system values and never contacts a NAS. Add controlled-time expiry/isolation tests and loopback gate/reconnect/unsupported/version-change tests; exercise the real process and container using synthetic data.
+
+Compatibility is an enabled-mode requirement, not an unqualified claim about existing pool-only mode. Capture evidence remains the previously authorized 25.04.2.6 system/pool fixtures; no realtime method is introduced. Complete required Rust/MSRV/build/container checks, update evidence/action plans, and execute the user's milestone commit workflow.

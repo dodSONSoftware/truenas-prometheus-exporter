@@ -1,13 +1,16 @@
-test: verify captured TrueNAS system compatibility
+feat: add opt-in system collection and compatibility gating
 
-[0.1.1] Zinc Ferret
+[0.2.0] Aluminum Ferret
 
-- Add full sanitized native and UID-10001 Docker system.info envelopes with capture provenance
-- Replay genuine responses offline through the production system preflight
-- Assert API-reported version, physical memory, fractional uptime and load averages
-- Record authorized live checks, restricted secret cleanup and remaining runtime integration limits
-- Update M3-B acceptance and the next automatic version-gate/system-collection scope
-- VERSION: Increment the patch release to 0.1.1
-- README.md: Update the Zinc Ferret release information
+- Gate enabled connections and reconnects with typed system.info before admitting requests
+- Poll system and pools independently with required-group readiness and finite per-group freshness
+- Share typed snapshot metrics while retaining separate timestamps, payloads and bounded errors
+- Publish validated system identity, uptime, physical memory and load without hardware identifiers
+- Route responses by pending method, preserving pool bounds and adding a 64 KiB system result limit
+- Verify version changes, response ordering, expiry, recovery and target isolation with offline fixtures
+- Extend container validation and configuration examples with explicit system-enabled mock coverage
+- Document opt-in defaults, rejection/grace policy and unrun live/resource acceptance
+- VERSION: Increment the minor release to 0.2.0 for the new collector functionality
+- README.md: Update the Aluminum Ferret release information
 
 developed by Randel Dodson and AI
