@@ -1,12 +1,11 @@
-docs: reconcile project status and add conversation handoff
+feat: export reported pool scan errors, progress and state
 
-[0.3.7] Tin Ferret
+[0.4.0] Bronze Ferret
 
-- handoff: Add a comprehensive continuation record and pasteable restart prompt
-- status: Consolidate completed evidence and remaining scan, acceptance and delivery work
-- docs: Reconcile stale summaries while preserving dated evidence and archived plan history
-- validation: Record passed ordinary checks, container build and local documentation links
-- VERSION: Increment version from 0.3.6 to 0.3.7
-- README.md: Add current status and handoff navigation and update Tin Ferret release information
+- Decode verified scan labels and optional measurements within the pool snapshot
+- Exercise captured SCRUB replay, synthetic variants, replacement and expiry
+- Document the callable serializer, byte field meanings and evidence limits
+- VERSION: Advance the release from 0.3.7 to 0.4.0
+- README.md: Update Bronze Ferret release and collector coverage
 
 developed by Randel Dodson and AI

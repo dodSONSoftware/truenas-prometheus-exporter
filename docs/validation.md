@@ -365,3 +365,9 @@ Documentation-only release 0.3.7 reconciles current status against functional/to
 sh scripts/check.sh passed formatting, strict Clippy, 77 regular Rust tests and 11 Python tests; four sustained tests remain ignored by default. The linux/amd64 production build tagged local/truenas-rust-exporter:handoff passed using unchanged production layers. Local Markdown targets across 37 repository/external documentation files were checked with zero missing links. Live appliance calls, sustained resource reruns, full MSRV-suite reruns, hosted CI and new security scans were not performed for this documentation checkpoint. Existing evidence retains its recorded scope.
 
 The next conversation should read project-status.md, implementation-plan.md and handoffs/2026-11-14-handoff.md, then begin offline callable SCRUB/RESILVER contract work. No push, tag, production deployment, dashboard/infrastructure/access-control change or credential-content read occurred.
+
+## November 14, 2026 — 0.4.0 pool scan metrics
+
+Both sanitized pool responses replayed through the production client and HTTP metrics endpoint, exposing FINISHED SCRUB, errors=0 and the source percentage divided by 100. Synthetic tests covered active and canceled RESILVER, unsupported/missing/null scan identity, invalid numeric values, pool replacement, failed-poll retention and expiry at the TTL boundary.
+
+`sh scripts/check.sh` passed formatting, locked all-target Clippy with warnings denied, 79 ordinary Rust tests and 11 Python tests. The initial sandbox run denied loopback listeners. The complete run with loopback access passed. Four sustained scenarios were ignored as configured. The pinned linux/amd64 runtime built on Docker Desktop context desktop-linux. Verification used public release sources and local fixtures. Hosted CI, sustained profiling and live acceptance were outside this run.

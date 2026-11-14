@@ -4,6 +4,8 @@ Entries below describe their milestone at the time, including then-pending work.
 
 ## Development history
 
+- 0.4.0 adds pool scan errors, reported progress and state with pool snapshot freshness. Both saved FINISHED SCRUB captures replay. RESILVER coverage uses the pinned producer and synthetic tests.
+
 - Consolidate current implementation/acceptance status, archive superseded plan snapshots, reconcile stale summaries and add a comprehensive conversation handoff plus pasteable restart prompt. Preserve dated evidence and live authorization limits.
 
 - Add an opt-in two-container cgroup profile with loopback-only synthetic fixtures, a separately capped production exporter, bounded read-only Docker statistics, controller guards and owned cleanup. Record finite sampled headroom separately from fixture cost and kernel-peak/production-budget limits.

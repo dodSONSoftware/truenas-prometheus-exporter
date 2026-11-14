@@ -1,6 +1,6 @@
 # Current implementation and acceptance plan
 
-Updated November 14, 2026 for documentation release 0.3.7. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
+Updated November 14, 2026 for release 0.4.0. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
 
 ## Completed baseline
 
@@ -10,17 +10,9 @@ Updated November 14, 2026 for documentation release 0.3.7. Use [project-status.m
 - [x] M3-D opt-in realtime implementation (4f0d215), native/Docker preflight (f89e193), four captured-frame replays (a9ce8f1).
 - [x] Offline numerical source review (d69722f), with operational semantics still explicitly unresolved.
 - [x] Finite integrated operational baseline (8e7d21f), longer phased profile (69ecd46), separate-cgroup attribution (069450d).
-- [x] Local quality gates, pinned image builds and scoped Rust 1.88 checks recorded in validation.md. Latest baseline: 77 regular Rust tests, 11 Python tests; four sustained tests ignored by default.
+- [x] Local quality gates, pinned image builds and scoped Rust 1.88 checks recorded in validation.md. Latest baseline: 79 regular Rust tests, 11 Python tests; four sustained tests ignored by default.
 
-## Next implementation: callable scan contract and metrics
-
-1. Inspect pool.query source serialization and the pinned TS-25.04.2.6 scan producer. The reference exporter targets 25.10.2 and is not authority. Existing pool captures retain scan shape; no live access is needed to begin.
-2. Record function/state enums, errors semantics, percentage and byte-progress meanings, null/no-scan/history behavior and malformed-field policy. Actual FINISHED SCRUB percentage is 99.99960064888, so state alone must not silently overwrite source progress. RESILVER remains synthetic/source evidence unless naturally captured under authorization.
-3. Implement only verified selected fields. Proposed families are truenas_pool_scan_errors{pool,function}, truenas_pool_scan_progress_ratio{pool,function}, truenas_pool_scan_state{pool,function,state}. Errors is a gauge. No scan is absence. Preserve existing pool behavior, bounded labels, snapshots/TTL and request allowlist; do not add discovery or trigger a scan.
-4. Test SCRUB/RESILVER, active/finished/canceled, absent/null/unknown/invalid, progress bounds, error values, stale removal and captured replay. Label constructed variants synthetic. Run required Rust/container checks and review the diff.
-5. Update contracts/provenance/status/external plans and execute git-commit-message-instructions.md after the milestone. Do not push/tag/deploy.
-
-Exit: code and documentation agree on a verified callable contract; unsupported cases remain explicit and no missing value becomes a fabricated zero.
+- [x] Callable pool scan errors, progress and state implemented. Both FINISHED SCRUB captures replay. RESILVER and other unobserved variants have synthetic coverage. See [API contract](api-contract.md#callable-pool-scan-ts-250426).
 
 ## Acceptance work that can proceed alongside feature development
 

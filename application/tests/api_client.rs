@@ -1065,6 +1065,9 @@ async fn captured_appliance_pool_envelopes_replay_offline() {
             "truenas_pool_size_bytes{target=\"captured-target\",pool=\"captured-pool-1\"} 24000277250048",
             "truenas_pool_healthy{target=\"captured-target\",pool=\"captured-pool-1\"} 1",
             "truenas_pool_warning{target=\"captured-target\",pool=\"captured-pool-1\"} 1",
+            "truenas_pool_scan_errors{target=\"captured-target\",pool=\"captured-pool-1\",function=\"SCRUB\"} 0",
+            "truenas_pool_scan_progress_ratio{target=\"captured-target\",pool=\"captured-pool-1\",function=\"SCRUB\"} 0.9999960064888",
+            "truenas_pool_scan_state{target=\"captured-target\",pool=\"captured-pool-1\",function=\"SCRUB\",state=\"FINISHED\"} 1",
             "truenas_pool_fragmentation_percent{target=\"captured-target\",pool=\"captured-pool-1\"} 13",
         ] {
             assert!(metrics.contains(expected), "missing {expected}");

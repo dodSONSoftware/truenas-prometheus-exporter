@@ -17,6 +17,41 @@ pub struct Pool {
     pub status_code: Option<String>,
     #[serde(default, deserialize_with = "fragmentation")]
     pub fragmentation: Option<f64>,
+    #[serde(default, deserialize_with = "scan")]
+    pub scan: Option<Scan>,
+}
+
+#[derive(Clone)]
+pub struct Scan {
+    pub function: &'static str,
+    pub state: &'static str,
+    pub errors: Option<u64>,
+    pub progress_ratio: Option<f64>,
+}
+
+// Scan is optional enrichment. Retain only verified labels and measurements.
+fn scan<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<Scan>, D::Error> {
+    let value = Value::deserialize(d)?;
+    let function = match value["function"].as_str() {
+        Some("SCRUB") => "SCRUB",
+        Some("RESILVER") => "RESILVER",
+        _ => return Ok(None),
+    };
+    let state = match value["state"].as_str() {
+        Some("SCANNING") => "SCANNING",
+        Some("FINISHED") => "FINISHED",
+        Some("CANCELED") => "CANCELED",
+        _ => return Ok(None),
+    };
+    Ok(Some(Scan {
+        function,
+        state,
+        errors: value["errors"].as_u64(),
+        progress_ratio: value["percentage"]
+            .as_f64()
+            .filter(|p| (0.0..=100.0).contains(p))
+            .map(|p| p / 100.0),
+    }))
 }
 
 fn fragmentation<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<f64>, D::Error> {
@@ -116,5 +151,45 @@ pub fn synthetic() -> Vec<Pool> {
         status: Some("ONLINE".into()),
         status_code: Some("FEAT_DISABLED".into()),
         fragmentation: Some(13.0),
+        scan: None,
     }]
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn synthetic_scan_variants() {
+        for value in [
+            json!({}),
+            json!({"scan":null}),
+            json!({"scan":5}),
+            json!({"scan":{"function":null,"state":"NONE","errors":0}}),
+            json!({"scan":{"function":"OTHER","state":"FINISHED"}}),
+            json!({"scan":{"function":"SCRUB","state":"OTHER"}}),
+        ] {
+            let mut pool = value;
+            pool["name"] = json!("tank");
+            assert!(parse(json!([pool])).unwrap()[0].scan.is_none());
+        }
+        for (state, errors, percent, expected_errors, ratio) in [
+            ("SCANNING", json!(3), json!(0), Some(3), Some(0.0)),
+            ("CANCELED", json!(0), json!(100), Some(0), Some(1.0)),
+            ("FINISHED", json!(-1), json!(101), None, None),
+            ("SCANNING", json!(1.5), json!(-1), None, None),
+            ("SCANNING", json!(null), json!(60), None, Some(0.6)),
+            ("CANCELED", json!(2), json!(null), Some(2), None),
+        ] {
+            let pools = parse(json!([{"name":"tank","scan":{"function":"RESILVER",
+                "state":state,"errors":errors,"percentage":percent}}]))
+            .unwrap();
+            let scan = pools[0].scan.as_ref().unwrap();
+            assert_eq!(
+                (scan.function, scan.state, scan.errors, scan.progress_ratio),
+                ("RESILVER", state, expected_errors, ratio)
+            );
+        }
+    }
 }

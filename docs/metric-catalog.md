@@ -1,4 +1,4 @@
-# Implemented metric catalog and deferred scan contract
+# Implemented metric catalog
 
 Prometheus/OpenMetrics encoding includes HELP and TYPE. All unsupported/null measurements are absent. No NaN/Inf. Labels include collector=pools/system/cpu/memory/network/arc, bounded reason categories, validated pool identity/status values, and the explicitly enabled system metadata/finite load windows below. Prometheus supplies job/instance. There is no implicit host label in pool-only mode. Enabled system identity exposes a validated host/version tuple only on truenas_system_info, not on every series.
 
@@ -20,10 +20,13 @@ Prometheus/OpenMetrics encoding includes HELP and TYPE. All unsupported/null mea
 | truenas_pool_warning{pool} | gauge | warning boolean, FEAT_DISABLED is not device degradation |
 | truenas_pool_info{pool,status,status_code} | gauge | 1; status allowlist ONLINE/DEGRADED/FAULTED/OFFLINE/UNAVAIL/REMOVED/SUSPENDED, otherwise UNKNOWN; status_code retains verified FEAT_DISABLED, other codes map to OTHER, absent codes to UNKNOWN |
 | truenas_pool_fragmentation_percent{pool} | gauge | fragmentation numeric or numeric string, 0..100 |
+| truenas_pool_scan_errors{pool,function} | gauge | Current or last reported scan error count, unsigned JSON integer |
+| truenas_pool_scan_progress_ratio{pool,function} | gauge | Source numeric percentage in [0,100] divided by 100, including for terminal states |
+| truenas_pool_scan_state{pool,function,state} | gauge | 1 for the reported SCRUB or RESILVER in SCANNING, FINISHED or CANCELED state |
 
-Scrub/resilver decision: future metrics use truenas_pool_scan_errors{pool,function}, truenas_pool_scan_progress_ratio{pool,function}, and truenas_pool_scan_state{pool,function,state}; bounded function SCRUB/RESILVER and state SCANNING/FINISHED/CANCELED. Errors is a gauge, not a lifetime counter. No scan means absence. Do not implement the ambiguous truenas_pool_scrub_errors name. Scan metrics are deferred to M3 until the complete callable response contract is verified; M2 ignores scan content.
+A missing, null, malformed or unsupported scan/function/state omits all scan samples. With recognized labels, missing, null or invalid numbers independently omit their sample. Scan measurements share pool replacement and monotonic expiry. See the [callable producer contract](api-contract.md#callable-pool-scan-ts-250426).
 
-Implemented system/realtime mappings and required-group freshness are described below and in system-contract.md/realtime-contract.md. CPU percent converts once to ratio; link Mbps once to bits/s; byte rates remain gauges. Callable scan schema is the next mapping gate. Independent numerical/source semantics remain an acceptance boundary even where parsing/replay succeeds.
+Implemented system/realtime mappings and required-group freshness are described below and in system-contract.md/realtime-contract.md. CPU percent converts once to ratio; link Mbps once to bits/s; byte rates remain gauges. Independent numerical/source semantics remain an acceptance boundary even where parsing/replay succeeds.
 
 Tests cover exposition metadata, label escaping, units, expiry boundaries, absent optional fields, invalid ranges, empty results and simultaneous healthy/warning. Pools are capped at 256 and names/codes bounded in length. No GUIDs, paths, messages or timestamps as labels.
 

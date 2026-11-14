@@ -717,6 +717,39 @@ fn pool_metrics(registry: &mut Metrics, pools: &[Pool]) {
             }),
         );
     }
+    let scans = pools.iter().filter_map(|pool| {
+        let scan = pool.scan.as_ref()?;
+        let labels = vec![
+            ("pool".into(), pool.name.clone()),
+            ("function".into(), scan.function.into()),
+        ];
+        Some((labels, scan))
+    });
+    family(
+        registry,
+        "truenas_pool_scan_errors",
+        "Errors reported for the current or last pool scan",
+        scans
+            .clone()
+            .filter_map(|(labels, scan)| Some((labels, scan.errors? as f64))),
+    );
+    family(
+        registry,
+        "truenas_pool_scan_progress_ratio",
+        "Reported pool scan percentage divided by 100",
+        scans
+            .clone()
+            .filter_map(|(labels, scan)| Some((labels, scan.progress_ratio?))),
+    );
+    family(
+        registry,
+        "truenas_pool_scan_state",
+        "State of the current or last reported pool scan",
+        scans.map(|(mut labels, scan)| {
+            labels.push(("state".into(), scan.state.into()));
+            (labels, 1.0)
+        }),
+    );
     family(
         registry,
         "truenas_pool_info",
@@ -762,6 +795,44 @@ mod system_tests {
 
     fn sample(text: &str, prefix: &str) -> bool {
         text.lines().any(|line| line.starts_with(prefix))
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn scan_snapshot_replacement_and_expiry() {
+        let state = State::configured(None, Duration::from_secs(10), false, false);
+        let start = Instant::now();
+        let active = pools::parse(serde_json::json!([{"name":"test","scan":{
+            "function":"RESILVER","state":"SCANNING","percentage":25,"errors":2}}]))
+        .unwrap();
+        state.complete(Ok(active.clone()), start, 100.0, Duration::ZERO);
+        state.complete(Err(Reason::Transport), start, 101.0, Duration::ZERO);
+        for (elapsed, present) in [(9, true), (10, false)] {
+            let metrics = state
+                .metrics_at(start + Duration::from_secs(elapsed))
+                .unwrap();
+            for family in ["state", "errors", "progress_ratio"] {
+                assert_eq!(
+                    sample(&metrics, &format!("truenas_pool_scan_{family}{{")),
+                    present
+                );
+            }
+        }
+        state.complete(
+            Ok(active),
+            start + Duration::from_secs(11),
+            111.0,
+            Duration::ZERO,
+        );
+        let cleared = pools::parse(serde_json::json!([{"name":"test","scan":null}])).unwrap();
+        state.complete(
+            Ok(cleared),
+            start + Duration::from_secs(12),
+            112.0,
+            Duration::ZERO,
+        );
+        let metrics = state.metrics_at(start + Duration::from_secs(12)).unwrap();
+        assert!(sample(&metrics, "truenas_pool_info{"));
+        assert!(!sample(&metrics, "truenas_pool_scan_"));
     }
 
     #[tokio::test(start_paused = true)]

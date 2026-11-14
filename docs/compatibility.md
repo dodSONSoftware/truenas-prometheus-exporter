@@ -1,6 +1,6 @@
 # Compatibility and evidence
 
-Current status: [project-status.md](project-status.md). Selected 25.04.2.6 live checks/captures are complete; general scan metrics, independent numerical/minimum-role and combined live-daemon acceptance remain open. Finite synthetic resource attribution is complete within its recorded scope.
+Current status: [project-status.md](project-status.md). Selected 25.04.2.6 live checks/captures are complete; captured FINISHED SCRUB replays through the scan metrics. RESILVER has source and synthetic coverage. Independent numerical/minimum-role and combined live-daemon acceptance remain open. Finite synthetic resource attribution is complete within its recorded scope.
 
 Target: TrueNAS SCALE 25.04.2.x, initially 25.04.2.6. Initial implementation used offline mocks; subsequently authorized transport and authenticated pool checks through memory-alpha.home.lab are recorded in memory-alpha-integration.md. Native macOS and local Docker checks passed on November 13, 2026 (November 14 UTC). Historical values in the handoff are not current observations.
 
