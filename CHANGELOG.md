@@ -2,6 +2,8 @@
 
 ## Development history
 
+- Add an opt-in phased memory profile with cross-platform child CPU/RSS sampling, baseline/load/cooldown and three recovery cycles. Preserve synthetic evidence and separate scrape-associated native peaks from quiet recovery and whole-cgroup pressure; no production behavior changes.
+
 - Add an opt-in full-process maximum-cardinality system/realtime operational scenario, shared with the existing pool-only fixture. Verify silence isolation, full outage recovery, final owned unsubscribe requests and stalled-reader shutdown; record native and capped-container child/cgroup resource observations without claiming long-term memory stability.
 
 - Trace pinned CPU/memory/ARC chart producers and realtime adapter arithmetic; verify synthetic conversion/default cases and document the unresolved ARC chart-algorithm concern and a concrete independent-comparison procedure. No exporter behavior changes.

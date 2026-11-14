@@ -84,3 +84,8 @@ The fixture checks every owned unsubscribe request against that connection's ID 
 The finite functional gate passes only when readiness/expiry/isolation/recovery/owned-cleanup assertions succeed. Resource observations retain their platform/workload scope. A capped run finishing without OOM does not establish comfortable headroom or long-term stability. In particular, the high native sampled RSS requires profiling before asserting a general low-memory claim; the earlier container run also approached the 128 MiB cgroup cap.
 
 Next resource work is a longer steady-state and repeated recovery profile, distinguishing allocator retention from growth and attributing response/snapshot buffers with controlled scrape pressure. Use child measurements and cgroup measurements separately. Do not change production resource limits or collector defaults based solely on this single finite workload. Independent appliance numerical/chart semantics, least privilege, hosted CI and eventual deployment remain separate gates; see realtime-numerical-review.md.
+
+
+## Longer phased continuation
+
+The later [phased memory profile](operational-memory-profile.md) adds two minutes of continuous scrape pressure, cooldown and three recovery cycles. It records both macOS and Linux child usage directly in the harness and retains separate cgroup accounting. Its results supplement this earlier finite baseline rather than changing the historical measurements. Three sustained scenarios are now explicitly ignored by ordinary cargo test.

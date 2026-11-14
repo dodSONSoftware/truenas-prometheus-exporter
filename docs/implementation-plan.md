@@ -150,3 +150,12 @@ The offline source-to-wire review and synthetic upstream-function experiments ar
 - [ ] Complete independent paired live numerical/source-chart verification and remaining role/CI acceptance before production readiness.
 
 See integrated-operational-validation.md and validation.md for results. Production code/defaults are unchanged. The next resource investigation should distinguish allocator retention and fixture/client overhead from exporter growth before selecting a correction or changing limits. Scan callable contracts remain a separate subsequent milestone.
+
+
+## Phased memory-profile continuation — November 14, 2026
+
+- [x] Run a longer warmed-baseline/load/cooldown comparison and three outage/recovery cycles on native macOS and capped network-disabled Docker, with per-phase child CPU/RSS and durable synthetic evidence.
+- [x] Record the scrape-associated native RSS peak, cooldown reduction and nearly flat quiet-recovery minima without inferring allocation ownership or indefinite leak freedom.
+- [ ] Establish production headroom with separate exporter/fixture cgroup accounting: the combined profile reached its 128 MiB cap despite successful completion. Do not infer exporter requirements from whole-harness peak or silently change production limits.
+
+See operational-memory-profile.md and docs/evidence/operational-memory-profile-2026-11-14.json. Independent live numerical/role acceptance and the historical intermittent process-fixture reliability issue remain open. Callable SCRUB/RESILVER schema work remains the next feature milestone; no production collector change is justified by this profile alone.

@@ -1,12 +1,12 @@
-test: validate integrated realtime outage and resource behavior
+test: profile phased memory use and repeated recovery
 
-[0.3.4] Tin Ferret
+[0.3.5] Tin Ferret
 
-- tests: Share the sustained fixture between pool-only and integrated maximum-cardinality scenarios
-- tests: Verify realtime silence isolation, full outage recovery and owned shutdown requests
-- measurements: Record native and capped-container exporter CPU and RSS with separate cgroup accounting
-- docs: Document reproducible acceptance, observed resource limits and remaining stability gates
-- VERSION: Increment version from 0.3.3 to 0.3.4
-- README.md: Link the integrated operational baseline and update Tin Ferret release information
+- tests: Add an opt-in baseline, scrape-load, cooldown and three-cycle recovery profile
+- measurements: Sample exporter CPU and RSS by phase on macOS and Linux
+- evidence: Preserve synthetic profile results and distinguish child usage from capped cgroup pressure
+- docs: Record validation, transient existing test failure and unresolved production headroom
+- VERSION: Increment version from 0.3.4 to 0.3.5
+- README.md: Link the phased profile and update Tin Ferret release information
 
 developed by Randel Dodson and AI

@@ -38,7 +38,7 @@ async fn get(address: std::net::SocketAddr, path: &str) -> String {
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 #[ignore = "Explicit sustained, maximum-size process and shutdown validation"]
 async fn sustained_collection_outage_recovery_and_stalled_sigterm() {
-    timeout(Duration::from_secs(180), exercise(false))
+    timeout(Duration::from_secs(180), exercise(Scenario::Pool))
         .await
         .unwrap();
 }
@@ -46,9 +46,24 @@ async fn sustained_collection_outage_recovery_and_stalled_sigterm() {
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 #[ignore = "Explicit integrated system/realtime maximum-size outage and resource validation"]
 async fn integrated_realtime_outage_recovery_and_stalled_sigterm() {
-    timeout(Duration::from_secs(240), exercise(true))
+    timeout(Duration::from_secs(240), exercise(Scenario::Integrated))
         .await
         .unwrap();
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "Explicit phased steady-state and repeated-recovery memory profiling"]
+async fn integrated_memory_profile() {
+    timeout(Duration::from_secs(900), exercise(Scenario::MemoryProfile))
+        .await
+        .unwrap();
+}
+
+#[derive(Clone, Copy)]
+enum Scenario {
+    Pool,
+    Integrated,
+    MemoryProfile,
 }
 
 struct ActiveSession(Arc<AtomicUsize>);
@@ -58,52 +73,96 @@ impl Drop for ActiveSession {
     }
 }
 
-// Sample only the exporter child, separately from whole-container cgroup accounting.
 #[cfg(target_os = "linux")]
-async fn sample_child(pid: u32, stop: tokio_util::sync::CancellationToken) {
+async fn child_usage(pid: u32) -> (u64, f64) {
+    let status = std::fs::read_to_string(format!("/proc/{pid}/status")).unwrap();
+    let stat = std::fs::read_to_string(format!("/proc/{pid}/stat")).unwrap();
+    let rss_kib: u64 = status
+        .lines()
+        .find_map(|line| line.strip_prefix("VmRSS:"))
+        .unwrap()
+        .split_whitespace()
+        .next()
+        .unwrap()
+        .parse()
+        .unwrap();
+    let fields: Vec<_> = stat
+        .rsplit_once(')')
+        .unwrap()
+        .1
+        .split_whitespace()
+        .collect();
+    let ticks = fields[11].parse::<u64>().unwrap() + fields[12].parse::<u64>().unwrap();
+    // SAFETY: sysconf takes an integer selector and no pointers.
+    let ticks_per_second = unsafe { libc::sysconf(libc::_SC_CLK_TCK) };
+    assert!(ticks_per_second > 0);
+    (rss_kib * 1024, ticks as f64 / ticks_per_second as f64)
+}
+
+#[cfg(target_os = "macos")]
+async fn child_usage(pid: u32) -> (u64, f64) {
+    let output = Command::new("/bin/ps")
+        .args(["-o", "rss=,time=", "-p", &pid.to_string()])
+        .output()
+        .await
+        .unwrap();
+    assert!(output.status.success());
+    let text = String::from_utf8(output.stdout).unwrap();
+    let mut fields = text.split_whitespace();
+    let rss_kib: u64 = fields.next().unwrap().parse().unwrap();
+    let seconds = fields
+        .next()
+        .unwrap()
+        .split(':')
+        .fold(0.0, |total, component| {
+            total * 60.0 + component.parse::<f64>().unwrap()
+        });
+    (rss_kib * 1024, seconds)
+}
+
+// Sampling is test-only and bounded by the enclosing scenario deadline.
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+async fn sample_child(
+    pid: u32,
+    phase: Arc<std::sync::Mutex<&'static str>>,
+    stop: tokio_util::sync::CancellationToken,
+) {
     let mut samples = Vec::new();
     while !stop.is_cancelled() {
-        let status = std::fs::read_to_string(format!("/proc/{pid}/status")).unwrap();
-        let stat = std::fs::read_to_string(format!("/proc/{pid}/stat")).unwrap();
-        let rss_kib: u64 = status
-            .lines()
-            .find_map(|line| line.strip_prefix("VmRSS:"))
-            .unwrap()
-            .split_whitespace()
-            .next()
-            .unwrap()
-            .parse()
-            .unwrap();
-        // Fields 14/15 follow the parenthesized command and state (field 3).
-        let fields: Vec<_> = stat
-            .rsplit_once(')')
-            .unwrap()
-            .1
-            .split_whitespace()
-            .collect();
-        let cpu_ticks = fields[11].parse::<u64>().unwrap() + fields[12].parse::<u64>().unwrap();
-        samples.push((Instant::now(), rss_kib, cpu_ticks));
+        // Copy the phase before awaiting so the mutex never spans process I/O.
+        let label = *phase.lock().unwrap();
+        let (rss, cpu) = child_usage(pid).await;
+        samples.push((Instant::now(), rss, cpu, label));
         tokio::select! {
             _ = stop.cancelled() => break,
             _ = sleep(Duration::from_millis(500)) => {},
         }
     }
-    let first = samples.first().unwrap();
-    let last = samples.last().unwrap();
-    // SAFETY: sysconf takes an integer selector and no pointers.
-    let ticks_per_second = unsafe { libc::sysconf(libc::_SC_CLK_TCK) };
-    assert!(ticks_per_second > 0);
-    println!(
-        "exporter_samples={} exporter_peak_sampled_rss_bytes={} exporter_cpu_ticks={} ticks_per_second={} observed_ms={}",
-        samples.len(),
-        samples.iter().map(|s| s.1).max().unwrap() * 1024,
-        last.2 - first.2,
-        ticks_per_second,
-        (last.0 - first.0).as_millis()
-    );
+    for group in samples.chunk_by(|a, b| a.3 == b.3) {
+        let first = group.first().unwrap();
+        let last = group.last().unwrap();
+        println!(
+            "resource_summary={}",
+            json!({
+                "phase":first.3,"samples":group.len(),"seconds":(last.0-first.0).as_secs_f64(),
+                "rss_first_bytes":first.1,"rss_last_bytes":last.1,
+                "rss_min_bytes":group.iter().map(|s|s.1).min().unwrap(),
+                "rss_peak_bytes":group.iter().map(|s|s.1).max().unwrap(),
+                "cpu_seconds":last.2-first.2
+            })
+        );
+    }
 }
 
-async fn exercise(realtime: bool) {
+fn set_phase(phase: &std::sync::Mutex<&'static str>, label: &'static str) {
+    *phase.lock().unwrap() = label;
+    println!("resource_phase={label}");
+}
+
+async fn exercise(scenario: Scenario) {
+    let realtime = !matches!(scenario, Scenario::Pool);
+    let profile = matches!(scenario, Scenario::MemoryProfile);
+    let phase = Arc::new(std::sync::Mutex::new("startup"));
     let experiment_start = Instant::now();
     let active = Arc::new(AtomicUsize::new(0));
     let subscriptions = Arc::new(AtomicUsize::new(0));
@@ -270,10 +329,14 @@ async fn exercise(realtime: bool) {
         .kill_on_drop(true)
         .spawn()
         .unwrap();
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
     let resources_stop = tokio_util::sync::CancellationToken::new();
-    #[cfg(target_os = "linux")]
-    let resources = tokio::spawn(sample_child(child.id().unwrap(), resources_stop.clone()));
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    let resources = tokio::spawn(sample_child(
+        child.id().unwrap(),
+        phase.clone(),
+        resources_stop.clone(),
+    ));
     println!(
         "operational_exporter_pid={} realtime={realtime}",
         child.id().unwrap()
@@ -312,6 +375,12 @@ async fn exercise(realtime: bool) {
             16 * 128
         );
     }
+    if profile {
+        set_phase(&phase, "baseline_no_scrapers");
+        sleep(Duration::from_secs(30)).await;
+        assert!(get(address, "/readyz").await.starts_with("HTTP/1.1 200"));
+    }
+    set_phase(&phase, "scrape_load");
     let stop_load = tokio_util::sync::CancellationToken::new();
     let mut scrapers = JoinSet::new();
     for _ in 0..4 {
@@ -339,7 +408,7 @@ async fn exercise(realtime: bool) {
     }
     let initial_count = collections.load(Ordering::Relaxed);
     let mut health_max = Duration::ZERO;
-    for _ in 0..30 {
+    for _ in 0..if profile { 120 } else { 30 } {
         let start = Instant::now();
         assert!(
             timeout(Duration::from_secs(3), get(address, "/healthz"))
@@ -353,44 +422,134 @@ async fn exercise(realtime: bool) {
     assert!(collections.load(Ordering::Relaxed) > initial_count + 16);
     let mut successes = 0;
     let mut busy = 0;
-    if realtime {
-        mode.store(2, Ordering::SeqCst); // Withhold events while polling and pongs continue.
-        sleep(Duration::from_secs(8)).await;
-        assert!(get(address, "/readyz").await.starts_with("HTTP/1.1 503"));
+    if profile {
         stop_load.cancel();
-        // Drain load before inspecting the complete metric set.
         while let Some(result) = scrapers.join_next().await {
             let (a, b) = result.unwrap();
             successes += a;
             busy += b;
         }
-        let metrics = get(address, "/metrics").await;
-        for family in [
-            "truenas_cpu_utilization_ratio",
-            "truenas_memory_available_bytes",
-            "truenas_network_link_up",
-            "truenas_zfs_arc_size_bytes",
+        set_phase(&phase, "cooldown_no_scrapers");
+        sleep(Duration::from_secs(45)).await;
+        assert!(get(address, "/readyz").await.starts_with("HTTP/1.1 200"));
+        for (outage, recovery) in [
+            ("outage_1", "recovery_1"),
+            ("outage_2", "recovery_2"),
+            ("outage_3", "recovery_3"),
         ] {
-            assert!(
-                !metrics
-                    .lines()
-                    .any(|line| line.starts_with(&format!("{family}{{")))
-            );
+            set_phase(&phase, outage);
+            mode.store(1, Ordering::SeqCst);
+            sleep(Duration::from_secs(8)).await;
+            assert!(get(address, "/readyz").await.starts_with("HTTP/1.1 503"));
+            let expired = get(address, "/metrics").await;
+            for family in [
+                "truenas_pool_size_bytes",
+                "truenas_memory_total_bytes",
+                "truenas_cpu_utilization_ratio",
+                "truenas_memory_available_bytes",
+                "truenas_network_link_up",
+                "truenas_zfs_arc_size_bytes",
+            ] {
+                assert!(
+                    !expired
+                        .lines()
+                        .any(|line| line.starts_with(&format!("{family}{{")))
+                );
+            }
+            mode.store(0, Ordering::SeqCst);
+            timeout(Duration::from_secs(70), async {
+                while !get(address, "/readyz").await.starts_with("HTTP/1.1 200") {
+                    sleep(Duration::from_millis(100)).await;
+                }
+            })
+            .await
+            .unwrap();
+            assert_eq!(active.load(Ordering::SeqCst), 32);
+            set_phase(&phase, recovery);
+            sleep(Duration::from_secs(20)).await;
+            assert!(get(address, "/readyz").await.starts_with("HTTP/1.1 200"));
         }
-        assert_eq!(
-            metrics
+    }
+    if !profile {
+        if realtime {
+            mode.store(2, Ordering::SeqCst); // Withhold events while polling and pongs continue.
+            sleep(Duration::from_secs(8)).await;
+            assert!(get(address, "/readyz").await.starts_with("HTTP/1.1 503"));
+            stop_load.cancel();
+            // Drain load before inspecting the complete metric set.
+            while let Some(result) = scrapers.join_next().await {
+                let (a, b) = result.unwrap();
+                successes += a;
+                busy += b;
+            }
+            let metrics = get(address, "/metrics").await;
+            for family in [
+                "truenas_cpu_utilization_ratio",
+                "truenas_memory_available_bytes",
+                "truenas_network_link_up",
+                "truenas_zfs_arc_size_bytes",
+            ] {
+                assert!(
+                    !metrics
+                        .lines()
+                        .any(|line| line.starts_with(&format!("{family}{{")))
+                );
+            }
+            assert_eq!(
+                metrics
+                    .lines()
+                    .filter(|line| line.starts_with("truenas_memory_total_bytes{"))
+                    .count(),
+                16
+            );
+            assert_eq!(
+                metrics
+                    .lines()
+                    .filter(|line| line.starts_with("truenas_pool_size_bytes{"))
+                    .count(),
+                16 * 256
+            );
+            mode.store(0, Ordering::SeqCst);
+            timeout(Duration::from_secs(70), async {
+                while !get(address, "/readyz").await.starts_with("HTTP/1.1 200") {
+                    sleep(Duration::from_millis(100)).await;
+                }
+            })
+            .await
+            .unwrap();
+            println!("realtime_silence_expiry_and_polling_isolation=passed");
+        }
+        mode.store(1, Ordering::SeqCst);
+        sleep(Duration::from_secs(15)).await;
+        assert!(get(address, "/readyz").await.starts_with("HTTP/1.1 503"));
+        stop_load.cancel();
+        while let Some(result) = scrapers.join_next().await {
+            let (a, b) = result.unwrap();
+            successes += a;
+            busy += b;
+        }
+        let expired = get(address, "/metrics").await;
+        assert!(
+            !expired
                 .lines()
-                .filter(|line| line.starts_with("truenas_memory_total_bytes{"))
-                .count(),
-            16
+                .any(|line| line.starts_with("truenas_pool_size_bytes{"))
         );
-        assert_eq!(
-            metrics
-                .lines()
-                .filter(|line| line.starts_with("truenas_pool_size_bytes{"))
-                .count(),
-            16 * 256
-        );
+        assert!(expired.contains("truenas_exporter_last_success_timestamp_seconds{"));
+        if realtime {
+            for family in [
+                "truenas_memory_total_bytes",
+                "truenas_cpu_utilization_ratio",
+                "truenas_memory_available_bytes",
+                "truenas_network_link_up",
+                "truenas_zfs_arc_size_bytes",
+            ] {
+                assert!(
+                    !expired
+                        .lines()
+                        .any(|line| line.starts_with(&format!("{family}{{")))
+                );
+            }
+        }
         mode.store(0, Ordering::SeqCst);
         timeout(Duration::from_secs(70), async {
             while !get(address, "/readyz").await.starts_with("HTTP/1.1 200") {
@@ -399,47 +558,7 @@ async fn exercise(realtime: bool) {
         })
         .await
         .unwrap();
-        println!("realtime_silence_expiry_and_polling_isolation=passed");
     }
-    mode.store(1, Ordering::SeqCst);
-    sleep(Duration::from_secs(15)).await;
-    assert!(get(address, "/readyz").await.starts_with("HTTP/1.1 503"));
-    stop_load.cancel();
-    while let Some(result) = scrapers.join_next().await {
-        let (a, b) = result.unwrap();
-        successes += a;
-        busy += b;
-    }
-    let expired = get(address, "/metrics").await;
-    assert!(
-        !expired
-            .lines()
-            .any(|line| line.starts_with("truenas_pool_size_bytes{"))
-    );
-    assert!(expired.contains("truenas_exporter_last_success_timestamp_seconds{"));
-    if realtime {
-        for family in [
-            "truenas_memory_total_bytes",
-            "truenas_cpu_utilization_ratio",
-            "truenas_memory_available_bytes",
-            "truenas_network_link_up",
-            "truenas_zfs_arc_size_bytes",
-        ] {
-            assert!(
-                !expired
-                    .lines()
-                    .any(|line| line.starts_with(&format!("{family}{{")))
-            );
-        }
-    }
-    mode.store(0, Ordering::SeqCst);
-    timeout(Duration::from_secs(70), async {
-        while !get(address, "/readyz").await.starts_with("HTTP/1.1 200") {
-            sleep(Duration::from_millis(100)).await;
-        }
-    })
-    .await
-    .unwrap();
     let recovered = get(address, "/metrics").await;
     for i in 0..16 {
         assert!(recovered.contains(&format!(
@@ -462,7 +581,8 @@ async fn exercise(realtime: bool) {
     let size = stalled.read(&mut prefix).await.unwrap();
     assert!(prefix[..size].starts_with(b"HTTP/1.1 200"));
     sleep(Duration::from_millis(200)).await;
-    #[cfg(target_os = "linux")]
+    set_phase(&phase, "stalled_reader");
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
     {
         resources_stop.cancel();
         resources.await.unwrap();
