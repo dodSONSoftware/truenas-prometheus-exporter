@@ -1,6 +1,6 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Copper Ferret — version 0.6.0.
+**Release:** Nickel Ferret — version 0.7.0.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 

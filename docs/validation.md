@@ -415,3 +415,9 @@ The dashboard covers every one of the 34 cataloged metric families plus scrape u
 scripts/check.sh passed formatting, strict Clippy, 83 Rust tests and 14 Python tests. Three new dashboard tests cover metric completeness, non-overlapping layout and unit semantics. The pinned linux/amd64 0.6.0 image built successfully. Four sustained cases remained ignored. The service was updated to the reviewed release image within the existing authorized ongoing local scope.
 
 Final post-update verification confirmed exporter readyz=200, minimum collector success=1 across all six groups, healthy Grafana/Prometheus/exporter containers, credential-copy permissions 0400 with owner 10001:10001, all dashboard queries successful and the final JSON persisted in Grafana. The live service runs local/truenas-rust-exporter:0.6.0.
+
+## November 14 — compact MEMORY ALPHA overview, 0.7.0
+
+Added a six-panel overview plus row header, preserving all 40 original detailed panel/row entries and IDs below a seven-unit offset. The pinned MEMORY ALPHA overview shows configured IP 10.10.10.7, days/time uptime, aggregate CPU, physical memory utilization, selected-pool allocation and RX+TX across selected interfaces. The identity tile combines scrape up, API connectivity and collector success. All six live overview queries returned samples without errors. The dashboard now contains 47 panel/row entries and seven variables. Browser rendering was not visually inspected.
+
+scripts/check.sh passed formatting, strict Clippy, 83 Rust tests and 15 Python tests. The added regression checks overview placement, pinned target, retained detail IDs and uptime/rate semantics. The pinned desktop-linux linux/amd64 container build passed. The final dashboard-only query refinement also passed the focused four-test dashboard suite. No additional NAS methods were introduced.

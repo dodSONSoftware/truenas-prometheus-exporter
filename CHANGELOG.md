@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 - 2026-11-14
+
+- Add a compact MEMORY ALPHA overview with IP address, uptime, CPU, physical memory utilization, pool usage and combined network throughput.
+- Preserve every detailed panel below the overview and verify the new live queries.
+
+
 ## 0.6.0 - 2026-11-14
 
 - Add a complete Grafana dashboard covering all 34 exporter metric families, with target filters, units and freshness context.

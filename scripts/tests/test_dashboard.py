@@ -44,3 +44,21 @@ class DashboardTests(unittest.TestCase):
                 if 'truenas_pool_scan_progress_ratio' in expression:
                     self.assertEqual(panel['fieldConfig']['defaults']['unit'], 'percentunit')
                     self.assertTrue(expression.startswith('truenas_pool_scan_progress_ratio{'))
+
+    def test_memory_alpha_overview_precedes_existing_details(self):
+        panels = self.dashboard['panels']
+        self.assertEqual(panels[0]['title'], 'MEMORY ALPHA overview')
+        self.assertEqual(panels[0]['gridPos']['y'], 0)
+        overview = panels[1:7]
+        self.assertEqual([p['title'] for p in overview], [
+            'HW: TrueNAS', 'IP address / uptime', 'CPU', 'Memory',
+            'Pool used', 'Network · RX + TX'])
+        for panel in overview:
+            self.assertIn('target="memory-alpha"', panel['targets'][0]['expr'])
+            self.assertTrue(panel['targets'][0]['instant'])
+        details = panels[7:]
+        self.assertEqual({p['id'] for p in details}, set(range(1, 41)))
+        self.assertTrue(all(p['gridPos']['y'] >= 7 for p in details))
+        self.assertEqual(overview[1]['fieldConfig']['defaults']['displayName'], '10.10.10.7')
+        self.assertEqual(overview[1]['fieldConfig']['defaults']['unit'], 'dtdhms')
+        self.assertNotIn('rate(', overview[-1]['targets'][0]['expr'])
