@@ -1,11 +1,11 @@
-docs: prepare bounded live exporter operational acceptance
+feat: add bounded exporter acceptance harness and record live recovery
 
-[0.8.7] Steel Ferret
+[0.9.0] Mercury Ferret
 
-- acceptance: Define one exporter-only stop/start window with phase deadlines and bounded observations
-- recovery: Specify an independent restoration guard, fallback limits and post-restart freshness criteria
-- operations: Preserve NAS services, existing credentials, deployed image and unrelated observability services
-- status: Record preparation separately from pending controller rehearsal and authorized live execution
-- VERSION: Increment 0.8.6 to 0.8.7 and update README.md and CHANGELOG.md release records
+- tooling: Add a one-shot controller and independent restoration guard with fixed deadlines and request caps
+- tests: Rehearse lifecycle, interruption, restoration, stale evidence and HTTP framing on macOS and Linux
+- evidence: Preserve the initial baseline refusal and separately authorized corrected live PASS with fresh collection and dashboard recovery
+- operations: Record unchanged NAS, surrounding services, configuration and deployed image 0.8.0
+- VERSION: Increment 0.8.7 to 0.9.0 and update README.md and CHANGELOG.md release records
 
 developed by Randel Dodson and AI

@@ -1,6 +1,6 @@
 # Current implementation and acceptance plan
 
-Updated November 14, 2026 for release 0.8.7. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
+Updated November 14, 2026 for release 0.9.0. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
 
 ## Completed baseline
 
@@ -10,7 +10,7 @@ Updated November 14, 2026 for release 0.8.7. Use [project-status.md](project-sta
 - [x] M3-D opt-in realtime implementation (4f0d215), native/Docker preflight (f89e193), four captured-frame replays (a9ce8f1).
 - [x] Offline numerical source review (d69722f), with operational semantics still explicitly unresolved.
 - [x] Finite integrated operational baseline (8e7d21f), longer phased profile (69ecd46), separate-cgroup attribution (069450d).
-- [x] Local quality gates, pinned image builds and scoped Rust 1.88 checks recorded in validation.md. Latest baseline: 84 regular Rust tests, 18 Python tests; four sustained tests ignored by default.
+- [x] Local quality gates, pinned image builds and scoped Rust 1.88 checks recorded in validation.md. Latest baseline: 84 regular Rust tests, 27 Python tests; four sustained tests ignored by default.
 
 - [x] Callable pool scan errors, progress and state implemented. Both FINISHED SCRUB captures replay. RESILVER and other unobserved variants have synthetic coverage. See [API contract](api-contract.md#callable-pool-scan-ts-250426).
 
@@ -21,7 +21,7 @@ Updated November 14, 2026 for release 0.8.7. Use [project-status.md](project-sta
 | Work | Required result / boundary |
 | --- | --- |
 | Independent numerical/chart comparison | Paired time/window/unit/identity evidence for CPU/memory/network; resolve ARC chart availability/algorithm before cache-efficiency interpretation. New live methods/private APIs/shell need concrete authorization |
-| Combined appliance daemon | Review live-operational-acceptance-plan.md; rehearse the bounded controller locally, obtain execution authorization, then run one exporter-only stop/start window with fresh collection/scrape and dashboard recovery. Preparation is complete; execution remains pending |
+| Combined appliance daemon | Bounded deployed exporter-only stop/restart acceptance PASSED on image 0.8.0; see live-operational-acceptance-results.md. NAS unsubscribe wire evidence, induced live network faults and broader scope remain distinct |
 | Least privilege | Confirm actual minimum effective roles and eventual host credential/CA ownership/rotation; no automatic role edits or administrative write probes |
 | Process-fixture reliability | Reproduced early-exit bind race fixed with synchronized, bounded collision-only startup and regression; 60 concurrent runs passed. Older configuration reset remains unattributed unless reproduced |
 | Release candidate checks | Rust 1.88/stable, ordinary tests, relevant opt-in profiles, hardened image/Compose, dependency/image security gates tied to exact commit/image; hosted CI still unrun |
@@ -33,7 +33,8 @@ Updated November 14, 2026 for release 0.8.7. Use [project-status.md](project-sta
 - [ ] Final Linux Compose/scrape/target configuration, operator runbook and alert artifacts.
 - [x] Explicitly authorized Linux exporter installation and Prometheus integration alongside the independent Graphite service.
 - [x] Operator-authorized dashboard/report migration and Graphite stop-before-removal gate, with backups and rollback. Operator-reported NAS-side entry disable/deletion and follow-up Rust telemetry checks are recorded.
-- [ ] Formal combined-daemon acceptance and alert review remain separate.
+- [x] Rehearsed controller and separately authorized corrected live stop/restart acceptance with fresh six-group collection, Prometheus and dashboard query recovery.
+- [ ] Reviewed alert artifacts and remaining numerical/minimum-role/release gates remain open.
 - [ ] P1 disks/reliable health-temperature, services and alert counts/severity after P0 contracts/acceptance.
 - [ ] P2 applications/tasks/VMs after stable P0/P1; generic arbitrary discovery remains outside scope.
 

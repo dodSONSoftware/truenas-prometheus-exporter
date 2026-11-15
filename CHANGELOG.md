@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.0 - 2026-11-14
+
+- Add a bounded one-shot operator acceptance controller and detached restoration guard, with native/Linux synthetic rehearsals and HTTP framing regression coverage.
+- Record separately authorized live exporter shutdown/restart acceptance: clean exit, down-scrape detection, fresh six-group recovery, stable operation and both dashboards' query recovery.
+- Preserve the initial no-mutation baseline failure and its controller fix; leave the NAS, other services, deployed image and credentials unchanged.
+
 ## 0.8.7 - 2026-11-14
 
 - Prepare an exporter-only live shutdown/restart acceptance procedure with fixed phase/request limits, restoration guard, fresh-collection and dashboard recovery criteria.

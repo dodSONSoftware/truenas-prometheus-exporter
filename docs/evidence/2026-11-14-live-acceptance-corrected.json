@@ -1,0 +1,3311 @@
+{
+  "status": "PASS",
+  "utc_start": "2026-11-15T03:56:53.674617+00:00",
+  "operator_date": "2026-11-14",
+  "plan_commit": "e2575bf",
+  "controller_sha256": "c3cad1adf114341781294750507dfa81cc0115b5eb7f296e97733e2e1c2d49e2",
+  "phases": [
+    {
+      "name": "preflight",
+      "elapsed": 0.00024831300834193826
+    },
+    {
+      "name": "baseline",
+      "elapsed": 0.2885136610129848
+    },
+    {
+      "name": "stop",
+      "elapsed": 60.28893711901037
+    },
+    {
+      "name": "stopped-observation",
+      "elapsed": 62.79237211801228
+    },
+    {
+      "name": "start",
+      "elapsed": 132.79369394600508
+    },
+    {
+      "name": "recovery",
+      "elapsed": 135.59715260300436
+    },
+    {
+      "name": "stable-recovery",
+      "elapsed": 195.89075993699953
+    },
+    {
+      "name": "final",
+      "elapsed": 275.89225817500846
+    }
+  ],
+  "observations": [
+    {
+      "wall": 1794715013.9897554,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:56:53.989758+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715000.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 58.481919326,
+          "last_success": 1794714955.505872
+        },
+        "system": {
+          "success": 1.0,
+          "age": 58.498886955,
+          "last_success": 1794714955.4889042
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.260971314,
+          "last_success": 1794715012.7268279
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.260971314,
+          "last_success": 1794715012.7268279
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.260971314,
+          "last_success": 1794715012.7268279
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.260971314,
+          "last_success": 1794715012.7268279
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208237.548232467,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11328118784.0,
+        "truenas_network_receive_bytes_per_second": 778.0,
+        "truenas_network_transmit_bytes_per_second": 3007.0,
+        "truenas_zfs_arc_size_bytes": 46250965264.0
+      }
+    },
+    {
+      "wall": 1794715018.9876373,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:56:58.987640+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715000.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 3.484082644,
+          "last_success": 1794715015.5030844
+        },
+        "system": {
+          "success": 1.0,
+          "age": 3.497570871,
+          "last_success": 1794715015.4895957
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.173814559,
+          "last_success": 1794715018.8133626
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.173814559,
+          "last_success": 1794715018.8133626
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.173814559,
+          "last_success": 1794715018.8133626
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.173814559,
+          "last_success": 1794715018.8133626
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208297.548545343,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11328503808.0,
+        "truenas_network_receive_bytes_per_second": 534.0,
+        "truenas_network_transmit_bytes_per_second": 3036.0,
+        "truenas_zfs_arc_size_bytes": 46250965264.0
+      }
+    },
+    {
+      "wall": 1794715023.9926708,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:57:03.992673+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715000.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 8.487539324,
+          "last_success": 1794715015.5030844
+        },
+        "system": {
+          "success": 1.0,
+          "age": 8.501027551,
+          "last_success": 1794715015.4895957
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.125760142,
+          "last_success": 1794715022.8648741
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.125760142,
+          "last_success": 1794715022.8648741
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.125760142,
+          "last_success": 1794715022.8648741
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.125760142,
+          "last_success": 1794715022.8648741
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208297.548545343,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11324776448.0,
+        "truenas_network_receive_bytes_per_second": 876.0,
+        "truenas_network_transmit_bytes_per_second": 3012.0,
+        "truenas_zfs_arc_size_bytes": 46250969592.0
+      }
+    },
+    {
+      "wall": 1794715028.9912279,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:57:08.991230+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715000.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 13.48767529,
+          "last_success": 1794715015.5030844
+        },
+        "system": {
+          "success": 1.0,
+          "age": 13.501163517,
+          "last_success": 1794715015.4895957
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.041121306,
+          "last_success": 1794715028.9496503
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.041121306,
+          "last_success": 1794715028.9496503
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.041121306,
+          "last_success": 1794715028.9496503
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.041121306,
+          "last_success": 1794715028.9496503
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208297.548545343,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11310235648.0,
+        "truenas_network_receive_bytes_per_second": 512.0,
+        "truenas_network_transmit_bytes_per_second": 3033.0,
+        "truenas_zfs_arc_size_bytes": 46251132256.0
+      }
+    },
+    {
+      "wall": 1794715033.98684,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:57:13.986843+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715000.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 18.483289269,
+          "last_success": 1794715015.5030844
+        },
+        "system": {
+          "success": 1.0,
+          "age": 18.496777496,
+          "last_success": 1794715015.4895957
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.980655049,
+          "last_success": 1794715033.0057266
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.980655049,
+          "last_success": 1794715033.0057266
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.980655049,
+          "last_success": 1794715033.0057266
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.980655049,
+          "last_success": 1794715033.0057266
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208297.548545343,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11321241600.0,
+        "truenas_network_receive_bytes_per_second": 350.0,
+        "truenas_network_transmit_bytes_per_second": 3091.0,
+        "truenas_zfs_arc_size_bytes": 46251132256.0
+      }
+    },
+    {
+      "wall": 1794715038.9901872,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:57:18.990189+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715030.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 23.485305359,
+          "last_success": 1794715015.5030844
+        },
+        "system": {
+          "success": 1.0,
+          "age": 23.498793586,
+          "last_success": 1794715015.4895957
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.9194678490000001,
+          "last_success": 1794715037.06893
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.9194678490000001,
+          "last_success": 1794715037.06893
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.9194678490000001,
+          "last_success": 1794715037.06893
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.9194678490000001,
+          "last_success": 1794715037.06893
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208297.548545343,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11319681024.0,
+        "truenas_network_receive_bytes_per_second": 767.0,
+        "truenas_network_transmit_bytes_per_second": 3208.0,
+        "truenas_zfs_arc_size_bytes": 46251132256.0
+      }
+    },
+    {
+      "wall": 1794715043.9965076,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:57:23.996509+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715030.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 28.492912401,
+          "last_success": 1794715015.5030844
+        },
+        "system": {
+          "success": 1.0,
+          "age": 28.506400628,
+          "last_success": 1794715015.4895957
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.843084224,
+          "last_success": 1794715043.15293
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.843084224,
+          "last_success": 1794715043.15293
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.843084224,
+          "last_success": 1794715043.15293
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.843084224,
+          "last_success": 1794715043.15293
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208297.548545343,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11315113984.0,
+        "truenas_network_receive_bytes_per_second": 235.0,
+        "truenas_network_transmit_bytes_per_second": 3006.0,
+        "truenas_zfs_arc_size_bytes": 46251132256.0
+      }
+    },
+    {
+      "wall": 1794715048.98809,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:57:28.988093+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715030.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 33.484368284,
+          "last_success": 1794715015.5030844
+        },
+        "system": {
+          "success": 1.0,
+          "age": 33.497856511,
+          "last_success": 1794715015.4895957
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.776542113,
+          "last_success": 1794715047.2109184
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.776542113,
+          "last_success": 1794715047.2109184
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.776542113,
+          "last_success": 1794715047.2109184
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.776542113,
+          "last_success": 1794715047.2109184
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208297.548545343,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11305037824.0,
+        "truenas_network_receive_bytes_per_second": 678.0,
+        "truenas_network_transmit_bytes_per_second": 3214.0,
+        "truenas_zfs_arc_size_bytes": 46251132256.0
+      }
+    },
+    {
+      "wall": 1794715053.9882717,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:57:33.988274+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715030.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 38.48342223,
+          "last_success": 1794715015.5030844
+        },
+        "system": {
+          "success": 1.0,
+          "age": 38.496910457,
+          "last_success": 1794715015.4895957
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.693132315,
+          "last_success": 1794715053.2933831
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.693132315,
+          "last_success": 1794715053.2933831
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.693132315,
+          "last_success": 1794715053.2933831
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.693132315,
+          "last_success": 1794715053.2933831
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208297.548545343,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11312177152.0,
+        "truenas_network_receive_bytes_per_second": 1745.0,
+        "truenas_network_transmit_bytes_per_second": 3007.0,
+        "truenas_zfs_arc_size_bytes": 46251133000.0
+      }
+    },
+    {
+      "wall": 1794715058.9894488,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:57:38.989451+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715030.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 43.48585007,
+          "last_success": 1794715015.5030844
+        },
+        "system": {
+          "success": 1.0,
+          "age": 43.499338297,
+          "last_success": 1794715015.4895957
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.642059621,
+          "last_success": 1794715057.3468847
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.642059621,
+          "last_success": 1794715057.3468847
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.642059621,
+          "last_success": 1794715057.3468847
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.642059621,
+          "last_success": 1794715057.3468847
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208297.548545343,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11327094784.0,
+        "truenas_network_receive_bytes_per_second": 1088.0,
+        "truenas_network_transmit_bytes_per_second": 3243.0,
+        "truenas_zfs_arc_size_bytes": 46251006600.0
+      }
+    },
+    {
+      "wall": 1794715063.991784,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:57:43.991787+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715060.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 48.486733697,
+          "last_success": 1794715015.5030844
+        },
+        "system": {
+          "success": 1.0,
+          "age": 48.500221924,
+          "last_success": 1794715015.4895957
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.5603915,
+          "last_success": 1794715063.429438
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.5603915,
+          "last_success": 1794715063.429438
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.5603915,
+          "last_success": 1794715063.429438
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.5603915,
+          "last_success": 1794715063.429438
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208297.548545343,
+        "truenas_cpu_utilization_ratio": 0.01,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11307601920.0,
+        "truenas_network_receive_bytes_per_second": 875.0,
+        "truenas_network_transmit_bytes_per_second": 3183.0,
+        "truenas_zfs_arc_size_bytes": 46255905032.0
+      }
+    },
+    {
+      "wall": 1794715068.9919078,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:57:48.991910+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715060.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 53.488339028,
+          "last_success": 1794715015.5030844
+        },
+        "system": {
+          "success": 1.0,
+          "age": 53.501827255,
+          "last_success": 1794715015.4895957
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.509348328,
+          "last_success": 1794715067.4820852
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.509348328,
+          "last_success": 1794715067.4820852
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.509348328,
+          "last_success": 1794715067.4820852
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.509348328,
+          "last_success": 1794715067.4820852
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208297.548545343,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11272368128.0,
+        "truenas_network_receive_bytes_per_second": 1374.0,
+        "truenas_network_transmit_bytes_per_second": 3276.0,
+        "truenas_zfs_arc_size_bytes": 46254280544.0
+      }
+    },
+    {
+      "wall": 1794715078.5086966,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:57:58.508698+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715060.711
+      }
+    },
+    {
+      "wall": 1794715083.5080807,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:03.508084+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715060.711
+      }
+    },
+    {
+      "wall": 1794715088.5114248,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:08.511427+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715060.711
+      }
+    },
+    {
+      "wall": 1794715093.5058036,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:13.505807+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715060.711
+      }
+    },
+    {
+      "wall": 1794715098.507021,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:18.507024+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715060.711
+      }
+    },
+    {
+      "wall": 1794715103.5151093,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:23.515111+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 0.0,
+        "sample": 1794715090.711
+      }
+    },
+    {
+      "wall": 1794715108.507367,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:28.507370+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 0.0,
+        "sample": 1794715090.711
+      }
+    },
+    {
+      "wall": 1794715113.5061314,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:33.506135+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 0.0,
+        "sample": 1794715090.711
+      }
+    },
+    {
+      "wall": 1794715118.5106668,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:38.510669+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 0.0,
+        "sample": 1794715090.711
+      }
+    },
+    {
+      "wall": 1794715123.5057945,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:43.505798+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 0.0,
+        "sample": 1794715090.711
+      }
+    },
+    {
+      "wall": 1794715128.5086293,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:48.508633+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 0.0,
+        "sample": 1794715090.711
+      }
+    },
+    {
+      "wall": 1794715133.5076463,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:53.507648+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 0.0,
+        "sample": 1794715120.711
+      }
+    },
+    {
+      "wall": 1794715138.5058749,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:58:58.505879+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 0.0,
+        "sample": 1794715120.711
+      }
+    },
+    {
+      "wall": 1794715143.5152192,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:03.515221+00:00",
+      "running": false,
+      "container_health": "unhealthy",
+      "oom": false,
+      "healthz": null,
+      "readyz": null,
+      "metrics_http": null,
+      "prom": {
+        "up": 0.0,
+        "sample": 1794715120.711
+      }
+    },
+    {
+      "wall": 1794715149.2877274,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:09.287730+00:00",
+      "running": true,
+      "container_health": "starting",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 0.0,
+        "sample": 1794715120.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 0.033603646,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 0.0
+        },
+        "memory": {
+          "success": 0.0
+        },
+        "network": {
+          "success": 0.0
+        },
+        "arc": {
+          "success": 0.0
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_memory_total_bytes": 63093960704.0
+      }
+    },
+    {
+      "wall": 1794715154.3098035,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:14.309805+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715150.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 5.05030385,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.652211168,
+          "last_success": 1794715152.651946
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.652211168,
+          "last_success": 1794715152.651946
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.652211168,
+          "last_success": 1794715152.651946
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.652211168,
+          "last_success": 1794715152.651946
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11283501056.0,
+        "truenas_network_receive_bytes_per_second": 264.0,
+        "truenas_network_transmit_bytes_per_second": 3041.0,
+        "truenas_zfs_arc_size_bytes": 46254168032.0
+      }
+    },
+    {
+      "wall": 1794715159.339068,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:19.339070+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715150.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 10.084827275,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.588213868,
+          "last_success": 1794715158.750467
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.588213868,
+          "last_success": 1794715158.750467
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.588213868,
+          "last_success": 1794715158.750467
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.588213868,
+          "last_success": 1794715158.750467
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11290021888.0,
+        "truenas_network_receive_bytes_per_second": 703.0,
+        "truenas_network_transmit_bytes_per_second": 2973.0,
+        "truenas_zfs_arc_size_bytes": 46254011368.0
+      }
+    },
+    {
+      "wall": 1794715164.360384,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:24.360385+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715150.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 15.104577473,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 3.577616211,
+          "last_success": 1794715160.7808135
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 3.577616211,
+          "last_success": 1794715160.7808135
+        },
+        "network": {
+          "success": 1.0,
+          "age": 3.577616211,
+          "last_success": 1794715160.7808135
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 3.577616211,
+          "last_success": 1794715160.7808135
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11290632192.0,
+        "truenas_network_receive_bytes_per_second": 461.0,
+        "truenas_network_transmit_bytes_per_second": 3092.0,
+        "truenas_zfs_arc_size_bytes": 46254011368.0
+      }
+    },
+    {
+      "wall": 1794715169.376963,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:29.376964+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715150.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 20.122735841,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.626087708,
+          "last_success": 1794715167.7505023
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.626087708,
+          "last_success": 1794715167.7505023
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.626087708,
+          "last_success": 1794715167.7505023
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.626087708,
+          "last_success": 1794715167.7505023
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11287429120.0,
+        "truenas_network_receive_bytes_per_second": 393.0,
+        "truenas_network_transmit_bytes_per_second": 3038.0,
+        "truenas_zfs_arc_size_bytes": 46254011368.0
+      }
+    },
+    {
+      "wall": 1794715174.395419,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:34.395421+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715150.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 25.139813645,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.551263429,
+          "last_success": 1794715173.8424072
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.551263429,
+          "last_success": 1794715173.8424072
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.551263429,
+          "last_success": 1794715173.8424072
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.551263429,
+          "last_success": 1794715173.8424072
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11284570112.0,
+        "truenas_network_receive_bytes_per_second": 2122.0,
+        "truenas_network_transmit_bytes_per_second": 3030.0,
+        "truenas_zfs_arc_size_bytes": 46254041864.0
+      }
+    },
+    {
+      "wall": 1794715179.4153771,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:39.415379+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715150.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 30.161095234,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.514899486,
+          "last_success": 1794715177.9000502
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.514899486,
+          "last_success": 1794715177.9000502
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.514899486,
+          "last_success": 1794715177.9000502
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.514899486,
+          "last_success": 1794715177.9000502
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11287756800.0,
+        "truenas_network_receive_bytes_per_second": 1171.0,
+        "truenas_network_transmit_bytes_per_second": 3202.0,
+        "truenas_zfs_arc_size_bytes": 46254041864.0
+      }
+    },
+    {
+      "wall": 1794715184.4495828,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:44.449585+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715180.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 35.193580884,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.449038747,
+          "last_success": 1794715183.9983966
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.449038747,
+          "last_success": 1794715183.9983966
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.449038747,
+          "last_success": 1794715183.9983966
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.449038747,
+          "last_success": 1794715183.9983966
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11302580224.0,
+        "truenas_network_receive_bytes_per_second": 697.0,
+        "truenas_network_transmit_bytes_per_second": 3037.0,
+        "truenas_zfs_arc_size_bytes": 46254043768.0
+      }
+    },
+    {
+      "wall": 1794715189.4891758,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:49.489177+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715180.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 40.234909421,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.434925308,
+          "last_success": 1794715188.053844
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.434925308,
+          "last_success": 1794715188.053844
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.434925308,
+          "last_success": 1794715188.053844
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.434925308,
+          "last_success": 1794715188.053844
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11298009088.0,
+        "truenas_network_receive_bytes_per_second": 278.0,
+        "truenas_network_transmit_bytes_per_second": 3039.0,
+        "truenas_zfs_arc_size_bytes": 46254043768.0
+      }
+    },
+    {
+      "wall": 1794715194.508637,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:54.508639+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715180.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 45.253229646,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.366821063,
+          "last_success": 1794715194.1402748
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.366821063,
+          "last_success": 1794715194.1402748
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.366821063,
+          "last_success": 1794715194.1402748
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.366821063,
+          "last_success": 1794715194.1402748
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11281248256.0,
+        "truenas_network_receive_bytes_per_second": 1374.0,
+        "truenas_network_transmit_bytes_per_second": 3032.0,
+        "truenas_zfs_arc_size_bytes": 46254043768.0
+      }
+    },
+    {
+      "wall": 1794715199.5277975,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T03:59:59.527800+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715180.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 50.273506489,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.334161016,
+          "last_success": 1794715198.193207
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.334161016,
+          "last_success": 1794715198.193207
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.334161016,
+          "last_success": 1794715198.193207
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.334161016,
+          "last_success": 1794715198.193207
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11277144064.0,
+        "truenas_network_receive_bytes_per_second": 384.0,
+        "truenas_network_transmit_bytes_per_second": 3039.0,
+        "truenas_zfs_arc_size_bytes": 46254043768.0
+      }
+    },
+    {
+      "wall": 1794715204.545561,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:04.545563+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 503,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715180.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 0.0
+        },
+        "system": {
+          "success": 1.0,
+          "age": 55.289942765,
+          "last_success": 1794715149.253847
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.224948665,
+          "last_success": 1794715204.318853
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.224948665,
+          "last_success": 1794715204.318853
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.224948665,
+          "last_success": 1794715204.318853
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.224948665,
+          "last_success": 1794715204.318853
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_system_uptime_seconds": 8208431.316631874,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11273621504.0,
+        "truenas_network_receive_bytes_per_second": 841.0,
+        "truenas_network_transmit_bytes_per_second": 3040.0,
+        "truenas_zfs_arc_size_bytes": 46254048096.0
+      }
+    },
+    {
+      "wall": 1794715209.5652654,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:09.565268+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715180.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 0.618906064,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 0.635601776,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.189314254,
+          "last_success": 1794715208.3754675
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.189314254,
+          "last_success": 1794715208.3754675
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.189314254,
+          "last_success": 1794715208.3754675
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.189314254,
+          "last_success": 1794715208.3754675
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11283709952.0,
+        "truenas_network_receive_bytes_per_second": 391.0,
+        "truenas_network_transmit_bytes_per_second": 3129.0,
+        "truenas_zfs_arc_size_bytes": 46254010240.0
+      }
+    },
+    {
+      "wall": 1794715209.5854259,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:09.585428+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715180.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 0.639042896,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 0.655738608,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.209451086,
+          "last_success": 1794715208.3754675
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.209451086,
+          "last_success": 1794715208.3754675
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.209451086,
+          "last_success": 1794715208.3754675
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.209451086,
+          "last_success": 1794715208.3754675
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11283709952.0,
+        "truenas_network_receive_bytes_per_second": 391.0,
+        "truenas_network_transmit_bytes_per_second": 3129.0,
+        "truenas_zfs_arc_size_bytes": 46254010240.0
+      }
+    },
+    {
+      "wall": 1794715214.5860548,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:14.586057+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715210.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 5.638526577,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 5.655222289,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.122813558,
+          "last_success": 1794715214.4615963
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.122813558,
+          "last_success": 1794715214.4615963
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.122813558,
+          "last_success": 1794715214.4615963
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.122813558,
+          "last_success": 1794715214.4615963
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11286302720.0,
+        "truenas_network_receive_bytes_per_second": 625.0,
+        "truenas_network_transmit_bytes_per_second": 3021.0,
+        "truenas_zfs_arc_size_bytes": 46254006432.0
+      }
+    },
+    {
+      "wall": 1794715219.5895977,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:19.589599+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715210.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 10.643232725,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 10.659928437,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.072810152,
+          "last_success": 1794715218.5163026
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.072810152,
+          "last_success": 1794715218.5163026
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.072810152,
+          "last_success": 1794715218.5163026
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.072810152,
+          "last_success": 1794715218.5163026
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11308478464.0,
+        "truenas_network_receive_bytes_per_second": 823.0,
+        "truenas_network_transmit_bytes_per_second": 3007.0,
+        "truenas_zfs_arc_size_bytes": 46254006432.0
+      }
+    },
+    {
+      "wall": 1794715224.5829816,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:24.582983+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715210.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 15.636694395,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 15.653390107,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 2.0125169,
+          "last_success": 1794715222.5700576
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 2.0125169,
+          "last_success": 1794715222.5700576
+        },
+        "network": {
+          "success": 1.0,
+          "age": 2.0125169,
+          "last_success": 1794715222.5700576
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 2.0125169,
+          "last_success": 1794715222.5700576
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11300192256.0,
+        "truenas_network_receive_bytes_per_second": 273.0,
+        "truenas_network_transmit_bytes_per_second": 3073.0,
+        "truenas_zfs_arc_size_bytes": 46254006432.0
+      }
+    },
+    {
+      "wall": 1794715229.5861845,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:29.586187+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715210.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 20.638308605,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 20.655004317,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.927911869,
+          "last_success": 1794715228.6562757
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.927911869,
+          "last_success": 1794715228.6562757
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.927911869,
+          "last_success": 1794715228.6562757
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.927911869,
+          "last_success": 1794715228.6562757
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11293454336.0,
+        "truenas_network_receive_bytes_per_second": 712.0,
+        "truenas_network_transmit_bytes_per_second": 3006.0,
+        "truenas_zfs_arc_size_bytes": 46254006432.0
+      }
+    },
+    {
+      "wall": 1794715234.5882196,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:34.588222+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715210.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 25.641790366,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 25.658486078,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.876688413,
+          "last_success": 1794715232.7109792
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.876688413,
+          "last_success": 1794715232.7109792
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.876688413,
+          "last_success": 1794715232.7109792
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.876688413,
+          "last_success": 1794715232.7109792
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11281162240.0,
+        "truenas_network_receive_bytes_per_second": 1452.0,
+        "truenas_network_transmit_bytes_per_second": 3008.0,
+        "truenas_zfs_arc_size_bytes": 46254007176.0
+      }
+    },
+    {
+      "wall": 1794715239.5854948,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:39.585497+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715210.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 30.639108549,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 30.655804261,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.785847355,
+          "last_success": 1794715238.7991433
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.785847355,
+          "last_success": 1794715238.7991433
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.785847355,
+          "last_success": 1794715238.7991433
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.785847355,
+          "last_success": 1794715238.7991433
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11268050944.0,
+        "truenas_network_receive_bytes_per_second": 1065.0,
+        "truenas_network_transmit_bytes_per_second": 3052.0,
+        "truenas_zfs_arc_size_bytes": 46254017272.0
+      }
+    },
+    {
+      "wall": 1794715244.5852852,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:44.585287+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715240.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 35.637738809,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 35.654434521,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.726782516,
+          "last_success": 1794715242.8568327
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.726782516,
+          "last_success": 1794715242.8568327
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.726782516,
+          "last_success": 1794715242.8568327
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.726782516,
+          "last_success": 1794715242.8568327
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11274489856.0,
+        "truenas_network_receive_bytes_per_second": 218.0,
+        "truenas_network_transmit_bytes_per_second": 3042.0,
+        "truenas_zfs_arc_size_bytes": 46254154720.0
+      }
+    },
+    {
+      "wall": 1794715249.5864139,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:49.586416+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715240.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 40.640013735,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 40.656709447,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.643509874,
+          "last_success": 1794715248.9423811
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.643509874,
+          "last_success": 1794715248.9423811
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.643509874,
+          "last_success": 1794715248.9423811
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.643509874,
+          "last_success": 1794715248.9423811
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11291549696.0,
+        "truenas_network_receive_bytes_per_second": 6028.0,
+        "truenas_network_transmit_bytes_per_second": 3006.0,
+        "truenas_zfs_arc_size_bytes": 46254154720.0
+      }
+    },
+    {
+      "wall": 1794715254.5851965,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:54.585199+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715240.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 45.638788482,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 45.655484194,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.5882011440000001,
+          "last_success": 1794715252.996466
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.5882011440000001,
+          "last_success": 1794715252.996466
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.5882011440000001,
+          "last_success": 1794715252.996466
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.5882011440000001,
+          "last_success": 1794715252.996466
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11291353088.0,
+        "truenas_network_receive_bytes_per_second": 3275.0,
+        "truenas_network_transmit_bytes_per_second": 3006.0,
+        "truenas_zfs_arc_size_bytes": 46254154720.0
+      }
+    },
+    {
+      "wall": 1794715259.5836694,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:00:59.583671+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715240.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 50.635989622,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 50.652685334,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.500032282,
+          "last_success": 1794715259.081836
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.500032282,
+          "last_success": 1794715259.081836
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.500032282,
+          "last_success": 1794715259.081836
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.500032282,
+          "last_success": 1794715259.081836
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11289030656.0,
+        "truenas_network_receive_bytes_per_second": 973.0,
+        "truenas_network_transmit_bytes_per_second": 3006.0,
+        "truenas_zfs_arc_size_bytes": 46254154720.0
+      }
+    },
+    {
+      "wall": 1794715264.586162,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:01:04.586165+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715240.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 55.639768953,
+          "last_success": 1794715208.9458683
+        },
+        "system": {
+          "success": 1.0,
+          "age": 55.656464665,
+          "last_success": 1794715208.9291728
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.44848467,
+          "last_success": 1794715263.1371596
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.44848467,
+          "last_success": 1794715263.1371596
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.44848467,
+          "last_success": 1794715263.1371596
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.44848467,
+          "last_success": 1794715263.1371596
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208490.989965487,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11285569536.0,
+        "truenas_network_receive_bytes_per_second": 290.0,
+        "truenas_network_transmit_bytes_per_second": 3006.0,
+        "truenas_zfs_arc_size_bytes": 46254159048.0
+      }
+    },
+    {
+      "wall": 1794715269.587406,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:01:09.587407+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715240.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 0.636937211,
+          "last_success": 1794715268.9485362
+        },
+        "system": {
+          "success": 1.0,
+          "age": 0.654913417,
+          "last_success": 1794715268.9305599
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.362679078,
+          "last_success": 1794715269.2228014
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.362679078,
+          "last_success": 1794715269.2228014
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.362679078,
+          "last_success": 1794715269.2228014
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.362679078,
+          "last_success": 1794715269.2228014
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208550.991192507,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11279093760.0,
+        "truenas_network_receive_bytes_per_second": 676.0,
+        "truenas_network_transmit_bytes_per_second": 3044.0,
+        "truenas_zfs_arc_size_bytes": 46254164096.0
+      }
+    },
+    {
+      "wall": 1794715274.5857544,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:01:14.585757+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715240.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 5.63669929,
+          "last_success": 1794715268.9485362
+        },
+        "system": {
+          "success": 1.0,
+          "age": 5.654675496,
+          "last_success": 1794715268.9305599
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.309481155,
+          "last_success": 1794715273.2757642
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.309481155,
+          "last_success": 1794715273.2757642
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.309481155,
+          "last_success": 1794715273.2757642
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.309481155,
+          "last_success": 1794715273.2757642
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208550.991192507,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11287904256.0,
+        "truenas_network_receive_bytes_per_second": 243.0,
+        "truenas_network_transmit_bytes_per_second": 3011.0,
+        "truenas_zfs_arc_size_bytes": 46254164096.0
+      }
+    },
+    {
+      "wall": 1794715279.5909793,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:01:19.590981+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715270.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 10.640354528,
+          "last_success": 1794715268.9485362
+        },
+        "system": {
+          "success": 1.0,
+          "age": 10.658330734,
+          "last_success": 1794715268.9305599
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.226635296,
+          "last_success": 1794715279.362267
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.226635296,
+          "last_success": 1794715279.362267
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.226635296,
+          "last_success": 1794715279.362267
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.226635296,
+          "last_success": 1794715279.362267
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208550.991192507,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11280363520.0,
+        "truenas_network_receive_bytes_per_second": 8627.0,
+        "truenas_network_transmit_bytes_per_second": 3007.0,
+        "truenas_zfs_arc_size_bytes": 46254164096.0
+      }
+    },
+    {
+      "wall": 1794715284.5844421,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:01:24.584444+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715270.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 15.635463704,
+          "last_success": 1794715268.9485362
+        },
+        "system": {
+          "success": 1.0,
+          "age": 15.65343991,
+          "last_success": 1794715268.9305599
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 1.168119591,
+          "last_success": 1794715283.4158897
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 1.168119591,
+          "last_success": 1794715283.4158897
+        },
+        "network": {
+          "success": 1.0,
+          "age": 1.168119591,
+          "last_success": 1794715283.4158897
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 1.168119591,
+          "last_success": 1794715283.4158897
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208550.991192507,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11298181120.0,
+        "truenas_network_receive_bytes_per_second": 756.0,
+        "truenas_network_transmit_bytes_per_second": 3006.0,
+        "truenas_zfs_arc_size_bytes": 46254164096.0
+      }
+    },
+    {
+      "wall": 1794715289.5885048,
+      "clock_uncertainty": 0.029529590606689454,
+      "utc": "2026-11-15T04:01:29.588507+00:00",
+      "running": true,
+      "container_health": "healthy",
+      "oom": false,
+      "healthz": 200,
+      "readyz": 200,
+      "metrics_http": 200,
+      "prom": {
+        "up": 1.0,
+        "sample": 1794715270.711
+      },
+      "collector_evidence": {
+        "pools": {
+          "success": 1.0,
+          "age": 20.63942541,
+          "last_success": 1794715268.9485362
+        },
+        "system": {
+          "success": 1.0,
+          "age": 20.657401616,
+          "last_success": 1794715268.9305599
+        },
+        "cpu": {
+          "success": 1.0,
+          "age": 0.087302995,
+          "last_success": 1794715289.5006719
+        },
+        "memory": {
+          "success": 1.0,
+          "age": 0.087302995,
+          "last_success": 1794715289.5006719
+        },
+        "network": {
+          "success": 1.0,
+          "age": 0.087302995,
+          "last_success": 1794715289.5006719
+        },
+        "arc": {
+          "success": 1.0,
+          "age": 0.087302995,
+          "last_success": 1794715289.5006719
+        }
+      },
+      "flags": {
+        "truenas_api_connected": 1.0,
+        "truenas_api_compatible": 1.0,
+        "truenas_realtime_subscribed": 1.0,
+        "truenas_exporter_mock_mode": 0.0
+      },
+      "measurements": {
+        "truenas_pool_size_bytes": 24000277250048.0,
+        "truenas_system_uptime_seconds": 8208550.991192507,
+        "truenas_cpu_utilization_ratio": 0.0,
+        "truenas_memory_total_bytes": 63093960704.0,
+        "truenas_memory_available_bytes": 11309031424.0,
+        "truenas_network_receive_bytes_per_second": 1344.0,
+        "truenas_network_transmit_bytes_per_second": 3146.0,
+        "truenas_zfs_arc_size_bytes": 46254164096.0
+      }
+    }
+  ],
+  "baseline_metadata": {
+    "exporter": {
+      "container": "23bf8673bd119bf411efc04b44d4f6cd602ba2298b9ecc92128ec42ae05363a3",
+      "image": "sha256:c8f69fc12a105a740e473e7b31a08d00ad06a5fa099263ac446c15efe79551b4",
+      "settings": {
+        "TRUENAS_TARGET": "memory-alpha",
+        "TRUENAS_SYSTEM_ENABLED": "true",
+        "TRUENAS_REALTIME_ENABLED": "true",
+        "TRUENAS_REALTIME_INTERVAL_SECONDS": "2",
+        "TRUENAS_REALTIME_TTL_SECONDS": null,
+        "TRUENAS_POLL_INTERVAL_SECONDS": "60",
+        "TRUENAS_API_TIMEOUT_SECONDS": null,
+        "TRUENAS_CACHE_TTL_SECONDS": "180",
+        "EXPORTER_LISTEN": "0.0.0.0:9110",
+        "EXPORTER_MOCK": null
+      },
+      "mounts": [
+        [
+          "/mnt/observability-stack/secrets/truenas-exporter/api-key",
+          "/run/secrets/api-key",
+          false
+        ],
+        [
+          "/mnt/observability-stack/secrets/truenas-exporter/root-ca.pem",
+          "/run/secrets/root-ca.pem",
+          false
+        ]
+      ],
+      "restart_count": 0
+    },
+    "surrounding": {
+      "services": {
+        "prometheus": {
+          "id": "65978a16308a0668eef4a237a36edcf8ae1e2280c5d3620d4742f8d79a858cec",
+          "started": "2026-11-13T02:27:27.026501638Z",
+          "running": true,
+          "health": "healthy"
+        },
+        "grafana": {
+          "id": "481e55f58e66dfbae761a4e847cd96f4f861eb0e91e9fcd592c00239c70d6a4f",
+          "started": "2026-11-13T02:27:27.014561234Z",
+          "running": true,
+          "health": "healthy"
+        },
+        "grafana-mcp": {
+          "id": "668fca0d1cc36b8442eb6897cd2c19de32e60ee3556ce0946b16f23ca2c2f942",
+          "started": "2026-11-13T02:27:27.035471123Z",
+          "running": true,
+          "health": null
+        },
+        "loki": {
+          "id": "789ffcf6e01773659a182269b3b10c60af0ad7045bda5e922da6b2569fb4cf98",
+          "started": "2026-11-13T02:27:27.029286966Z",
+          "running": true,
+          "health": "healthy"
+        }
+      },
+      "config_sha256": {
+        "docker-compose.yml": "8021aea007c6ff541bd493a58530d03993c836f7f96e0f24e9322a5416c5a660",
+        "prometheus-config.yml": "e41090fe8bfec2115605203aa4d8d620521fe7d4665b5c76bbe1311152c5ab14"
+      }
+    },
+    "clock": {
+      "clock_offset_seconds": 0.0064449310302734375,
+      "clock_roundtrip_seconds": 0.019059181213378906,
+      "clock_uncertainty_seconds": 0.029529590606689454
+    },
+    "targets": [
+      {
+        "job": "metric-simulator",
+        "instance": "10.10.10.218:9109",
+        "health": "down"
+      },
+      {
+        "job": "metrics_glucose-10.64",
+        "instance": "10.10.10.64:9187",
+        "health": "up"
+      },
+      {
+        "job": "metrics_ip_pinger-10.50",
+        "instance": "10.10.10.50:32001",
+        "health": "up"
+      },
+      {
+        "job": "metrics_sensornet_service-10.50",
+        "instance": "10.10.10.50:32000",
+        "health": "up"
+      },
+      {
+        "job": "metrics_telemetry-10.50",
+        "instance": "10.10.10.50:32002",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.2",
+        "instance": "10.10.10.2:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.3",
+        "instance": "10.10.10.3:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.5",
+        "instance": "10.10.10.5:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.50",
+        "instance": "10.10.10.50:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.60",
+        "instance": "10.10.10.60:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.64",
+        "instance": "10.10.10.64:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.66",
+        "instance": "10.10.10.66:9100",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-1-dcgm_exporter",
+        "instance": "10.10.10.70:9400",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-1-node_exporter",
+        "instance": "10.10.10.70:9100",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-1-nvidia_smi_exporter",
+        "instance": "10.10.10.70:9835",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-2-dcgm_exporter",
+        "instance": "10.10.10.72:9400",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-2-node_exporter",
+        "instance": "10.10.10.72:9100",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-2-nvidia_smi_exporter",
+        "instance": "10.10.10.72:9835",
+        "health": "up"
+      },
+      {
+        "job": "truenas-api-exporter",
+        "instance": "truenas-exporter:9110",
+        "health": "up"
+      },
+      {
+        "job": "windows_exporter-10.55",
+        "instance": "10.10.10.55:9182",
+        "health": "down"
+      },
+      {
+        "job": "windows_exporter-10.56",
+        "instance": "10.10.10.56:9182",
+        "health": "down"
+      }
+    ]
+  },
+  "baseline_queries": [
+    {
+      "sha256": "b8eb29da40c52ed03425169b8a4123156a3ce3699007d5657eed3b7d7e77d848",
+      "value": 0.0
+    },
+    {
+      "sha256": "b80893f6b7749c848b19724591b9045e7e7226cbe8b8df2eaa6e6ecbd8e5a430",
+      "value": 82.06356107347284
+    },
+    {
+      "sha256": "65c5ff14b429199fcd78a2fda3653c3a89a2176535928dc409fff26637c0ad72",
+      "value": 52.38503017166127
+    },
+    {
+      "sha256": "39a1a1ad989eef572b628dc4f4834913916c32b0779662d65479d7bbddf4c00e",
+      "value": 3289.0
+    },
+    {
+      "sha256": "ef60a30089ba71b5e955ac750f20966a7b1ce0fb5428ce63a42694223d5b8b5f",
+      "value": 1.0
+    },
+    {
+      "sha256": "6347085148316c63010954652a6927c9d3850a79e11eeae032ed8aeb5d010e35",
+      "value": 8208237.548232467
+    },
+    {
+      "sha256": "9659083315f8b28cf4a8d428c0a2c98a3b64032e37bbda2584a0192753f526c9",
+      "value": 46250965264.0
+    }
+  ],
+  "shutdown": {
+    "duration": 2.435432889004005,
+    "completed": 1794715076.4669616,
+    "exit_code": 0,
+    "events": [
+      "1794715074435613142 kill 15 ",
+      "1794715076137489166 stop  ",
+      "1794715076423766420 die  0"
+    ]
+  },
+  "down_scrape": {
+    "up": 0.0,
+    "sample": 1794715120.711
+  },
+  "new_started_at": 1794715147.819483,
+  "recovered_success_times": {
+    "pools": 1794715208.9458683,
+    "system": 1794715208.9291728,
+    "cpu": 1794715208.3754675,
+    "memory": 1794715208.3754675,
+    "network": 1794715208.3754675,
+    "arc": 1794715208.3754675
+  },
+  "final_success_times": {
+    "pools": 1794715268.9485362,
+    "system": 1794715268.9305599,
+    "cpu": 1794715289.5006719,
+    "memory": 1794715289.5006719,
+    "network": 1794715289.5006719,
+    "arc": 1794715289.5006719
+  },
+  "final": {
+    "guard": {
+      "container": "23bf8673bd119bf411efc04b44d4f6cd602ba2298b9ecc92128ec42ae05363a3",
+      "utc": "2026-11-15T03:59:54.013885+00:00",
+      "result": "already-running"
+    },
+    "targets": [
+      {
+        "job": "metric-simulator",
+        "instance": "10.10.10.218:9109",
+        "health": "down"
+      },
+      {
+        "job": "metrics_glucose-10.64",
+        "instance": "10.10.10.64:9187",
+        "health": "up"
+      },
+      {
+        "job": "metrics_ip_pinger-10.50",
+        "instance": "10.10.10.50:32001",
+        "health": "up"
+      },
+      {
+        "job": "metrics_sensornet_service-10.50",
+        "instance": "10.10.10.50:32000",
+        "health": "up"
+      },
+      {
+        "job": "metrics_telemetry-10.50",
+        "instance": "10.10.10.50:32002",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.2",
+        "instance": "10.10.10.2:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.3",
+        "instance": "10.10.10.3:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.5",
+        "instance": "10.10.10.5:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.50",
+        "instance": "10.10.10.50:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.60",
+        "instance": "10.10.10.60:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.64",
+        "instance": "10.10.10.64:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.66",
+        "instance": "10.10.10.66:9100",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-1-dcgm_exporter",
+        "instance": "10.10.10.70:9400",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-1-node_exporter",
+        "instance": "10.10.10.70:9100",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-1-nvidia_smi_exporter",
+        "instance": "10.10.10.70:9835",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-2-dcgm_exporter",
+        "instance": "10.10.10.72:9400",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-2-node_exporter",
+        "instance": "10.10.10.72:9100",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-2-nvidia_smi_exporter",
+        "instance": "10.10.10.72:9835",
+        "health": "up"
+      },
+      {
+        "job": "truenas-api-exporter",
+        "instance": "truenas-exporter:9110",
+        "health": "up"
+      },
+      {
+        "job": "windows_exporter-10.55",
+        "instance": "10.10.10.55:9182",
+        "health": "down"
+      },
+      {
+        "job": "windows_exporter-10.56",
+        "instance": "10.10.10.56:9182",
+        "health": "down"
+      }
+    ],
+    "queries": [
+      {
+        "sha256": "b8eb29da40c52ed03425169b8a4123156a3ce3699007d5657eed3b7d7e77d848",
+        "value": 0.0
+      },
+      {
+        "sha256": "b80893f6b7749c848b19724591b9045e7e7226cbe8b8df2eaa6e6ecbd8e5a430",
+        "value": 82.12333853486403
+      },
+      {
+        "sha256": "65c5ff14b429199fcd78a2fda3653c3a89a2176535928dc409fff26637c0ad72",
+        "value": 52.38503672518556
+      },
+      {
+        "sha256": "39a1a1ad989eef572b628dc4f4834913916c32b0779662d65479d7bbddf4c00e",
+        "value": 3720.0
+      },
+      {
+        "sha256": "ef60a30089ba71b5e955ac750f20966a7b1ce0fb5428ce63a42694223d5b8b5f",
+        "value": 1.0
+      },
+      {
+        "sha256": "6347085148316c63010954652a6927c9d3850a79e11eeae032ed8aeb5d010e35",
+        "value": 8208550.991192507
+      },
+      {
+        "sha256": "9659083315f8b28cf4a8d428c0a2c98a3b64032e37bbda2584a0192753f526c9",
+        "value": 46254164096.0
+      }
+    ]
+  },
+  "elapsed": 275.99485040601576,
+  "utc_end": "2026-11-15T04:01:29.669466+00:00",
+  "request_counts": {
+    "direct": 168,
+    "prometheus": 62
+  },
+  "full_report_sha256": "ad959a3d4c1a2061b5d12582644b7dab5c72bc4773f4094d9ef5ac72e6b89b5c",
+  "full_report_location": "/home/worker/truenas-acceptance-corrected-20261115T035547Z/result.json",
+  "dashboard_bindings": {
+    "panels": [
+      {
+        "uid": "dbfqrjypqhwirke",
+        "panel": "panel-112",
+        "expr": "100 * truenas_cpu_utilization_ratio{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",cpu=\"cpu\"}"
+      },
+      {
+        "uid": "dbfqrjypqhwirke",
+        "panel": "panel-113",
+        "expr": "100 * (1 - truenas_memory_available_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} / truenas_memory_total_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"})"
+      },
+      {
+        "uid": "dbfqrjypqhwirke",
+        "panel": "panel-114",
+        "expr": "100 * truenas_pool_allocated_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} / truenas_pool_size_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}"
+      },
+      {
+        "uid": "dbfqrjypqhwirke",
+        "panel": "panel-115",
+        "expr": "sum by (target,job,instance) (truenas_network_receive_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"} + truenas_network_transmit_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"})"
+      },
+      {
+        "uid": "dbfqrjypqhwirke",
+        "panel": "panel-30",
+        "expr": "(truenas_api_connected{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} * on(job,instance) group_left up{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\"}) or on() vector(-1)"
+      },
+      {
+        "uid": "dbfqrjypqhwirke",
+        "panel": "panel-85",
+        "expr": "truenas_system_uptime_seconds{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}"
+      },
+      {
+        "uid": "truenas-memory-alpha-monitor",
+        "panel": "arc",
+        "expr": "truenas_zfs_arc_size_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}"
+      },
+      {
+        "uid": "truenas-memory-alpha-monitor",
+        "panel": "cpu",
+        "expr": "100 * truenas_cpu_utilization_ratio{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",cpu=\"cpu\"}"
+      },
+      {
+        "uid": "truenas-memory-alpha-monitor",
+        "panel": "identity",
+        "expr": "(truenas_api_connected{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} * on(job,instance) group_left up{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\"}) or on() vector(-1)"
+      },
+      {
+        "uid": "truenas-memory-alpha-monitor",
+        "panel": "memory",
+        "expr": "100 * (1 - truenas_memory_available_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} / truenas_memory_total_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"})"
+      },
+      {
+        "uid": "truenas-memory-alpha-monitor",
+        "panel": "network",
+        "expr": "sum by (target,job,instance) (truenas_network_receive_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"} + truenas_network_transmit_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"})"
+      },
+      {
+        "uid": "truenas-memory-alpha-monitor",
+        "panel": "uptime",
+        "expr": "truenas_system_uptime_seconds{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}"
+      }
+    ],
+    "expressions": [
+      "100 * truenas_cpu_utilization_ratio{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",cpu=\"cpu\"}",
+      "100 * (1 - truenas_memory_available_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} / truenas_memory_total_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"})",
+      "100 * truenas_pool_allocated_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} / truenas_pool_size_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}",
+      "sum by (target,job,instance) (truenas_network_receive_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"} + truenas_network_transmit_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"})",
+      "(truenas_api_connected{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} * on(job,instance) group_left up{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\"}) or on() vector(-1)",
+      "truenas_system_uptime_seconds{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}",
+      "truenas_zfs_arc_size_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}"
+    ]
+  }
+}

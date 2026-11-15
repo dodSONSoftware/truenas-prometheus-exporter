@@ -1,6 +1,6 @@
 # Bounded live exporter shutdown/restart acceptance
 
-Prepared November 14, 2026, release 0.8.7. **Proposed procedure; not executed.** This preparation does not authorize a production stop. Review and authorize one execution window before running the commands below. The exporter resumes its existing, previously authorized read-only NAS collection after restart.
+Prepared November 14, 2026, release 0.8.7. **Execution update (0.9.0):** the operator authorized the original attempt and one corrected window after a baseline-only controller failure. The corrected window passed; see [results and limits](live-operational-acceptance-results.md). The procedure below is the committed scope, not authorization for another run. The exporter resumes its existing, previously authorized read-only NAS collection after restart.
 
 ## Target and scope
 
@@ -98,7 +98,7 @@ Capture the stop monotonic/UTC start time. Execute only:
 timeout --signal=TERM --kill-after=2s 15s docker stop --timeout 10 "$CID"
 ```
 
-The ten-second Docker grace sends the verified SIGTERM first and can force termination at expiry. Force is limited to this exporter container, never the NAS, and is an acceptance failure. Require successful command completion, stopped state and exit code0, no OOM, and no intervening auto-restart. Record stop duration and FinishedAt. Read only bounded, sanitized lifecycle evidence for this ID to detect SIGKILL; do not infer a graceful stop merely from eventual absence. Do not start a new observer API session to the NAS.
+The ten-second Docker grace sends the verified SIGTERM first and can force termination at expiry. Force is limited to this exporter container, never the NAS, and is an acceptance failure. Require successful command completion, stopped state and exit code 0, no OOM, and no intervening auto-restart. Record stop duration and FinishedAt. Read only bounded, sanitized lifecycle evidence for this ID to detect SIGKILL; do not infer a graceful stop merely from eventual absence. Do not start a new observer API session to the NAS.
 
 For shutdown signal evidence, bound one historical event query to the recorded stop interval (with a three-second command deadline and at most 64 records / 16 KiB). Persist only selected signal/exit fields, for example:
 
@@ -130,8 +130,8 @@ Allow at most 150 seconds from start completion for all criteria below. The exis
 
 - healthz200, readyz200, mock_mode0, api_connected1, api_compatible1 and realtime_subscribed1, plus healthy container/no OOM and no unexpected additional restart.
 - Exactly six successful/fresh collector rows, with direct ages below the configured group TTL. Each group's finite last-success timestamp must be **after the new StartedAt** and newer than the baseline. Require host/controller wall clocks to agree within two seconds in preflight; use monotonic durations and record uncertainty. Abort before stop on a larger offset, and reject last-success timestamps beyond that measured uncertainty.
-- Prometheus up1 with an actual scrape sample after new StartedAt and an increment beyond its stopped-phase sample timestamp. Normal scraping must be sufficient; no manual reload, scrape-interval change or special scrape trigger is allowed.
-- Actual selected pool/system/CPU/memory/network/ARC measurements must be present with their baseline identities and valid units. A stopped-phase cache value or an up1 scrape alone does not prove NAS collection recovered. Legitimate measurement changes during normal NAS activity are allowed.
+- Prometheus up=1 with an actual scrape sample after new StartedAt and an increment beyond its stopped-phase sample timestamp. Normal scraping must be sufficient; no manual reload, scrape-interval change or special scrape trigger is allowed.
+- Actual selected pool/system/CPU/memory/network/ARC measurements must be present with their baseline identities and valid units. A stopped-phase cache value or an up=1 scrape alone does not prove NAS collection recovered. Legitimate measurement changes during normal NAS activity are allowed.
 
 Maintain those conditions for the next 80 seconds using the same bounded observations. Pool/system last-success timestamps must advance again during that stable interval; realtime groups must also advance. One failed readiness/freshness observation breaks this acceptance interval and fails the window; do not restart the interval to obtain a pass. This is not a longer soak or a guarantee about all future outages.
 
@@ -145,8 +145,8 @@ A PASS requires every mandatory preflight, graceful-exit, down-scrape, restart, 
 
 Successful bounded shutdown plus no cleanup-warning log is useful evidence, but does not independently capture the NAS unsubscribe acknowledgement or exact server-side socket count. Those protocol behaviors already have synthetic coverage. Preserve that distinction. This test also does not close independent numerical/ARC algorithms, minimum-role/write-denial, hosted CI, long-duration resource, stalled-reader-on-live-NAS or induced network-failure acceptance.
 
-## Preparation and authorization status
+## Original preparation status and subsequent execution
 
-This milestone prepares the reviewable procedure only. No live inspection, stop/start, guard process or NAS call was performed. The documented guard/controller procedure has not been rehearsed as an executable harness; before execution, perform a local synthetic rehearsal of its deadlines, interruption and restoration paths, and review the exact resulting controller/commands. This is an execution prerequisite, not a claim that a tested live harness already exists.
+At the 0.8.7 preparation milestone, no live inspection, stop/start, guard process or NAS call was performed and the controller still required rehearsal. Release 0.9.0 implements scripts/live-operational-acceptance.py, records nine native/Linux rehearsal tests and the explicitly authorized live results. The Python detached guard implements the same target, 120-second restore check and 148+2-second lifetime as the shell command shape above. Every future execution still requires a reviewed, specifically authorized window; this record does not grant standing restart permission.
 
 The separate execution authorization should identify this plan/version, one window of at most eight minutes, the exact Linux container/image, one stop and planned start, the two bounded restoration allowances, read-only observation caps, the temporary telemetry gap, and unchanged NAS services/credentials/collection. Approval to prepare and commit this plan does not imply approval to run it.

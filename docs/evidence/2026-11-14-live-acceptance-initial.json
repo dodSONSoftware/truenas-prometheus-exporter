@@ -1,0 +1,200 @@
+{
+  "status": "FAIL",
+  "utc_start": "2026-11-15T03:49:59.041306+00:00",
+  "operator_date": "2026-11-14",
+  "plan_commit": "e2575bf",
+  "controller_sha256": "eda43cc156cfd6bdcc365a7dd9da9d2c9b9cc55b473c5d076edbe0face7ebe3e",
+  "phases": [
+    {
+      "name": "preflight",
+      "elapsed": 0.0015951860114000738
+    },
+    {
+      "name": "baseline",
+      "elapsed": 0.49317124200752005
+    }
+  ],
+  "observations": [],
+  "baseline_metadata": {
+    "exporter": {
+      "container": "23bf8673bd119bf411efc04b44d4f6cd602ba2298b9ecc92128ec42ae05363a3",
+      "image": "sha256:c8f69fc12a105a740e473e7b31a08d00ad06a5fa099263ac446c15efe79551b4",
+      "settings": {
+        "TRUENAS_TARGET": "memory-alpha",
+        "TRUENAS_SYSTEM_ENABLED": "true",
+        "TRUENAS_REALTIME_ENABLED": "true",
+        "TRUENAS_REALTIME_INTERVAL_SECONDS": "2",
+        "TRUENAS_REALTIME_TTL_SECONDS": null,
+        "TRUENAS_POLL_INTERVAL_SECONDS": "60",
+        "TRUENAS_API_TIMEOUT_SECONDS": null,
+        "TRUENAS_CACHE_TTL_SECONDS": "180",
+        "EXPORTER_LISTEN": "0.0.0.0:9110",
+        "EXPORTER_MOCK": null
+      },
+      "mounts": [
+        [
+          "/mnt/observability-stack/secrets/truenas-exporter/api-key",
+          "/run/secrets/api-key",
+          false
+        ],
+        [
+          "/mnt/observability-stack/secrets/truenas-exporter/root-ca.pem",
+          "/run/secrets/root-ca.pem",
+          false
+        ]
+      ],
+      "restart_count": 0
+    },
+    "surrounding": {
+      "services": {
+        "prometheus": {
+          "id": "65978a16308a0668eef4a237a36edcf8ae1e2280c5d3620d4742f8d79a858cec",
+          "started": "2026-11-13T02:27:27.026501638Z",
+          "running": true,
+          "health": "healthy"
+        },
+        "grafana": {
+          "id": "481e55f58e66dfbae761a4e847cd96f4f861eb0e91e9fcd592c00239c70d6a4f",
+          "started": "2026-11-13T02:27:27.014561234Z",
+          "running": true,
+          "health": "healthy"
+        },
+        "grafana-mcp": {
+          "id": "668fca0d1cc36b8442eb6897cd2c19de32e60ee3556ce0946b16f23ca2c2f942",
+          "started": "2026-11-13T02:27:27.035471123Z",
+          "running": true,
+          "health": null
+        },
+        "loki": {
+          "id": "789ffcf6e01773659a182269b3b10c60af0ad7045bda5e922da6b2569fb4cf98",
+          "started": "2026-11-13T02:27:27.029286966Z",
+          "running": true,
+          "health": "healthy"
+        }
+      },
+      "config_sha256": {
+        "docker-compose.yml": "8021aea007c6ff541bd493a58530d03993c836f7f96e0f24e9322a5416c5a660",
+        "prometheus-config.yml": "e41090fe8bfec2115605203aa4d8d620521fe7d4665b5c76bbe1311152c5ab14"
+      }
+    },
+    "clock": {
+      "clock_offset_seconds": 0.005712985992431641,
+      "clock_roundtrip_seconds": 0.019231081008911133,
+      "clock_uncertainty_seconds": 0.029615540504455567
+    },
+    "targets": [
+      {
+        "job": "metric-simulator",
+        "instance": "10.10.10.218:9109",
+        "health": "down"
+      },
+      {
+        "job": "metrics_glucose-10.64",
+        "instance": "10.10.10.64:9187",
+        "health": "up"
+      },
+      {
+        "job": "metrics_ip_pinger-10.50",
+        "instance": "10.10.10.50:32001",
+        "health": "up"
+      },
+      {
+        "job": "metrics_sensornet_service-10.50",
+        "instance": "10.10.10.50:32000",
+        "health": "up"
+      },
+      {
+        "job": "metrics_telemetry-10.50",
+        "instance": "10.10.10.50:32002",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.2",
+        "instance": "10.10.10.2:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.3",
+        "instance": "10.10.10.3:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.5",
+        "instance": "10.10.10.5:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.50",
+        "instance": "10.10.10.50:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.60",
+        "instance": "10.10.10.60:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.64",
+        "instance": "10.10.10.64:9100",
+        "health": "up"
+      },
+      {
+        "job": "node_exporter-10.66",
+        "instance": "10.10.10.66:9100",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-1-dcgm_exporter",
+        "instance": "10.10.10.70:9400",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-1-node_exporter",
+        "instance": "10.10.10.70:9100",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-1-nvidia_smi_exporter",
+        "instance": "10.10.10.70:9835",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-2-dcgm_exporter",
+        "instance": "10.10.10.72:9400",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-2-node_exporter",
+        "instance": "10.10.10.72:9100",
+        "health": "up"
+      },
+      {
+        "job": "ollama-ai-2-nvidia_smi_exporter",
+        "instance": "10.10.10.72:9835",
+        "health": "up"
+      },
+      {
+        "job": "truenas-api-exporter",
+        "instance": "truenas-exporter:9110",
+        "health": "up"
+      },
+      {
+        "job": "windows_exporter-10.55",
+        "instance": "10.10.10.55:9182",
+        "health": "down"
+      },
+      {
+        "job": "windows_exporter-10.56",
+        "instance": "10.10.10.56:9182",
+        "health": "down"
+      }
+    ]
+  },
+  "reason": "Prometheus query unavailable",
+  "elapsed": 0.4944424210116267,
+  "utc_end": "2026-11-15T03:49:59.535749+00:00",
+  "request_counts": {
+    "direct": 0,
+    "prometheus": 2
+  }
+}

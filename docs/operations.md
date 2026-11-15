@@ -116,3 +116,12 @@ The later explicit operator authorization supersedes the earlier parallel-operat
 ## Proposed formal live operational acceptance — release 0.8.7
 
 The [bounded acceptance procedure](live-operational-acceptance-plan.md) targets only the existing Linux exporter container, with a 480-second global window, fixed phase/request bounds, independent restoration guard, graceful exit and post-restart collection/scrape/dashboard criteria. No NAS service or configuration change is included. This is a prepared plan, not a live test result or an already rehearsed executable controller; local synthetic rehearsal and explicit window authorization remain prerequisites.
+
+
+## One-shot acceptance controller and completed live window — 0.9.0
+
+scripts/live-operational-acceptance.py is an operator test harness, not a separate NAS application or installed monitoring service. Its normal process lasts only for the bounded test; its internal --guard child independently restores the captured exporter container if necessary. Do not invoke guard mode as a standalone service. Future runs need their own explicit scope/authorization and a fresh private task directory; an existing result marker refuses automatic rerun.
+
+The reviewed inputs contain only the two saved dashboards' twelve NAS panel bindings/seven expressions, the exporter-only expected deployment snapshot and measured SSH clock evidence. No key contents or raw environment are needed. The live entrypoint is --execute-plan-e2575bf with --input and --output, on the Linux observability host, wrapped by timeout --signal=TERM --kill-after=30s 450s. The existing dedicated credential remains mounted solely in the exporter; the controller never opens it or connects to the NAS.
+
+The initial live attempt failed in baseline due to a controller fixed-length HTTP reader bug and issued no stop/start. After fixing it, passing native/Linux rehearsals and obtaining separate corrected-window authorization, the test passed in 275.995 seconds. The same container/image was stopped and started once, the guard did not intervene, and surrounding services/configuration remained unchanged. See [complete evidence and limits](live-operational-acceptance-results.md). No new permanent service or runtime image was deployed.

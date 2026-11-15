@@ -1,10 +1,10 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Steel Ferret — version 0.8.7.
+**Release:** Mercury Ferret — version 0.9.0.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
-**Development status:** Pool collection and opt-in system/CPU/memory/network/ARC collection are implemented. Authorized native and local Docker preflights and sanitized captured-response replay establish selected TrueNAS 25.04.2.6 compatibility. Finite synthetic integrated/repeated-recovery and separate-cgroup profiles pass. Independent live numerical/combined-daemon acceptance and production readiness remain open. Pool scans expose reported errors, progress and state. Disks/services/alerts remain planned. The operator-authorized [Graphite migration and retirement](docs/graphite-retirement.md) moves both production dashboards and the daily report to the Rust exporter.
+**Development status:** Pool collection and opt-in system/CPU/memory/network/ARC collection are implemented. Authorized native and local Docker preflights and sanitized captured-response replay establish selected TrueNAS 25.04.2.6 compatibility. Finite synthetic integrated/repeated-recovery and separate-cgroup profiles pass. Independent numerical/minimum-role acceptance and broader production readiness remain open; [bounded deployed shutdown/restart acceptance passed](docs/live-operational-acceptance-results.md). Pool scans expose reported errors, progress and state. Disks/services/alerts remain planned. The operator-authorized [Graphite migration and retirement](docs/graphite-retirement.md) moves both production dashboards and the daily report to the Rust exporter.
 
 Start with the [current project status](docs/project-status.md), [remaining-work plan](docs/implementation-plan.md), [conversation handoff](docs/handoffs/2026-11-14-handoff.md) and [restart prompt](docs/handoffs/2026-11-14-restart-prompt.md). Dated evidence records preserve their original scope.
 
@@ -75,9 +75,9 @@ For an independent image build use `docker build --platform linux/amd64 -f deplo
 
 ## Prioritized remaining work
 
-1. Complete independent numerical/source-chart verification, especially ARC hit-ratio semantics, and separately scoped combined live-daemon/minimum-role acceptance. The [bounded live acceptance plan](docs/live-operational-acceptance-plan.md) is prepared; execution and a local controller rehearsal remain pending.
+1. Complete independent numerical/source-chart verification, especially ARC hit-ratio semantics, and minimum-role acceptance. The [bounded live acceptance result](docs/live-operational-acceptance-results.md) records successful deployed exporter stop/restart and recovery; broader live fault scenarios remain separately scoped.
 2. Run hosted final-candidate CI and refresh security/hardening evidence. The reproduced process-test bind race is fixed; the older configuration-reset report remains unattributed. See [test reliability evidence](docs/process-test-reliability.md).
-3. Review alert artifacts and complete formal operational acceptance; the authorized Linux installation and Graphite retirement have rollback evidence. Production-representative soaks can refine finite resource confidence.
+3. Review alert artifacts and remaining acceptance limits; the authorized Linux installation, Graphite retirement and bounded exporter lifecycle test have evidence. Production-representative soaks can refine finite resource confidence.
 4. Expand P1 disks/services/alerts and later P2 applications/tasks/VMs after P0 contracts and acceptance. See [implementation-plan.md](docs/implementation-plan.md) for exit criteria.
 
 Licensed under the [MIT License](LICENSE). See docs/implementation-plan.md and docs/validation.md for actual validation and remaining acceptance gates.
