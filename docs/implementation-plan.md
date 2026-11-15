@@ -1,6 +1,6 @@
 # Current implementation and acceptance plan
 
-Updated November 14, 2026 for release 0.8.6. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
+Updated November 14, 2026 for release 0.8.7. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
 
 ## Completed baseline
 
@@ -21,7 +21,7 @@ Updated November 14, 2026 for release 0.8.6. Use [project-status.md](project-sta
 | Work | Required result / boundary |
 | --- | --- |
 | Independent numerical/chart comparison | Paired time/window/unit/identity evidence for CPU/memory/network; resolve ARC chart availability/algorithm before cache-efficiency interpretation. New live methods/private APIs/shell need concrete authorization |
-| Combined appliance daemon | Bounded explicitly scoped run covering scheduled pools/system + realtime + HTTP/readiness/cleanup; selected one-shot evidence is already complete |
+| Combined appliance daemon | Review live-operational-acceptance-plan.md; rehearse the bounded controller locally, obtain execution authorization, then run one exporter-only stop/start window with fresh collection/scrape and dashboard recovery. Preparation is complete; execution remains pending |
 | Least privilege | Confirm actual minimum effective roles and eventual host credential/CA ownership/rotation; no automatic role edits or administrative write probes |
 | Process-fixture reliability | Reproduced early-exit bind race fixed with synchronized, bounded collision-only startup and regression; 60 concurrent runs passed. Older configuration reset remains unattributed unless reproduced |
 | Release candidate checks | Rust 1.88/stable, ordinary tests, relevant opt-in profiles, hardened image/Compose, dependency/image security gates tied to exact commit/image; hosted CI still unrun |

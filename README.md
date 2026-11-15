@@ -1,6 +1,6 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Steel Ferret — version 0.8.6.
+**Release:** Steel Ferret — version 0.8.7.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
@@ -75,7 +75,7 @@ For an independent image build use `docker build --platform linux/amd64 -f deplo
 
 ## Prioritized remaining work
 
-1. Complete independent numerical/source-chart verification, especially ARC hit-ratio semantics, and separately scoped combined live-daemon/minimum-role acceptance.
+1. Complete independent numerical/source-chart verification, especially ARC hit-ratio semantics, and separately scoped combined live-daemon/minimum-role acceptance. The [bounded live acceptance plan](docs/live-operational-acceptance-plan.md) is prepared; execution and a local controller rehearsal remain pending.
 2. Run hosted final-candidate CI and refresh security/hardening evidence. The reproduced process-test bind race is fixed; the older configuration-reset report remains unattributed. See [test reliability evidence](docs/process-test-reliability.md).
 3. Review alert artifacts and complete formal operational acceptance; the authorized Linux installation and Graphite retirement have rollback evidence. Production-representative soaks can refine finite resource confidence.
 4. Expand P1 disks/services/alerts and later P2 applications/tasks/VMs after P0 contracts and acceptance. See [implementation-plan.md](docs/implementation-plan.md) for exit criteria.

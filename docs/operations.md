@@ -111,3 +111,8 @@ The optional Grafana panel image-render request returned HTTP500. Saved-model/qu
 ## Authorized Graphite retirement — release 0.8.3
 
 The later explicit operator authorization supersedes the earlier parallel-operation requirement for the Linux Graphite bridge. Both named Grafana dashboards and the published n8n Daily Infrastructure Report now use Rust exporter telemetry. The bridge was stopped first, newer successful snapshots and dashboard/report queries were verified, then its sole container and scrape job were removed. The standalone Compose definition is archived, its image retained, and no other stack service was recreated. See [exact evidence and rollback](graphite-retirement.md). NAS-side legacy reporting was not modified.
+
+
+## Proposed formal live operational acceptance — release 0.8.7
+
+The [bounded acceptance procedure](live-operational-acceptance-plan.md) targets only the existing Linux exporter container, with a 480-second global window, fixed phase/request bounds, independent restoration guard, graceful exit and post-restart collection/scrape/dashboard criteria. No NAS service or configuration change is included. This is a prepared plan, not a live test result or an already rehearsed executable controller; local synthetic rehearsal and explicit window authorization remain prerequisites.

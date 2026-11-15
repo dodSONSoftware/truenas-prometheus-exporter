@@ -1,11 +1,11 @@
-fix: handle ephemeral port collisions in process-test startup
+docs: prepare bounded live exporter operational acceptance
 
-[0.8.6] Steel Ferret
+[0.8.7] Steel Ferret
 
-- tests: Synchronize HTTP probes with the child startup line and bound reselection to confirmed listener bind collisions
-- regression: Force occupied ports, verify three-attempt exhaustion and propagate unrelated startup errors immediately
-- fixtures: Share startup handling across process/configuration/realtime tests and preserve complete startup log assertions
-- docs: Record reproduced bind errors, concurrent verification and the remaining historical reset limitation
-- VERSION: Increment 0.8.5 to 0.8.6 and update README.md and CHANGELOG.md release records
+- acceptance: Define one exporter-only stop/start window with phase deadlines and bounded observations
+- recovery: Specify an independent restoration guard, fallback limits and post-restart freshness criteria
+- operations: Preserve NAS services, existing credentials, deployed image and unrelated observability services
+- status: Record preparation separately from pending controller rehearsal and authorized live execution
+- VERSION: Increment 0.8.6 to 0.8.7 and update README.md and CHANGELOG.md release records
 
 developed by Randel Dodson and AI

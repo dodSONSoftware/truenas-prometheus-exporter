@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.7 - 2026-11-14
+
+- Prepare an exporter-only live shutdown/restart acceptance procedure with fixed phase/request limits, restoration guard, fresh-collection and dashboard recovery criteria.
+- Keep controller rehearsal and explicit execution authorization as prerequisites; no live action or acceptance pass is claimed.
+
 ## 0.8.6 - 2026-11-14
 
 - Fix synthetic process-test startup races by waiting for the child's post-bind startup line before HTTP probes and handling only confirmed port collisions within bounded startup attempts.
