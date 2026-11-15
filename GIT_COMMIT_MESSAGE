@@ -1,11 +1,11 @@
-fix: wire live MEMORY ALPHA controls to observability metrics
+fix: migrate TrueNAS monitoring and retire the Graphite bridge
 
-[0.8.2] Steel Ferret
+[0.8.3] Steel Ferret
 
-- Apply four targeted Grafana MCP panel additions to office-desk version 161
-- Preserve existing elements and retain the backup-row placeholder area
-- Synchronize the saved resource and production datasource regression check
-- Record live query verification and the image-rendering limitation
-- VERSION, README.md and CHANGELOG.md: record release 0.8.2
+- dashboards: Replace legacy NAS queries with scoped Rust exporter metrics and preserve the unconfigured backup placeholder
+- reporting: Record the published three-node n8n migration with fresh API/system evidence and isolated regression cases
+- operations: Record dependency inventory, stop-before-removal verification, backups and Graphite rollback
+- tests: Cover migrated datasource, metric, unit and placeholder contracts without changing exporter code
+- VERSION: Increment 0.8.2 to 0.8.3; update README.md and CHANGELOG.md release records
 
 developed by Randel Dodson and AI

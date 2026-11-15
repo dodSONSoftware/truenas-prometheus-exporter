@@ -1,10 +1,10 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Steel Ferret — version 0.8.2.
+**Release:** Steel Ferret — version 0.8.3.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
-**Development status:** Pool collection and opt-in system/CPU/memory/network/ARC collection are implemented. Authorized native and local Docker preflights and sanitized captured-response replay establish selected TrueNAS 25.04.2.6 compatibility. Finite synthetic integrated/repeated-recovery and separate-cgroup profiles pass. Independent live numerical/combined-daemon acceptance and production readiness remain open. Pool scans expose reported errors, progress and state. Disks/services/alerts remain planned. The existing Graphite pipeline remains independent.
+**Development status:** Pool collection and opt-in system/CPU/memory/network/ARC collection are implemented. Authorized native and local Docker preflights and sanitized captured-response replay establish selected TrueNAS 25.04.2.6 compatibility. Finite synthetic integrated/repeated-recovery and separate-cgroup profiles pass. Independent live numerical/combined-daemon acceptance and production readiness remain open. Pool scans expose reported errors, progress and state. Disks/services/alerts remain planned. The operator-authorized [Graphite migration and retirement](docs/graphite-retirement.md) moves both production dashboards and the daily report to the Rust exporter.
 
 Start with the [current project status](docs/project-status.md), [remaining-work plan](docs/implementation-plan.md), [conversation handoff](docs/handoffs/2026-11-14-handoff.md) and [restart prompt](docs/handoffs/2026-11-14-restart-prompt.md). Dated evidence records preserve their original scope.
 
@@ -77,7 +77,7 @@ For an independent image build use `docker build --platform linux/amd64 -f deplo
 
 1. Complete independent numerical/source-chart verification, especially ARC hit-ratio semantics, and separately scoped combined live-daemon/minimum-role acceptance.
 2. Resolve intermittent process/configuration test failures, run hosted final-candidate CI and refresh relevant security/hardening evidence.
-3. Prepare reviewed monitoring artifacts and an operator-approved Linux rollout with parallel Graphite/rollback; production-representative soaks can refine finite resource confidence.
+3. Review alert artifacts and complete formal operational acceptance; the authorized Linux installation and Graphite retirement have rollback evidence. Production-representative soaks can refine finite resource confidence.
 4. Expand P1 disks/services/alerts and later P2 applications/tasks/VMs after P0 contracts and acceptance. See [implementation-plan.md](docs/implementation-plan.md) for exit criteria.
 
 Licensed under the [MIT License](LICENSE). See docs/implementation-plan.md and docs/validation.md for actual validation and remaining acceptance gates.

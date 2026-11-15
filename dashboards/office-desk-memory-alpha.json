@@ -460,31 +460,7 @@
           "data": {
             "kind": "QueryGroup",
             "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "hidden": false,
-                    "query": {
-                      "datasource": {
-                        "name": "afpqtre5ghmgwe"
-                      },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
-                      "spec": {
-                        "editorMode": "code",
-                        "exemplar": false,
-                        "expr": "up{moniker=\"TrueNAS\"} or vector(-1)",
-                        "instant": true,
-                        "legendFormat": "TrueNAS",
-                        "range": false
-                      },
-                      "version": "v0"
-                    },
-                    "refId": "A"
-                  }
-                }
-              ],
+              "queries": [],
               "queryOptions": {},
               "transformations": []
             }
@@ -517,7 +493,7 @@
                 "overrides": []
               },
               "options": {
-                "afterRender": "const root = context.element?.querySelector('#memory-alpha-tile');\nif (!root) return;\n\n// Make the plugin's content wrapper fill the panel, not just the rendered text.\nconst host = context.element;\nif (host) {\n  host.style.position = 'relative';\n  host.style.height = '100%';\n  host.style.minHeight = '0';\n  host.style.padding = '0';\n  host.style.overflow = 'hidden';\n\n  // Some Business Text versions insert one or more auto-height row wrappers.\n  // Remove these as containing blocks so the tile anchors to the panel host.\n  let wrapper = root.parentElement;\n  while (wrapper && wrapper !== host) {\n    wrapper.style.position = 'static';\n    wrapper.style.height = '100%';\n    wrapper.style.minHeight = '0';\n    wrapper.style.padding = '0';\n    wrapper.style.margin = '0';\n    wrapper = wrapper.parentElement;\n  }\n}\n\nconst series = context.panelData?.series ?? context.data?.series ?? [];\nconst frame = series.find((item) => item.refId === 'A') ?? series[0];\nconst field = frame?.fields?.find((item) => item.type === 'number');\nconst values = field?.values;\nconst raw = values?.length ? Number(values[values.length - 1]) : NaN;\nroot.style.background = raw === 1\n  ? 'linear-gradient(105deg, #37973e, #6ebc53)'\n  : raw === 0\n    ? 'linear-gradient(105deg, #a62d2d, #d54d4d)'\n    : 'linear-gradient(105deg, #535353, #777777)';",
+                "afterRender": "const root = context.element?.querySelector('#memory-alpha-tile');\nif (!root) return;\n\n// Make the plugin's content wrapper fill the panel, not just the rendered text.\nconst host = context.element;\nif (host) {\n  host.style.position = 'relative';\n  host.style.height = '100%';\n  host.style.minHeight = '0';\n  host.style.padding = '0';\n  host.style.overflow = 'hidden';\n\n  // Some Business Text versions insert one or more auto-height row wrappers.\n  // Remove these as containing blocks so the tile anchors to the panel host.\n  let wrapper = root.parentElement;\n  while (wrapper && wrapper !== host) {\n    wrapper.style.position = 'static';\n    wrapper.style.height = '100%';\n    wrapper.style.minHeight = '0';\n    wrapper.style.padding = '0';\n    wrapper.style.margin = '0';\n    wrapper = wrapper.parentElement;\n  }\n}\n\nroot.style.background = 'linear-gradient(105deg, #535353, #777777)';",
                 "content": "<div id=\"memory-alpha-tile\" class=\"memory-alpha-tile\">\n  <div class=\"memory-alpha-label\">HW: TrueNAS Backup</div>\n  <div class=\"memory-alpha-name\">MEMORY BETA</div>\n</div>",
                 "contentPartials": [],
                 "defaultContent": "<div id=\"memory-alpha-tile\" class=\"memory-alpha-tile\">\n  <div class=\"memory-alpha-label\">HW: TrueNAS Backup</div>\n  <div class=\"memory-alpha-name\">MEMORY BETA</div>\n</div>",
@@ -546,32 +522,7 @@
           "data": {
             "kind": "QueryGroup",
             "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "hidden": false,
-                    "query": {
-                      "datasource": {
-                        "name": "prometheus"
-                      },
-                      "group": "graphite",
-                      "kind": "DataQuery",
-                      "spec": {
-                        "editorMode": "code",
-                        "exemplar": false,
-                        "expr": "truenas_truenas_system_uptime_uptime{moniker=\"TrueNAS\"}",
-                        "instant": true,
-                        "interval": "",
-                        "legendFormat": "{{ipaddress}}",
-                        "range": false
-                      },
-                      "version": "v0"
-                    },
-                    "refId": "A"
-                  }
-                }
-              ],
+              "queries": [],
               "queryOptions": {},
               "transformations": []
             }
@@ -672,7 +623,7 @@
           "description": "MEMORY ALPHA aggregate CPU from the Rust API exporter.",
           "id": 112,
           "links": [],
-          "title": "CPU",
+          "title": "",
           "transparent": true,
           "vizConfig": {
             "group": "gauge",
@@ -777,10 +728,10 @@
               "transformations": []
             }
           },
-          "description": "Physical memory utilization, 100 \u00d7 (1 \u2212 available / total). This value alone does not diagnose memory pressure.",
+          "description": "Physical memory utilization, 100 × (1 − available / total). This value alone does not diagnose memory pressure.",
           "id": 113,
           "links": [],
-          "title": "MEMORY",
+          "title": "",
           "transparent": true,
           "vizConfig": {
             "group": "gauge",
@@ -888,7 +839,7 @@
           "description": "Allocated bytes / total bytes for each MEMORY ALPHA pool.",
           "id": 114,
           "links": [],
-          "title": "POOL USED",
+          "title": "",
           "transparent": true,
           "vizConfig": {
             "group": "gauge",
@@ -996,7 +947,7 @@
           "description": "Receive plus transmit bytes/s on enp42s0. Source rate gauges are added directly. Full scale is 250 MB/s for the currently reported full-duplex 1 Gbit/s link.",
           "id": 115,
           "links": [],
-          "title": "NETWORK RX + TX",
+          "title": "",
           "transparent": true,
           "vizConfig": {
             "group": "gauge",
@@ -2743,7 +2694,7 @@
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "up{moniker=\"TrueNAS\"} or vector(-1)",
+                        "expr": "(truenas_api_connected{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} * on(job,instance) group_left up{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\"}) or on() vector(-1)",
                         "instant": true,
                         "legendFormat": "TrueNAS",
                         "range": false
@@ -2758,7 +2709,7 @@
               "transformations": []
             }
           },
-          "description": "",
+          "description": "Green: authenticated NAS API connection and exporter scrape successful. Red: connection/scrape reports failure. Gray: absent monitoring data. API reachability does not prove hardware power or pool health.",
           "id": 30,
           "links": [],
           "title": "",
@@ -5865,14 +5816,14 @@
                     "hidden": false,
                     "query": {
                       "datasource": {
-                        "name": "prometheus"
+                        "name": "afpqtre5ghmgwe"
                       },
-                      "group": "graphite",
+                      "group": "prometheus",
                       "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "truenas_truenas_system_uptime_uptime{moniker=\"TrueNAS\"}",
+                        "expr": "truenas_system_uptime_seconds{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}",
                         "instant": true,
                         "interval": "",
                         "legendFormat": "{{ipaddress}}",
@@ -6801,12 +6752,51 @@
             "spec": {
               "element": {
                 "kind": "ElementReference",
-                "name": "panel-100"
+                "name": "panel-112"
               },
               "height": 5,
-              "width": 8,
+              "width": 2,
               "x": 8,
-              "y": 15
+              "y": 10
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-113"
+              },
+              "height": 5,
+              "width": 2,
+              "x": 10,
+              "y": 10
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-114"
+              },
+              "height": 5,
+              "width": 2,
+              "x": 12,
+              "y": 10
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-115"
+              },
+              "height": 5,
+              "width": 2,
+              "x": 14,
+              "y": 10
             }
           },
           {
@@ -6936,6 +6926,19 @@
               "height": 5,
               "width": 3,
               "x": 5,
+              "y": 15
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-100"
+              },
+              "height": 5,
+              "width": 8,
+              "x": 8,
               "y": 15
             }
           },
@@ -7496,58 +7499,6 @@
               "width": 3,
               "x": 21,
               "y": 47
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-112"
-              },
-              "height": 5,
-              "width": 2,
-              "x": 8,
-              "y": 10
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-113"
-              },
-              "height": 5,
-              "width": 2,
-              "x": 10,
-              "y": 10
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-114"
-              },
-              "height": 5,
-              "width": 2,
-              "x": 12,
-              "y": 10
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-115"
-              },
-              "height": 5,
-              "width": 2,
-              "x": 14,
-              "y": 10
             }
           }
         ]

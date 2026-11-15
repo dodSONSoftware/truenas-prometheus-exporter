@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.3 - 2026-11-14
+
+- Migrate office-desk availability/uptime and TrueNAS Server Monitoring to Rust exporter metrics, preserving the live layouts and MEMORY BETA placeholder.
+- Migrate the published daily n8n report to bounded authenticated-API and system-freshness evidence, with isolated regression coverage and rollback parameters.
+- Retire the Graphite container and scrape job only after a reversible post-stop check; preserve configuration backups, archived Compose definition, image and historical data.
+
+
 ## 0.8.2 - 2026-11-14
 
 - Add the four MEMORY ALPHA gauges directly to live office-desk through Grafana MCP, using the observability-stack Prometheus datasource.

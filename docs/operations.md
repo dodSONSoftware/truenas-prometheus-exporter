@@ -106,3 +106,8 @@ The targeted patch added elements panel-112 through panel-115 and four grid item
 All four new panels use production Prometheus UID afpqtre5ghmgwe, job truenas-api-exporter, instance truenas-exporter:9110 and target memory-alpha. CPU is aggregate percent; memory is 100*(1-available/total); pool allocation is per-pool percent; enp42s0 RX/TX rate gauges are added directly in bytes/s. The network gauge scale is 250 MB/s for the reported full-duplex 1 Gbit/s link. Adjacent gauge styles were reused, with stale field-name filters cleared on the network panel. All four queries returned production samples through MCP before saving, and a subsequent dashboard fetch confirmed the new definitions.
 
 The optional Grafana panel image-render request returned HTTP500. Saved-model/query verification passed; screenshot rendering was unavailable. No renderer configuration was changed.
+
+
+## Authorized Graphite retirement — release 0.8.3
+
+The later explicit operator authorization supersedes the earlier parallel-operation requirement for the Linux Graphite bridge. Both named Grafana dashboards and the published n8n Daily Infrastructure Report now use Rust exporter telemetry. The bridge was stopped first, newer successful snapshots and dashboard/report queries were verified, then its sole container and scrape job were removed. The standalone Compose definition is archived, its image retained, and no other stack service was recreated. See [exact evidence and rollback](graphite-retirement.md). NAS-side legacy reporting was not modified.

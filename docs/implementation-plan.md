@@ -1,6 +1,6 @@
 # Current implementation and acceptance plan
 
-Updated November 14, 2026 for release 0.8.2. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
+Updated November 14, 2026 for release 0.8.3. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
 
 ## Completed baseline
 
@@ -10,7 +10,7 @@ Updated November 14, 2026 for release 0.8.2. Use [project-status.md](project-sta
 - [x] M3-D opt-in realtime implementation (4f0d215), native/Docker preflight (f89e193), four captured-frame replays (a9ce8f1).
 - [x] Offline numerical source review (d69722f), with operational semantics still explicitly unresolved.
 - [x] Finite integrated operational baseline (8e7d21f), longer phased profile (69ecd46), separate-cgroup attribution (069450d).
-- [x] Local quality gates, pinned image builds and scoped Rust 1.88 checks recorded in validation.md. Latest baseline: 83 regular Rust tests, 16 Python tests; four sustained tests ignored by default.
+- [x] Local quality gates, pinned image builds and scoped Rust 1.88 checks recorded in validation.md. Latest baseline: 83 regular Rust tests, 18 Python tests; four sustained tests ignored by default.
 
 - [x] Callable pool scan errors, progress and state implemented. Both FINISHED SCRUB captures replay. RESILVER and other unobserved variants have synthetic coverage. See [API contract](api-contract.md#callable-pool-scan-ts-250426).
 
@@ -30,7 +30,8 @@ Updated November 14, 2026 for release 0.8.2. Use [project-status.md](project-sta
 - [x] Authorized Mac Docker Desktop stack with live exporter, local scrape job, complete Grafana dashboard and backup/rollback instructions.
 - [ ] Final Linux Compose/scrape/target configuration, operator runbook and alert artifacts.
 - [x] Explicitly authorized Linux exporter installation and Prometheus integration alongside the independent Graphite service.
-- [ ] Formal parallel acceptance, alert review and migration decision.
+- [x] Operator-authorized dashboard/report migration and Graphite stop-before-removal gate, with backups and rollback.
+- [ ] Formal combined-daemon acceptance and alert review remain separate.
 - [ ] P1 disks/reliable health-temperature, services and alert counts/severity after P0 contracts/acceptance.
 - [ ] P2 applications/tasks/VMs after stable P0/P1; generic arbitrary discovery remains outside scope.
 

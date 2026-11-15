@@ -1,0 +1,948 @@
+{
+  "apiVersion": "dashboard.grafana.app/v2",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "truenas-memory-alpha-monitor"
+  },
+  "spec": {
+    "annotations": [],
+    "cursorSync": "Off",
+    "description": "MEMORY ALPHA · TrueNAS SCALE · 10.10.10.7. Read-only Rust exporter metrics. Status reflects authenticated API connection and scrape availability, not hardware power or full system health.",
+    "editable": true,
+    "elements": {
+      "arc": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "afpqtre5ghmgwe"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "truenas_zfs_arc_size_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}",
+                        "format": "time_series",
+                        "instant": true,
+                        "legendFormat": "",
+                        "range": false
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "Source-reported ZFS ARC size in bytes. Cache size is not memory pressure or cache efficiency. Independent raw-counter and ARC algorithm verification remains open.",
+          "id": 5,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "stat",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "fixedColor": "green",
+                    "mode": "fixed"
+                  },
+                  "decimals": 2,
+                  "displayName": "Cache size",
+                  "noValue": "No data",
+                  "unit": "bytes"
+                },
+                "overrides": []
+              },
+              "options": {
+                "colorMode": "value",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "vertical",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "text": {
+                  "titleSize": 24,
+                  "valueSize": 48
+                },
+                "textMode": "value_and_name",
+                "wideLayout": false
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "cpu": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "afpqtre5ghmgwe"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "100 * truenas_cpu_utilization_ratio{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",cpu=\"cpu\"}",
+                        "format": "time_series",
+                        "instant": true,
+                        "legendFormat": "",
+                        "range": false
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "Aggregate reporting.realtime CPU utilization ratio multiplied by 100 once. Source value; not load average.",
+          "id": 3,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "gauge",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "decimals": 1,
+                  "max": 100,
+                  "min": 0,
+                  "noValue": "No data",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      },
+                      {
+                        "color": "yellow",
+                        "value": 70
+                      },
+                      {
+                        "color": "orange",
+                        "value": 85
+                      },
+                      {
+                        "color": "red",
+                        "value": 95
+                      }
+                    ]
+                  },
+                  "unit": "percent"
+                },
+                "overrides": []
+              },
+              "options": {
+                "barShape": "flat",
+                "barWidthFactor": 0.5,
+                "effects": {
+                  "barGlow": false,
+                  "centerGlow": false,
+                  "gradient": false
+                },
+                "endpointMarker": "none",
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "segmentCount": 1,
+                "segmentSpacing": 0.5,
+                "shape": "gauge",
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto",
+                "sparkline": false,
+                "text": {
+                  "titleSize": 24,
+                  "valueSize": 48
+                },
+                "textMode": "value"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "heading_arc": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "",
+          "id": 105,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "text",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "options": {
+                "content": "<div style=\"font-size:26px;line-height:1.15;text-align:center;color:#ccccdc;padding-top:10px;\">ZFS ARC</div>",
+                "mode": "html"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "heading_cpu": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "",
+          "id": 103,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "text",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "options": {
+                "content": "<div style=\"font-size:26px;line-height:1.15;text-align:center;color:#ccccdc;padding-top:10px;\">CPU %</div>",
+                "mode": "html"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "heading_identity": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "",
+          "id": 101,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "text",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "options": {
+                "content": "<div style=\"font-size:26px;line-height:1.15;text-align:center;color:#ccccdc;padding-top:10px;\">SYSTEMS</div>",
+                "mode": "html"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "heading_memory": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "",
+          "id": 104,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "text",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "options": {
+                "content": "<div style=\"font-size:26px;line-height:1.15;text-align:center;color:#ccccdc;padding-top:10px;\">MEMORY %</div>",
+                "mode": "html"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "heading_network": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "",
+          "id": 106,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "text",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "options": {
+                "content": "<div style=\"font-size:26px;line-height:1.15;text-align:center;color:#ccccdc;padding-top:10px;\">NETWORK RX + TX</div>",
+                "mode": "html"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "heading_uptime": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "",
+          "id": 102,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "text",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "options": {
+                "content": "<div style=\"font-size:26px;line-height:1.15;text-align:center;color:#ccccdc;padding-top:10px;\">IP ADDRESS | UPTIME</div>",
+                "mode": "html"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "identity": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "afpqtre5ghmgwe"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "(truenas_api_connected{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} * on(job,instance) group_left up{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\"}) or on() vector(-1)",
+                        "format": "time_series",
+                        "instant": true,
+                        "legendFormat": "",
+                        "range": false
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "Green: authenticated NAS API connection and exporter scrape successful. Red: explicit connection/scrape failure. Unknown: absent telemetry; no hardware power-state claim.",
+          "id": 1,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "marcusolsson-dynamictext-panel",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "options": {
+                "afterRender": "",
+                "content": "<article class=\"nas-card {{monitoringState}}\"><div class=\"hardware\">HW: TrueNAS</div><div class=\"server-name\">MEMORY ALPHA</div></article>",
+                "contentPartials": [],
+                "defaultContent": "<article class=\"nas-card unknown\"><div class=\"hardware\">HW: TrueNAS</div><div class=\"server-name\">MEMORY ALPHA</div></article>",
+                "editor": {
+                  "format": "auto",
+                  "language": "html"
+                },
+                "editors": [
+                  "styles"
+                ],
+                "externalScripts": [],
+                "externalStyles": [],
+                "helpers": "const field = context.dataFrame?.fields.find((field) => field.type === \"number\");\nconst value = field?.values[field.values.length - 1];\nconst state = value === 1 ? \"online\" : value === 0 ? \"offline\" : \"unknown\";\ncontext.handlebars.registerHelper(\"monitoringState\", () => state);\ncontext.handlebars.registerHelper(\"monitoringLabel\", () =>\n  state === \"online\" ? \"MONITORING ONLINE\" :\n  state === \"offline\" ? \"MONITORING OFFLINE\" : \"NO MONITORING DATA\"\n);",
+                "renderMode": "everyRow",
+                "status": "",
+                "styles": "& {height:100%;} & .dt-row, & .dt-row > div {height:100%;} .nas-card{box-sizing:border-box;position:relative;min-height:210px;height:100%;border-radius:14px;padding:20px;color:#fff;display:grid;place-items:center;} .online{background:linear-gradient(110deg,#309c3e,#70b84b);} .offline{background:#a12626;} .unknown{background:#746315;} .hardware{position:absolute;top:20px;left:20px;font-size:28px;font-weight:600;line-height:1.2;} .server-name{width:100%;text-align:center;font-size:clamp(32px,2.8vw,56px);font-weight:700;line-height:1.15;}",
+                "wrap": false
+              }
+            },
+            "version": "6.3.0"
+          }
+        }
+      },
+      "memory": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "afpqtre5ghmgwe"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "100 * (1 - truenas_memory_available_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} / truenas_memory_total_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"})",
+                        "format": "time_series",
+                        "instant": true,
+                        "legendFormat": "",
+                        "range": false
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "100 × (1 − available/total physical RAM). Includes source memory accounting; ARC is not subtracted. Green is informational and does not establish absence of memory pressure.",
+          "id": 4,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "gauge",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "fixedColor": "green",
+                    "mode": "fixed"
+                  },
+                  "decimals": 1,
+                  "max": 100,
+                  "min": 0,
+                  "noValue": "No data",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      }
+                    ]
+                  },
+                  "unit": "percent"
+                },
+                "overrides": []
+              },
+              "options": {
+                "barShape": "flat",
+                "barWidthFactor": 0.5,
+                "effects": {
+                  "barGlow": false,
+                  "centerGlow": false,
+                  "gradient": false
+                },
+                "endpointMarker": "none",
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "segmentCount": 1,
+                "segmentSpacing": 0.5,
+                "shape": "gauge",
+                "showThresholdLabels": false,
+                "showThresholdMarkers": false,
+                "sizing": "auto",
+                "sparkline": false,
+                "text": {
+                  "titleSize": 24,
+                  "valueSize": 48
+                },
+                "textMode": "value"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "network": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "afpqtre5ghmgwe"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum by (target,job,instance) (truenas_network_receive_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"} + truenas_network_transmit_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"})",
+                        "format": "time_series",
+                        "instant": true,
+                        "legendFormat": "R/W",
+                        "range": false
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "Combined RX + TX for enp42s0, in bytes/second. Source gauges are already rates. 250 MB/s ceiling represents 1 Gbit/s in each full-duplex direction.",
+          "id": 6,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "gauge",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "fixedColor": "green",
+                    "mode": "fixed"
+                  },
+                  "decimals": 1,
+                  "max": 250000000,
+                  "min": 0,
+                  "noValue": "No data",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      }
+                    ]
+                  },
+                  "unit": "Bps"
+                },
+                "overrides": []
+              },
+              "options": {
+                "barShape": "flat",
+                "barWidthFactor": 0.5,
+                "effects": {
+                  "barGlow": false,
+                  "centerGlow": false,
+                  "gradient": false
+                },
+                "endpointMarker": "none",
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "segmentCount": 1,
+                "segmentSpacing": 0.5,
+                "shape": "gauge",
+                "showThresholdLabels": false,
+                "showThresholdMarkers": false,
+                "sizing": "auto",
+                "sparkline": false,
+                "text": {
+                  "titleSize": 24,
+                  "valueSize": 48
+                },
+                "textMode": "value"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "uptime": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "afpqtre5ghmgwe"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "truenas_system_uptime_seconds{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}",
+                        "format": "time_series",
+                        "instant": true,
+                        "legendFormat": "",
+                        "range": false
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "Configured TrueNAS host IP: 10.10.10.7. TrueNAS host uptime in seconds; exporter is on 10.10.10.60.",
+          "id": 2,
+          "links": [],
+          "title": "",
+          "transparent": true,
+          "vizConfig": {
+            "group": "marcusolsson-dynamictext-panel",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "options": {
+                "afterRender": "",
+                "content": "<div class=\"host-identity\"><div class=\"host-ip\">10.10.10.7</div><div class=\"host-uptime\">{{hostUptime}}</div></div>",
+                "contentPartials": [],
+                "defaultContent": "<div class=\"host-identity\"><div class=\"host-ip\">10.10.10.7</div><div class=\"host-uptime missing\">No uptime data</div></div>",
+                "editor": {
+                  "format": "auto",
+                  "language": "html"
+                },
+                "editors": [
+                  "styles"
+                ],
+                "externalScripts": [],
+                "externalStyles": [],
+                "helpers": "context.handlebars.registerHelper(\"hostUptime\", () => {\n  const field = context.dataFrame?.fields.find((field) => field.type === \"number\");\n  const value = field?.values[field.values.length - 1];\n  if (value == null || !Number.isFinite(value) || value < 0) return \"No uptime data\";\n  const seconds = Math.floor(value);\n  const days = Math.floor(seconds / 86400);\n  const hours = String(Math.floor(seconds % 86400 / 3600)).padStart(2, \"0\");\n  const minutes = String(Math.floor(seconds % 3600 / 60)).padStart(2, \"0\");\n  const remainder = String(seconds % 60).padStart(2, \"0\");\n  return days + \" d \" + hours + \":\" + minutes + \":\" + remainder;\n});",
+                "renderMode": "everyRow",
+                "styles": "&{height:100%;} & .dt-row, & .dt-row > div{height:100%;} .host-identity{box-sizing:border-box;min-height:210px;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:8px;gap:8px;} .host-ip{color:#ccccdc;font-size:clamp(32px,2.2vw,56px);font-weight:500;line-height:1.1;} .host-uptime{color:#73bf69;font-size:clamp(28px,2.4vw,64px);font-weight:600;line-height:1.15;white-space:nowrap;font-variant-numeric:tabular-nums;} .missing{color:#f2cc0c;font-size:28px;}",
+                "wrap": false
+              }
+            },
+            "version": "6.3.0"
+          }
+        }
+      }
+    },
+    "layout": {
+      "kind": "GridLayout",
+      "spec": {
+        "items": [
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "heading_identity"
+              },
+              "height": 2,
+              "width": 7,
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "identity"
+              },
+              "height": 7,
+              "width": 7,
+              "x": 0,
+              "y": 2
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "heading_uptime"
+              },
+              "height": 2,
+              "width": 5,
+              "x": 7,
+              "y": 0
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "uptime"
+              },
+              "height": 7,
+              "width": 5,
+              "x": 7,
+              "y": 2
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "heading_cpu"
+              },
+              "height": 2,
+              "width": 3,
+              "x": 12,
+              "y": 0
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "cpu"
+              },
+              "height": 7,
+              "width": 3,
+              "x": 12,
+              "y": 2
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "heading_memory"
+              },
+              "height": 2,
+              "width": 3,
+              "x": 15,
+              "y": 0
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "memory"
+              },
+              "height": 7,
+              "width": 3,
+              "x": 15,
+              "y": 2
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "heading_arc"
+              },
+              "height": 2,
+              "width": 3,
+              "x": 18,
+              "y": 0
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "arc"
+              },
+              "height": 7,
+              "width": 3,
+              "x": 18,
+              "y": 2
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "heading_network"
+              },
+              "height": 2,
+              "width": 3,
+              "x": 21,
+              "y": 0
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "network"
+              },
+              "height": 7,
+              "width": 3,
+              "x": 21,
+              "y": 2
+            }
+          }
+        ]
+      }
+    },
+    "links": [],
+    "preload": false,
+    "tags": [
+      "truenas",
+      "memory-alpha",
+      "infrastructure"
+    ],
+    "timeSettings": {
+      "autoRefresh": "30s",
+      "autoRefreshIntervals": [
+        "10s",
+        "30s",
+        "1m",
+        "5m"
+      ],
+      "fiscalYearStartMonth": 0,
+      "from": "now-15m",
+      "hideTimepicker": false,
+      "timezone": "browser",
+      "to": "now"
+    },
+    "title": "TrueNAS Server Monitoring",
+    "variables": []
+  }
+}
