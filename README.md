@@ -1,6 +1,6 @@
 # TrueNAS SCALE Rust Prometheus exporter
 
-**Release:** Steel Ferret — version 0.8.0.
+**Release:** Steel Ferret — version 0.8.1.
 
 A standalone, remote, read-only exporter targeting TrueNAS SCALE 25.04.2.x. One Rust executable serves cached pool measurements and exporter operational metrics for one or multiple configured TrueNAS targets. It runs without installing anything on TrueNAS.
 
@@ -107,3 +107,5 @@ Authorized native and UID-10001 local Docker `check-realtime` runs now pass agai
 An explicitly authorized one-shot public chart diagnostic is available as the Cargo example public_chart_comparison. It requires a new output-file path. Read docs/public-chart-comparison-results.md and docs/reporting-api-comparison-plan.md before use.
 
 The complete Grafana dashboard is in dashboards/truenas-exporter.json. The authorized local Docker Desktop setup runs Prometheus, Grafana 13.2.2 and the live exporter together in metric-simulator-observability. See docs/operations.md for paths and lifecycle instructions.
+
+The operator-authorized Linux observability stack now runs exporter image 0.8.0 on 10.10.10.60 and scrapes it internally as job truenas-api-exporter. See docs/operations.md for the installed configuration and rollback record.

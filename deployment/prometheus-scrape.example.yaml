@@ -1,5 +1,9 @@
-# Append this job under the existing scrape_configs after deployment approval.
+# Add under scrape_configs after operator deployment authorization.
 - job_name: truenas-api-exporter
   scrape_interval: 30s
   static_configs:
     - targets: ["truenas-exporter:9110"]
+      labels:
+        ipaddress: "10.10.10.7"
+        environment: Hardware
+        moniker: TrueNAS API

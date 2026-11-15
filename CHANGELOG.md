@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.1 - 2026-11-14
+
+- Record the authorized Linux observability-stack installation of exporter image 0.8.0 and its internal Prometheus scrape job.
+- Document protected credential installation, validated configuration backups, observed health and rollback, with an exporter-only installed Compose snapshot.
+
+
 ## 0.8.0 - 2026-11-14
 
 - Add an edited copy of the supplied office-desk Grafana v2 dashboard with CPU, memory, pool usage and RX+TX gauges beside MEMORY ALPHA.

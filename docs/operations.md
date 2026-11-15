@@ -65,3 +65,34 @@ The top row pins target memory-alpha and respects scrape job/instance filters. I
 The edited resource is dashboards/office-desk-memory-alpha.json, retaining the supplied Grafana v2 metadata name dbfqrjypqhwirke. New panels 112–115 occupy x=8/10/12/14, y=10, width=2 and height=5 beside MEMORY ALPHA. The original empty panel-100 layout area is shortened to y=15, height=5, leaving its lower backup-row placeholder. All original element definitions and other layout entries are preserved.
 
 The four additions use the local Prometheus datasource UID prometheus and exact exporter job/instance/target labels. Existing panels retain their original datasource references. The network gauge selects enp42s0, verified in local Prometheus at 1 Gbit/s. Its 250 MB/s scale represents combined full-duplex RX+TX capacity; revise the scale if link speed changes. All four new query expressions returned live samples. This resource is a file deliverable and has not replaced the running office-desk dashboard on any server. Import it in the intended Grafana instance or use its resource JSON in the editor; ensure datasource UID prometheus supplies the selected exporter series there.
+
+## Authorized Linux installation — November 14, 2026
+
+The operator explicitly authorized installing the exporter on worker@10.10.10.60 in /mnt/observability-stack and separately approved transferring the existing dedicated NAS API credential using encrypted SCP. Docker access is available to worker; sudo is required for /mnt changes. No SSH password or API key value was saved in this repository.
+
+An exporter-only snapshot of the installed Compose service/network is saved in deployment/observability-stack-exporter.json. It includes file paths, never key contents.
+
+The installed service truenas-exporter belongs to Compose project observability, in the existing docker-compose.yml, on network observability. It runs local/truenas-rust-exporter:0.8.0 (linux/amd64), transferred as a local image archive and loaded on the server. The executable reported 0.8.0. Release 0.8.1 records deployment evidence and configuration. No image registry publication is involved.
+
+The service uses UID/GID 10001:10001, read-only root, zero capabilities, no-new-privileges, 128 MiB memory limit, 0.5 CPU, 64 PIDs and bounded logs. It restarts unless stopped. Port 9110 is exposed only on the Docker network. No host/LAN port is published. Prometheus reaches http://truenas-exporter:9110/metrics on the shared network.
+
+The dedicated key is installed at /mnt/observability-stack/secrets/truenas-exporter/api-key, owner 10001:10001 and mode 0400. The public CA is root-ca.pem in that root-only directory, mode 0644. Both files are mounted read-only. The temporary worker-owned key copy was removed after installation. Future rotation must update this Linux copy through an approved secure transfer and restart only this service. The source Mac credential was not modified.
+
+Collection uses wss://memory-alpha.home.lab/api/current, username prometheus_exporter, target memory-alpha, 60-second pools/system polling, two-second realtime interval and 180-second pool/system TTL. Existing API allowlists and verified TLS remain in force. Startup unavailable attempts before admission cleared after the first scheduled poll. Linux readyz returned 200 and all six collectors became successful.
+
+The existing Prometheus file prometheus-config.yml adds job truenas-api-exporter at 30 seconds, target truenas-exporter:9110, environment Hardware, ipaddress 10.10.10.7 and moniker TrueNAS API. The distinct moniker preserves the legacy up{moniker="TrueNAS"} selector for the independent Graphite target. All existing jobs were preserved. Candidate Compose validation and promtool checks passed before applying changes. Prometheus reload used POST http://127.0.0.1:9090/-/reload. The bind-mounted configuration was updated in place so the running container sees the same inode.
+
+Backups of docker-compose.yml and prometheus-config.yml are in /mnt/observability-stack/backups/truenas-exporter-20261115T012526Z. This UTC timestamp falls on November 14 in the operator's America/Chicago timezone. The backup directory is root-only. Rollback requires sudo: stop only truenas-exporter, restore those two configuration contents in place, validate Compose and Prometheus configuration, and reload Prometheus. Preserve Grafana/Prometheus data. Keep the dedicated credential protected until the operator decides whether the service will be resumed. Avoid down -v on the observability project.
+
+Useful server checks follow. Metrics are read over the container network; no new NAS action is required for these checks.
+
+```sh
+cd /mnt/observability-stack
+docker compose -p observability -f docker-compose.yml ps truenas-exporter
+docker logs --tail 20 truenas-exporter
+docker exec prometheus promtool check config /etc/prometheus/prometheus.yml
+curl -fsSG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=up{job="truenas-api-exporter"}'
+curl -fsSG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=truenas_exporter_collection_success{job="truenas-api-exporter"}'
+```
+
+Minimum effective roles, independent raw-counter/ARC algorithm verification, formal induced-fault/recovery acceptance and longer resource confidence remain separate findings. Successful installation and current health do not close those evidence gaps.

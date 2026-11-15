@@ -1,10 +1,10 @@
-feat: add MEMORY ALPHA controls to supplied office dashboard
+docs: record authorized Linux observability deployment
 
-[0.8.0] Steel Ferret
+[0.8.1] Steel Ferret
 
-- Add four local-exporter gauges in the supplied Grafana v2 layout
-- Preserve existing element definitions and backup-row placeholder space
-- Verify live query results and new control wiring with focused checks
-- VERSION, README.md and CHANGELOG.md: record release 0.8.0
+- Record installed exporter 0.8.0, protected credentials and internal scrape target
+- Preserve existing jobs and document validated backups and rollback
+- Record live readiness, collector success and work Prometheus verification
+- VERSION, README.md and CHANGELOG.md: record release 0.8.1
 
 developed by Randel Dodson and AI
