@@ -64,7 +64,7 @@ The top row pins target memory-alpha and respects scrape job/instance filters. I
 
 The edited resource is dashboards/office-desk-memory-alpha.json, retaining the supplied Grafana v2 metadata name dbfqrjypqhwirke. New panels 112–115 occupy x=8/10/12/14, y=10, width=2 and height=5 beside MEMORY ALPHA. The original empty panel-100 layout area is shortened to y=15, height=5, leaving its lower backup-row placeholder. All original element definitions and other layout entries are preserved.
 
-The four additions use the local Prometheus datasource UID prometheus and exact exporter job/instance/target labels. Existing panels retain their original datasource references. The network gauge selects enp42s0, verified in local Prometheus at 1 Gbit/s. Its 250 MB/s scale represents combined full-duplex RX+TX capacity; revise the scale if link speed changes. All four new query expressions returned live samples. This resource is a file deliverable and has not replaced the running office-desk dashboard on any server. Import it in the intended Grafana instance or use its resource JSON in the editor; ensure datasource UID prometheus supplies the selected exporter series there.
+At release 0.8.0 the four additions used local Prometheus UID prometheus. The later live MCP integration uses the production datasource recorded below. Both versions use exact exporter job/instance/target labels. Existing panels retain their original datasource references. The network gauge selects enp42s0, verified in local Prometheus at 1 Gbit/s. Its 250 MB/s scale represents combined full-duplex RX+TX capacity; revise the scale if link speed changes. All four new query expressions returned live samples. At release 0.8.0 this resource was a file deliverable. The later explicitly authorized MCP update is recorded below. Import it in the intended Grafana instance or use its resource JSON in the editor; ensure datasource UID prometheus supplies the selected exporter series there.
 
 ## Authorized Linux installation — November 14, 2026
 
@@ -96,3 +96,13 @@ curl -fsSG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=truenas_ex
 ```
 
 Minimum effective roles, independent raw-counter/ARC algorithm verification, formal induced-fault/recovery acceptance and longer resource confidence remain separate findings. Successful installation and current health do not close those evidence gaps.
+
+## Live office-desk MCP update — 0.8.2
+
+The operator explicitly authorized using Grafana MCP to add CPU, MEMORY, POOL USED and NETWORK RX + TX controls directly to the MEMORY ALPHA row on office-desk. Dashboard UID dbfqrjypqhwirke in folder rtx4g9 was updated from version160 to161. Saved version160 remains the rollback snapshot. The version-history message is Add MEMORY ALPHA CPU, memory, pool used and RX+TX gauges from the Linux Rust exporter.
+
+The targeted patch added elements panel-112 through panel-115 and four grid items at x8/10/12/14, y10, width2 and height5. It moved the empty panel-100 placeholder to y15, height5. Every existing element and unrelated layout/dashboard property was verified unchanged against the fetched live source. The repository export dashboards/office-desk-memory-alpha.json now reflects the saved live resource.
+
+All four new panels use production Prometheus UID afpqtre5ghmgwe, job truenas-api-exporter, instance truenas-exporter:9110 and target memory-alpha. CPU is aggregate percent; memory is 100*(1-available/total); pool allocation is per-pool percent; enp42s0 RX/TX rate gauges are added directly in bytes/s. The network gauge scale is 250 MB/s for the reported full-duplex 1 Gbit/s link. Adjacent gauge styles were reused, with stale field-name filters cleared on the network panel. All four queries returned production samples through MCP before saving, and a subsequent dashboard fetch confirmed the new definitions.
+
+The optional Grafana panel image-render request returned HTTP500. Saved-model/query verification passed; screenshot rendering was unavailable. No renderer configuration was changed.

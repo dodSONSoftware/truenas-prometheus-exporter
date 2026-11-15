@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.2 - 2026-11-14
+
+- Add the four MEMORY ALPHA gauges directly to live office-desk through Grafana MCP, using the observability-stack Prometheus datasource.
+- Synchronize the saved Grafana v2 export and regression checks with live dashboard version 161.
+
+
 ## 0.8.1 - 2026-11-14
 
 - Record the authorized Linux observability-stack installation of exporter image 0.8.0 and its internal Prometheus scrape job.

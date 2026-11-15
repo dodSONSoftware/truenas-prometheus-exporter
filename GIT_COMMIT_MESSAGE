@@ -1,10 +1,11 @@
-docs: record authorized Linux observability deployment
+fix: wire live MEMORY ALPHA controls to observability metrics
 
-[0.8.1] Steel Ferret
+[0.8.2] Steel Ferret
 
-- Record installed exporter 0.8.0, protected credentials and internal scrape target
-- Preserve existing jobs and document validated backups and rollback
-- Record live readiness, collector success and work Prometheus verification
-- VERSION, README.md and CHANGELOG.md: record release 0.8.1
+- Apply four targeted Grafana MCP panel additions to office-desk version 161
+- Preserve existing elements and retain the backup-row placeholder area
+- Synchronize the saved resource and production datasource regression check
+- Record live query verification and the image-rendering limitation
+- VERSION, README.md and CHANGELOG.md: record release 0.8.2
 
 developed by Randel Dodson and AI

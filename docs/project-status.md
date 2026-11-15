@@ -1,6 +1,6 @@
 # Current project status
 
-Release 0.8.1, Steel Ferret, follows documentation checkpoint 3ac2903. Root VERSION is the release authority.
+Release 0.8.2, Steel Ferret, follows documentation checkpoint 3ac2903. Root VERSION is the release authority.
 
 ## Implemented and evidenced
 

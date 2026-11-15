@@ -634,6 +634,439 @@
           }
         }
       },
+      "panel-112": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "afpqtre5ghmgwe"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "100 * truenas_cpu_utilization_ratio{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",cpu=\"cpu\"}",
+                        "format": "time_series",
+                        "instant": true,
+                        "legendFormat": "CPU",
+                        "range": false
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "MEMORY ALPHA aggregate CPU from the Rust API exporter.",
+          "id": 112,
+          "links": [],
+          "title": "CPU",
+          "transparent": true,
+          "vizConfig": {
+            "group": "gauge",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "decimals": 1,
+                  "max": 100,
+                  "min": 0,
+                  "noValue": "No data",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": 0
+                      },
+                      {
+                        "color": "yellow",
+                        "value": 60
+                      },
+                      {
+                        "color": "dark-red",
+                        "value": 80
+                      }
+                    ]
+                  },
+                  "unit": "percent"
+                },
+                "overrides": []
+              },
+              "options": {
+                "barShape": "flat",
+                "barWidthFactor": 0.5,
+                "effects": {
+                  "barGlow": false,
+                  "centerGlow": false,
+                  "gradient": false
+                },
+                "endpointMarker": "glow",
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "segmentCount": 1,
+                "segmentSpacing": 0.3,
+                "shape": "gauge",
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto",
+                "sparkline": false,
+                "text": {},
+                "textMode": "auto"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "panel-113": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "afpqtre5ghmgwe"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "100 * (1 - truenas_memory_available_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} / truenas_memory_total_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"})",
+                        "format": "time_series",
+                        "instant": true,
+                        "legendFormat": "MEMORY",
+                        "range": false
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "Physical memory utilization, 100 \u00d7 (1 \u2212 available / total). This value alone does not diagnose memory pressure.",
+          "id": 113,
+          "links": [],
+          "title": "MEMORY",
+          "transparent": true,
+          "vizConfig": {
+            "group": "gauge",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "decimals": 1,
+                  "max": 100,
+                  "min": 0,
+                  "noValue": "No data",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "dark-green",
+                        "value": 0
+                      },
+                      {
+                        "color": "dark-yellow",
+                        "value": 80
+                      },
+                      {
+                        "color": "dark-red",
+                        "value": 90
+                      }
+                    ]
+                  },
+                  "unit": "percent"
+                },
+                "overrides": []
+              },
+              "options": {
+                "barShape": "flat",
+                "barWidthFactor": 0.5,
+                "effects": {
+                  "barGlow": false,
+                  "centerGlow": false,
+                  "gradient": false
+                },
+                "endpointMarker": "point",
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "segmentCount": 1,
+                "segmentSpacing": 0.3,
+                "shape": "gauge",
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto",
+                "sparkline": false,
+                "text": {},
+                "textMode": "auto"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "panel-114": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "afpqtre5ghmgwe"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "100 * truenas_pool_allocated_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} / truenas_pool_size_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}",
+                        "format": "time_series",
+                        "instant": true,
+                        "legendFormat": "{{pool}}",
+                        "range": false
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "Allocated bytes / total bytes for each MEMORY ALPHA pool.",
+          "id": 114,
+          "links": [],
+          "title": "POOL USED",
+          "transparent": true,
+          "vizConfig": {
+            "group": "gauge",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "decimals": 1,
+                  "max": 100,
+                  "min": 0,
+                  "noValue": "No data",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": 0
+                      },
+                      {
+                        "color": "yellow",
+                        "value": 80
+                      },
+                      {
+                        "color": "dark-red",
+                        "value": 90
+                      }
+                    ]
+                  },
+                  "unit": "percent"
+                },
+                "overrides": []
+              },
+              "options": {
+                "barShape": "flat",
+                "barWidthFactor": 0.5,
+                "effects": {
+                  "barGlow": false,
+                  "centerGlow": false,
+                  "gradient": false
+                },
+                "endpointMarker": "glow",
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "segmentCount": 1,
+                "segmentSpacing": 0.3,
+                "shape": "gauge",
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto",
+                "sparkline": false,
+                "text": {},
+                "textMode": "auto"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
+      "panel-115": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "afpqtre5ghmgwe"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum by (target,job,instance) (truenas_network_receive_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"} + truenas_network_transmit_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"})",
+                        "format": "time_series",
+                        "instant": true,
+                        "legendFormat": "NETWORK RX + TX",
+                        "range": false
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "Receive plus transmit bytes/s on enp42s0. Source rate gauges are added directly. Full scale is 250 MB/s for the currently reported full-duplex 1 Gbit/s link.",
+          "id": 115,
+          "links": [],
+          "title": "NETWORK RX + TX",
+          "transparent": true,
+          "vizConfig": {
+            "group": "gauge",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "decimals": 1,
+                  "fieldMinMax": false,
+                  "max": 250000000,
+                  "min": 0,
+                  "noValue": "No data",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": 0
+                      },
+                      {
+                        "color": "yellow",
+                        "value": 150000000
+                      },
+                      {
+                        "color": "dark-red",
+                        "value": 200000000
+                      }
+                    ]
+                  },
+                  "unit": "Bps"
+                },
+                "overrides": []
+              },
+              "options": {
+                "barShape": "flat",
+                "barWidthFactor": 0.5,
+                "effects": {
+                  "barGlow": false,
+                  "centerGlow": false,
+                  "gradient": false
+                },
+                "endpointMarker": "point",
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "segmentCount": 1,
+                "segmentSpacing": 0.3,
+                "shape": "gauge",
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto",
+                "sparkline": false,
+                "text": {},
+                "textMode": "auto"
+              }
+            },
+            "version": "13.2.2"
+          }
+        }
+      },
       "panel-12": {
         "kind": "Panel",
         "spec": {
@@ -6118,438 +6551,6 @@
                 "sparkline": false,
                 "text": {},
                 "textMode": "value"
-              }
-            },
-            "version": "13.2.2"
-          }
-        }
-      },
-      "panel-112": {
-        "kind": "Panel",
-        "spec": {
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "hidden": false,
-                    "query": {
-                      "datasource": {
-                        "name": "prometheus"
-                      },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
-                      "spec": {
-                        "editorMode": "code",
-                        "expr": "100 * truenas_cpu_utilization_ratio{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",cpu=\"cpu\"}",
-                        "legendFormat": "CPU",
-                        "instant": true,
-                        "range": false,
-                        "format": "time_series"
-                      },
-                      "version": "v0"
-                    },
-                    "refId": "A"
-                  }
-                }
-              ],
-              "queryOptions": {},
-              "transformations": []
-            }
-          },
-          "description": "Aggregate MEMORY ALPHA CPU utilization from the Rust API exporter.",
-          "id": 112,
-          "links": [],
-          "title": "CPU",
-          "transparent": true,
-          "vizConfig": {
-            "group": "gauge",
-            "kind": "VizConfig",
-            "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "mode": "thresholds"
-                  },
-                  "decimals": 1,
-                  "noValue": "No data",
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 60
-                      },
-                      {
-                        "color": "dark-red",
-                        "value": 80
-                      }
-                    ]
-                  },
-                  "unit": "percent",
-                  "min": 0,
-                  "max": 100
-                },
-                "overrides": []
-              },
-              "options": {
-                "barShape": "flat",
-                "barWidthFactor": 0.5,
-                "effects": {
-                  "barGlow": false,
-                  "centerGlow": false,
-                  "gradient": false
-                },
-                "endpointMarker": "glow",
-                "minVizHeight": 75,
-                "minVizWidth": 75,
-                "orientation": "auto",
-                "reduceOptions": {
-                  "calcs": [
-                    "lastNotNull"
-                  ],
-                  "fields": "",
-                  "values": false
-                },
-                "segmentCount": 1,
-                "segmentSpacing": 0.3,
-                "shape": "gauge",
-                "showThresholdLabels": false,
-                "showThresholdMarkers": true,
-                "sizing": "auto",
-                "sparkline": false,
-                "text": {},
-                "textMode": "auto"
-              }
-            },
-            "version": "13.2.2"
-          }
-        }
-      },
-      "panel-113": {
-        "kind": "Panel",
-        "spec": {
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "hidden": false,
-                    "query": {
-                      "datasource": {
-                        "name": "prometheus"
-                      },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
-                      "spec": {
-                        "editorMode": "code",
-                        "expr": "100 * (1 - truenas_memory_available_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} / truenas_memory_total_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"})",
-                        "legendFormat": "MEMORY",
-                        "instant": true,
-                        "range": false,
-                        "format": "time_series"
-                      },
-                      "version": "v0"
-                    },
-                    "refId": "A"
-                  }
-                }
-              ],
-              "queryOptions": {},
-              "transformations": []
-            }
-          },
-          "description": "Physical utilization calculated from available/total bytes. ARC accounting affects interpretation; this alone does not diagnose pressure.",
-          "id": 113,
-          "links": [],
-          "title": "MEMORY",
-          "transparent": true,
-          "vizConfig": {
-            "group": "gauge",
-            "kind": "VizConfig",
-            "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "mode": "thresholds"
-                  },
-                  "decimals": 1,
-                  "noValue": "No data",
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 60
-                      },
-                      {
-                        "color": "dark-red",
-                        "value": 80
-                      }
-                    ]
-                  },
-                  "unit": "percent",
-                  "min": 0,
-                  "max": 100
-                },
-                "overrides": []
-              },
-              "options": {
-                "barShape": "flat",
-                "barWidthFactor": 0.5,
-                "effects": {
-                  "barGlow": false,
-                  "centerGlow": false,
-                  "gradient": false
-                },
-                "endpointMarker": "glow",
-                "minVizHeight": 75,
-                "minVizWidth": 75,
-                "orientation": "auto",
-                "reduceOptions": {
-                  "calcs": [
-                    "lastNotNull"
-                  ],
-                  "fields": "",
-                  "values": false
-                },
-                "segmentCount": 1,
-                "segmentSpacing": 0.3,
-                "shape": "gauge",
-                "showThresholdLabels": false,
-                "showThresholdMarkers": true,
-                "sizing": "auto",
-                "sparkline": false,
-                "text": {},
-                "textMode": "auto"
-              }
-            },
-            "version": "13.2.2"
-          }
-        }
-      },
-      "panel-114": {
-        "kind": "Panel",
-        "spec": {
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "hidden": false,
-                    "query": {
-                      "datasource": {
-                        "name": "prometheus"
-                      },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
-                      "spec": {
-                        "editorMode": "code",
-                        "expr": "100 * truenas_pool_allocated_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"} / truenas_pool_size_bytes{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\"}",
-                        "legendFormat": "{{pool}}",
-                        "instant": true,
-                        "range": false,
-                        "format": "time_series"
-                      },
-                      "version": "v0"
-                    },
-                    "refId": "A"
-                  }
-                }
-              ],
-              "queryOptions": {},
-              "transformations": []
-            }
-          },
-          "description": "Allocated bytes / total bytes for each MEMORY ALPHA pool.",
-          "id": 114,
-          "links": [],
-          "title": "POOL USED",
-          "transparent": true,
-          "vizConfig": {
-            "group": "gauge",
-            "kind": "VizConfig",
-            "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "mode": "thresholds"
-                  },
-                  "decimals": 1,
-                  "noValue": "No data",
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 60
-                      },
-                      {
-                        "color": "dark-red",
-                        "value": 80
-                      }
-                    ]
-                  },
-                  "unit": "percent",
-                  "min": 0,
-                  "max": 100
-                },
-                "overrides": []
-              },
-              "options": {
-                "barShape": "flat",
-                "barWidthFactor": 0.5,
-                "effects": {
-                  "barGlow": false,
-                  "centerGlow": false,
-                  "gradient": false
-                },
-                "endpointMarker": "glow",
-                "minVizHeight": 75,
-                "minVizWidth": 75,
-                "orientation": "auto",
-                "reduceOptions": {
-                  "calcs": [
-                    "lastNotNull"
-                  ],
-                  "fields": "",
-                  "values": false
-                },
-                "segmentCount": 1,
-                "segmentSpacing": 0.3,
-                "shape": "gauge",
-                "showThresholdLabels": false,
-                "showThresholdMarkers": true,
-                "sizing": "auto",
-                "sparkline": false,
-                "text": {},
-                "textMode": "auto"
-              }
-            },
-            "version": "13.2.2"
-          }
-        }
-      },
-      "panel-115": {
-        "kind": "Panel",
-        "spec": {
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "hidden": false,
-                    "query": {
-                      "datasource": {
-                        "name": "prometheus"
-                      },
-                      "group": "prometheus",
-                      "kind": "DataQuery",
-                      "spec": {
-                        "editorMode": "code",
-                        "expr": "sum by (target,job,instance) (truenas_network_receive_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"} + truenas_network_transmit_bytes_per_second{job=\"truenas-api-exporter\",instance=\"truenas-exporter:9110\",target=\"memory-alpha\",interface=\"enp42s0\"})",
-                        "legendFormat": "NETWORK - RX + TX",
-                        "instant": true,
-                        "range": false,
-                        "format": "time_series"
-                      },
-                      "version": "v0"
-                    },
-                    "refId": "A"
-                  }
-                }
-              ],
-              "queryOptions": {},
-              "transformations": []
-            }
-          },
-          "description": "Receive plus transmit bytes/s for enp42s0. Gauges are added directly. Display scale is 250 MB/s, the combined full-duplex capacity of the currently reported 1 Gbit/s link.",
-          "id": 115,
-          "links": [],
-          "title": "NETWORK - RX + TX",
-          "transparent": true,
-          "vizConfig": {
-            "group": "gauge",
-            "kind": "VizConfig",
-            "spec": {
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "mode": "thresholds"
-                  },
-                  "decimals": 1,
-                  "noValue": "No data",
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": 0
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 150000000
-                      },
-                      {
-                        "color": "dark-red",
-                        "value": 200000000
-                      }
-                    ]
-                  },
-                  "unit": "Bps",
-                  "min": 0,
-                  "max": 250000000
-                },
-                "overrides": []
-              },
-              "options": {
-                "barShape": "flat",
-                "barWidthFactor": 0.5,
-                "effects": {
-                  "barGlow": false,
-                  "centerGlow": false,
-                  "gradient": false
-                },
-                "endpointMarker": "glow",
-                "minVizHeight": 75,
-                "minVizWidth": 75,
-                "orientation": "auto",
-                "reduceOptions": {
-                  "calcs": [
-                    "lastNotNull"
-                  ],
-                  "fields": "",
-                  "values": false
-                },
-                "segmentCount": 1,
-                "segmentSpacing": 0.3,
-                "shape": "gauge",
-                "showThresholdLabels": false,
-                "showThresholdMarkers": true,
-                "sizing": "auto",
-                "sparkline": false,
-                "text": {},
-                "textMode": "auto"
               }
             },
             "version": "13.2.2"
