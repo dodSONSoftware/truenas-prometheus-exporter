@@ -1,10 +1,10 @@
-feat: add compact MEMORY ALPHA dashboard overview
+feat: add MEMORY ALPHA controls to supplied office dashboard
 
-[0.7.0] Nickel Ferret
+[0.8.0] Steel Ferret
 
-- Show configured IP, uptime, CPU, memory, pool usage and network throughput
-- Preserve all detailed panels and verify overview placement and live queries
-- Document target and interface-filter semantics
-- VERSION, README.md and CHANGELOG.md: record release 0.7.0
+- Add four local-exporter gauges in the supplied Grafana v2 layout
+- Preserve existing element definitions and backup-row placeholder space
+- Verify live query results and new control wiring with focused checks
+- VERSION, README.md and CHANGELOG.md: record release 0.8.0
 
 developed by Randel Dodson and AI

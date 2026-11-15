@@ -59,3 +59,9 @@ Before the Grafana upgrade, the stopped service's data, provisioning and Compose
 ## MEMORY ALPHA overview — 0.7.0
 
 The top row pins target memory-alpha and respects scrape job/instance filters. It displays configured IP 10.10.10.7 above cached uptime, aggregate CPU, 1-available/total memory, allocated/size per selected pool, and RX+TX across selected interfaces. The system tile reflects Prometheus scrape availability, API connectivity and fresh successful collectors. Pool/interface filters apply to the corresponding overview panels. Select physical interfaces to avoid counting overlapping paths. All 40 original detailed panel/row entries retain their IDs and move down seven grid units. The dashboard now has 47 panel/row entries and seven variables.
+
+## Supplied office-desk dashboard — 0.8.0
+
+The edited resource is dashboards/office-desk-memory-alpha.json, retaining the supplied Grafana v2 metadata name dbfqrjypqhwirke. New panels 112–115 occupy x=8/10/12/14, y=10, width=2 and height=5 beside MEMORY ALPHA. The original empty panel-100 layout area is shortened to y=15, height=5, leaving its lower backup-row placeholder. All original element definitions and other layout entries are preserved.
+
+The four additions use the local Prometheus datasource UID prometheus and exact exporter job/instance/target labels. Existing panels retain their original datasource references. The network gauge selects enp42s0, verified in local Prometheus at 1 Gbit/s. Its 250 MB/s scale represents combined full-duplex RX+TX capacity; revise the scale if link speed changes. All four new query expressions returned live samples. This resource is a file deliverable and has not replaced the running office-desk dashboard on any server. Import it in the intended Grafana instance or use its resource JSON in the editor; ensure datasource UID prometheus supplies the selected exporter series there.

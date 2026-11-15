@@ -62,3 +62,24 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(overview[1]['fieldConfig']['defaults']['displayName'], '10.10.10.7')
         self.assertEqual(overview[1]['fieldConfig']['defaults']['unit'], 'dtdhms')
         self.assertNotIn('rate(', overview[-1]['targets'][0]['expr'])
+
+    def test_office_desk_memory_alpha_controls_use_local_exporter(self):
+        dashboard = json.loads((ROOT / 'dashboards/office-desk-memory-alpha.json').read_text())
+        self.assertEqual(dashboard['apiVersion'], 'dashboard.grafana.app/v2')
+        self.assertEqual(dashboard['metadata']['name'], 'dbfqrjypqhwirke')
+        items = {v['spec']['element']['name']: v['spec']
+                 for v in dashboard['spec']['layout']['spec']['items']}
+        expected = ['CPU', 'MEMORY', 'POOL USED', 'NETWORK - RX + TX']
+        for index, title in enumerate(expected, start=112):
+            key = f'panel-{index}'
+            panel = dashboard['spec']['elements'][key]['spec']
+            self.assertEqual(panel['title'], title)
+            self.assertEqual(items[key]['y'], 10)
+            self.assertEqual(items[key]['x'], 8 + (index - 112) * 2)
+            query = panel['data']['spec']['queries'][0]['spec']['query']
+            self.assertEqual(query['datasource']['name'], 'prometheus')
+            self.assertTrue(query['spec']['instant'])
+            self.assertIn('target="memory-alpha"', query['spec']['expr'])
+            self.assertNotIn('rate(', query['spec']['expr'])
+        self.assertEqual(items['panel-100']['y'], 15)
+        self.assertEqual(items['panel-100']['height'], 5)

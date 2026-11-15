@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0 - 2026-11-14
+
+- Add an edited copy of the supplied office-desk Grafana v2 dashboard with CPU, memory, pool usage and RX+TX gauges beside MEMORY ALPHA.
+- Preserve existing dashboard elements and retain the lower half of its empty placeholder for the backup row.
+
+
 ## 0.7.0 - 2026-11-14
 
 - Add a compact MEMORY ALPHA overview with IP address, uptime, CPU, physical memory utilization, pool usage and combined network throughput.

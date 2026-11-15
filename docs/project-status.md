@@ -1,6 +1,6 @@
 # Current project status
 
-Release 0.7.0, Nickel Ferret, follows documentation checkpoint 3ac2903. Root VERSION is the release authority.
+Release 0.8.0, Steel Ferret, follows documentation checkpoint 3ac2903. Root VERSION is the release authority.
 
 ## Implemented and evidenced
 
@@ -14,7 +14,7 @@ Release 0.7.0, Nickel Ferret, follows documentation checkpoint 3ac2903. Root VER
 | Appliance evidence | Authorized native and UID-10001 Docker auth/pool/system/realtime checks; observed version 25.04.2.6; sanitized full pool/system envelopes and four realtime frames replay offline |
 | Finite operational evidence | Dual-socket integration, silence despite pongs, full outage/recovery, repeated recovery and stalled-reader shutdown passed against synthetic loopback services |
 | Resource attribution | Separate-cgroup profile passed: maximum sampled exporter charge 63.30 MiB under 128 MiB; fixture 53.42 MiB separately. Exporter true kernel peak/event history unavailable |
-| Ordinary checks at baseline | 83 regular Rust tests, 15 Python tests, formatting and strict Clippy passed; Rust 1.88 checks/profile builds passed within recorded scopes |
+| Ordinary checks at baseline | 83 regular Rust tests, 16 Python tests, formatting and strict Clippy passed; Rust 1.88 checks/profile builds passed within recorded scopes |
 | Sustained checks | Four explicitly ignored scenarios; isolated_cgroup_memory_profile requires its controller, not bare cargo test --ignored |
 | Packaging/security | Pinned non-root distroless runtime, license, shell-free probes and offline Compose/integration examples. Security scans are dated evidence, not current vulnerability guarantees |
 
