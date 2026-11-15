@@ -1,11 +1,9 @@
-feat: add bounded exporter acceptance harness and record live recovery
+chore: advance project release metadata
 
-[0.9.0] Mercury Ferret
+[0.9.1] Mercury Ferret
 
-- tooling: Add a one-shot controller and independent restoration guard with fixed deadlines and request caps
-- tests: Rehearse lifecycle, interruption, restoration, stale evidence and HTTP framing on macOS and Linux
-- evidence: Preserve the initial baseline refusal and separately authorized corrected live PASS with fresh collection and dashboard recovery
-- operations: Record unchanged NAS, surrounding services, configuration and deployed image 0.8.0
-- VERSION: Increment 0.8.7 to 0.9.0 and update README.md and CHANGELOG.md release records
+- VERSION: Increment 0.9.0 to 0.9.1 using the required patch fallback for a clean working tree
+- README.md: Update the Mercury Ferret release line
+- CHANGELOG.md: Record the release-metadata-only update
 
 developed by Randel Dodson and AI

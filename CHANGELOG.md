@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.1 - 2026-11-14
+
+- Advance release metadata only; no application, tooling or deployment behavior changed.
+
 ## 0.9.0 - 2026-11-14
 
 - Add a bounded one-shot operator acceptance controller and detached restoration guard, with native/Linux synthetic rehearsals and HTTP framing regression coverage.
