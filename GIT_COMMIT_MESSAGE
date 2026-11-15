@@ -1,10 +1,10 @@
-docs: verify Rust monitoring after NAS Graphite reporting disable
+docs: verify Rust monitoring after NAS Graphite entry deletion
 
-[0.8.4] Steel Ferret
+[0.8.5] Steel Ferret
 
-- operations: Record operator-performed Graphite sending disable with retained configuration for rollback
-- validation: Verify exporter readiness, fresh collectors and both dashboards without administrative credential changes
-- status: Close the NAS sending retirement step while retaining numerical and formal acceptance limits
-- VERSION: Increment 0.8.3 to 0.8.4 and update README.md and CHANGELOG.md release records
+- operations: Record operator-reported Graphite entry deletion and update NAS rollback requirements
+- validation: Verify live exporter health, collector freshness and both dashboards after deletion
+- status: Preserve the distinction between reported NAS configuration and observed telemetry
+- VERSION: Increment 0.8.4 to 0.8.5 and update README.md and CHANGELOG.md release records
 
 developed by Randel Dodson and AI

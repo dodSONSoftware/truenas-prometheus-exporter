@@ -1,6 +1,6 @@
 # Current implementation and acceptance plan
 
-Updated November 14, 2026 for release 0.8.4. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
+Updated November 14, 2026 for release 0.8.5. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
 
 ## Completed baseline
 
@@ -30,7 +30,7 @@ Updated November 14, 2026 for release 0.8.4. Use [project-status.md](project-sta
 - [x] Authorized Mac Docker Desktop stack with live exporter, local scrape job, complete Grafana dashboard and backup/rollback instructions.
 - [ ] Final Linux Compose/scrape/target configuration, operator runbook and alert artifacts.
 - [x] Explicitly authorized Linux exporter installation and Prometheus integration alongside the independent Graphite service.
-- [x] Operator-authorized dashboard/report migration and Graphite stop-before-removal gate, with backups and rollback. Operator-reported NAS-side sending disable and follow-up Rust telemetry checks are recorded.
+- [x] Operator-authorized dashboard/report migration and Graphite stop-before-removal gate, with backups and rollback. Operator-reported NAS-side entry disable/deletion and follow-up Rust telemetry checks are recorded.
 - [ ] Formal combined-daemon acceptance and alert review remain separate.
 - [ ] P1 disks/reliable health-temperature, services and alert counts/severity after P0 contracts/acceptance.
 - [ ] P2 applications/tasks/VMs after stable P0/P1; generic arbitrary discovery remains outside scope.

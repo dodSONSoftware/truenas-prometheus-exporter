@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.5 - 2026-11-14
+
+- Record the operator-reported deletion of the old NAS Graphite reporting entry and independent follow-up exporter/dashboard checks.
+- Clarify that a NAS-side rollback now requires recreating the deleted entry; Linux rollback backups remain available.
+
 ## 0.8.4 - 2026-11-14
 
 - Record the operator-performed NAS Graphite reporting disable and bounded follow-up verification of Rust readiness, collector freshness and both dashboards.
