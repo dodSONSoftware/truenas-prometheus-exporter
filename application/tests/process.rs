@@ -1,14 +1,11 @@
 #![cfg(unix)]
 
+mod support;
+
 use futures_util::{SinkExt, StreamExt};
 use rustls::{ServerConfig, pki_types::PrivatePkcs8KeyDer};
 use serde_json::{Value, json};
-use std::{
-    net::{Ipv4Addr, SocketAddr},
-    process::Stdio,
-    sync::Arc,
-    time::Duration,
-};
+use std::{net::SocketAddr, sync::Arc, time::Duration};
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::{TcpListener, TcpStream},
@@ -88,25 +85,20 @@ async fn check_process_redaction(malformed: bool) {
     let ca = directory.path().join("ca");
     std::fs::write(&key, marker).unwrap();
     std::fs::write(&ca, certificate.cert.pem()).unwrap();
-    let reserved = TcpListener::bind((Ipv4Addr::LOCALHOST, 0)).await.unwrap();
-    let address = reserved.local_addr().unwrap();
-    drop(reserved);
-    let mut child = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+    let mut command = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"));
+    command
         .env_clear()
         .env("TRUENAS_WS_URL", url)
         .env("TRUENAS_USERNAME", marker)
         .env("TRUENAS_API_KEY_FILE", key)
         .env("TRUENAS_CA_CERT_FILE", ca)
-        .env("EXPORTER_LISTEN", address.to_string())
         .env("RUST_LOG", "trace")
         .env("TRUENAS_POLL_INTERVAL_SECONDS", "1")
         .env("TRUENAS_API_TIMEOUT_SECONDS", "1")
-        .env("TRUENAS_CACHE_TTL_SECONDS", "3")
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .kill_on_drop(true)
-        .spawn()
-        .unwrap();
+        .env("TRUENAS_CACHE_TTL_SECONDS", "3");
+    let started = support::start_exporter(&mut command).await.unwrap();
+    let address = started.address;
+    let mut child = started.child;
     timeout(Duration::from_secs(5), async {
         loop {
             if get(address, "/metrics")
@@ -115,10 +107,17 @@ async fn check_process_redaction(malformed: bool) {
             {
                 break;
             }
-            assert!(
-                child.try_wait().unwrap().is_none(),
-                "exporter exited prematurely"
-            );
+            if let Some(status) = child.try_wait().unwrap() {
+                let mut stderr = String::new();
+                child
+                    .stderr
+                    .take()
+                    .unwrap()
+                    .read_to_string(&mut stderr)
+                    .await
+                    .unwrap();
+                panic!("exporter exited prematurely ({status}): {stderr}");
+            }
             sleep(Duration::from_millis(20)).await;
         }
     })
@@ -156,7 +155,8 @@ async fn check_process_redaction(malformed: bool) {
         .unwrap();
     assert!(output.status.success());
     let logs = format!(
-        "{}{}",
+        "{}{}{}",
+        String::from_utf8_lossy(&started.startup_stdout),
         String::from_utf8_lossy(&output.stdout),
         String::from_utf8_lossy(&output.stderr)
     );
@@ -287,4 +287,58 @@ async fn version_reports_root_release_without_configuration() {
         )
     );
     assert!(output.stderr.is_empty());
+}
+
+#[tokio::test]
+async fn startup_reselects_only_colliding_ports_and_bounds_attempts() {
+    let occupied = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let occupied_address = occupied.local_addr().unwrap();
+    let mut command = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"));
+    command.env_clear().env("EXPORTER_MOCK", "true");
+    let mut attempts = 0;
+    let mut started = support::start_exporter_with_ports(&mut command, || {
+        attempts += 1;
+        if attempts == 1 {
+            occupied_address
+        } else {
+            support::unused_address()
+        }
+    })
+    .await
+    .unwrap();
+    assert_eq!(attempts, 2);
+    assert_ne!(started.address, occupied_address);
+    assert!(
+        get(started.address, "/healthz")
+            .await
+            .unwrap()
+            .starts_with("HTTP/1.1 200")
+    );
+    started.child.kill().await.unwrap();
+
+    attempts = 0;
+    let error = support::start_exporter_with_ports(&mut command, || {
+        attempts += 1;
+        occupied_address
+    })
+    .await
+    .err()
+    .unwrap();
+    assert_eq!(attempts, 3);
+    assert!(error.to_string().contains("Address already in use"));
+
+    command.env("RUST_LOG", "invalid[");
+    attempts = 0;
+    let error = support::start_exporter_with_ports(&mut command, || {
+        attempts += 1;
+        support::unused_address()
+    })
+    .await
+    .err()
+    .unwrap();
+    assert_eq!(
+        attempts, 1,
+        "unrelated startup errors must fail immediately"
+    );
+    assert!(error.to_string().contains("invalid RUST_LOG filter"));
 }

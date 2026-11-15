@@ -1,3 +1,6 @@
+#[cfg(unix)]
+mod support;
+
 use std::collections::HashMap;
 use truenas_exporter::config::Config;
 
@@ -281,7 +284,7 @@ async fn environment_unicode_errors_are_redacted_and_unrelated_bytes_are_ignored
     use std::{ffi::OsString, os::unix::ffi::OsStringExt};
     use tokio::{
         io::{AsyncReadExt, AsyncWriteExt},
-        net::{TcpListener, TcpStream},
+        net::TcpStream,
         process::Command,
         time::{Duration, sleep, timeout},
     };
@@ -290,23 +293,20 @@ async fn environment_unicode_errors_are_redacted_and_unrelated_bytes_are_ignored
     let key = dir.path().join("key");
     std::fs::write(&key, "synthetic").unwrap();
     for mock in [true, false] {
-        let reserved = TcpListener::bind("127.0.0.1:0").await.unwrap();
-        let address = reserved.local_addr().unwrap();
-        drop(reserved);
-        let mut child = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+        let mut command = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"));
+        command
             .env_clear()
             .kill_on_drop(true)
             .env("UNRELATED_BINARY", &invalid)
             .env(&invalid, &invalid)
             .env("EXPORTER_MOCK", mock.to_string())
-            .env("EXPORTER_LISTEN", address.to_string())
             .env("TRUENAS_WS_URL", "wss://127.0.0.1:1/api/current")
             .env("TRUENAS_USERNAME", "synthetic")
-            .env("TRUENAS_API_KEY_FILE", &key)
-            .stdout(std::process::Stdio::null())
-            .stderr(std::process::Stdio::null())
-            .spawn()
-            .unwrap();
+            .env("TRUENAS_API_KEY_FILE", &key);
+        let started = support::start_exporter(&mut command).await.unwrap();
+        assert!(!String::from_utf8_lossy(&started.startup_stdout).contains("PRIVATE_MARKER_"));
+        let address = started.address;
+        let mut child = started.child;
         timeout(Duration::from_secs(3), async {
             loop {
                 assert!(child.try_wait().unwrap().is_none());

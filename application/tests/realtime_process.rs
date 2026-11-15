@@ -1,7 +1,9 @@
 #![cfg(unix)]
+
+mod support;
 use futures_util::{SinkExt, StreamExt};
 use serde_json::{Value, json};
-use std::{process::Stdio, sync::Arc, time::Duration};
+use std::{sync::Arc, time::Duration};
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::{TcpListener, TcpStream},
@@ -85,10 +87,8 @@ async fn daemon_uses_isolated_realtime_socket_and_closes_owned_subscription_on_s
     let key = folder.path().join("key");
     std::fs::write(&ca, cert.cert.pem()).unwrap();
     std::fs::write(&key, "SYNTHETIC_RT_SECRET").unwrap();
-    let reserved = TcpListener::bind("127.0.0.1:0").await.unwrap();
-    let address = reserved.local_addr().unwrap();
-    drop(reserved);
-    let mut child = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"))
+    let mut command = Command::new(env!("CARGO_BIN_EXE_truenas-exporter"));
+    command
         .env_clear()
         .env("TRUENAS_WS_URL", url)
         .env("TRUENAS_USERNAME", "synthetic-user")
@@ -100,13 +100,10 @@ async fn daemon_uses_isolated_realtime_socket_and_closes_owned_subscription_on_s
         .env("TRUENAS_POLL_INTERVAL_SECONDS", "1")
         .env("TRUENAS_API_TIMEOUT_SECONDS", "1")
         .env("TRUENAS_CACHE_TTL_SECONDS", "3")
-        .env("EXPORTER_LISTEN", address.to_string())
-        .env("RUST_LOG", "trace")
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .kill_on_drop(true)
-        .spawn()
-        .unwrap();
+        .env("RUST_LOG", "trace");
+    let started = support::start_exporter(&mut command).await.unwrap();
+    let address = started.address;
+    let mut child = started.child;
     timeout(Duration::from_secs(6), async {
         while TcpStream::connect(address).await.is_err() {
             assert!(child.try_wait().unwrap().is_none());
@@ -156,7 +153,8 @@ async fn daemon_uses_isolated_realtime_socket_and_closes_owned_subscription_on_s
         .unwrap();
     assert!(output.status.success());
     let logs = format!(
-        "{}{}",
+        "{}{}{}",
+        String::from_utf8_lossy(&started.startup_stdout),
         String::from_utf8_lossy(&output.stdout),
         String::from_utf8_lossy(&output.stderr)
     );

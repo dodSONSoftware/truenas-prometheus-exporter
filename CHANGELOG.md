@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.6 - 2026-11-14
+
+- Fix synthetic process-test startup races by waiting for the child's post-bind startup line before HTTP probes and handling only confirmed port collisions within bounded startup attempts.
+- Share startup handling across process/configuration/realtime fixtures while preserving startup logs for redaction assertions and reporting child exit diagnostics.
+- Add a forced-collision regression covering recovery, bounded exhaustion and immediate unrelated-error propagation; record concurrent reproduction and verification.
+
 ## 0.8.5 - 2026-11-14
 
 - Record the operator-reported deletion of the old NAS Graphite reporting entry and independent follow-up exporter/dashboard checks.

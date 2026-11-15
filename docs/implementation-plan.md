@@ -1,6 +1,6 @@
 # Current implementation and acceptance plan
 
-Updated November 14, 2026 for release 0.8.5. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
+Updated November 14, 2026 for release 0.8.6. Use [project-status.md](project-status.md) for the current status and evidence map. The [earlier sequential plan](history/implementation-plan-through-0.3.6.md) is archived; its superseded checkboxes must not reopen completed work.
 
 ## Completed baseline
 
@@ -10,9 +10,11 @@ Updated November 14, 2026 for release 0.8.5. Use [project-status.md](project-sta
 - [x] M3-D opt-in realtime implementation (4f0d215), native/Docker preflight (f89e193), four captured-frame replays (a9ce8f1).
 - [x] Offline numerical source review (d69722f), with operational semantics still explicitly unresolved.
 - [x] Finite integrated operational baseline (8e7d21f), longer phased profile (69ecd46), separate-cgroup attribution (069450d).
-- [x] Local quality gates, pinned image builds and scoped Rust 1.88 checks recorded in validation.md. Latest baseline: 83 regular Rust tests, 18 Python tests; four sustained tests ignored by default.
+- [x] Local quality gates, pinned image builds and scoped Rust 1.88 checks recorded in validation.md. Latest baseline: 84 regular Rust tests, 18 Python tests; four sustained tests ignored by default.
 
 - [x] Callable pool scan errors, progress and state implemented. Both FINISHED SCRUB captures replay. RESILVER and other unobserved variants have synthetic coverage. See [API contract](api-contract.md#callable-pool-scan-ts-250426).
+
+- [x] Reproduced process-test HTTP bind collision, shared startup fix and focused regression; see process-test-reliability.md.
 
 ## Acceptance work that can proceed alongside feature development
 
@@ -21,7 +23,7 @@ Updated November 14, 2026 for release 0.8.5. Use [project-status.md](project-sta
 | Independent numerical/chart comparison | Paired time/window/unit/identity evidence for CPU/memory/network; resolve ARC chart availability/algorithm before cache-efficiency interpretation. New live methods/private APIs/shell need concrete authorization |
 | Combined appliance daemon | Bounded explicitly scoped run covering scheduled pools/system + realtime + HTTP/readiness/cleanup; selected one-shot evidence is already complete |
 | Least privilege | Confirm actual minimum effective roles and eventual host credential/CA ownership/rotation; no automatic role edits or administrative write probes |
-| Process-fixture reliability | Reproduce/capture the intermittent reset/early-exit cause and fix with a focused regression, not relaxed assertions |
+| Process-fixture reliability | Reproduced early-exit bind race fixed with synchronized, bounded collision-only startup and regression; 60 concurrent runs passed. Older configuration reset remains unattributed unless reproduced |
 | Release candidate checks | Rust 1.88/stable, ordinary tests, relevant opt-in profiles, hardened image/Compose, dependency/image security gates tied to exact commit/image; hosted CI still unrun |
 | Production resource confidence | Longer representative soak/payload/scrape policy as needed. Separate-cgroup finite attribution is complete; exporter kernel peak/event history and universal bounds are not established |
 
