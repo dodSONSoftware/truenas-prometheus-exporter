@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.4 - 2026-11-14
+
+- Record the operator-performed NAS Graphite reporting disable and bounded follow-up verification of Rust readiness, collector freshness and both dashboards.
+- Retain the distinction between operator-reported configuration state and independently observed telemetry health.
+
 ## 0.8.3 - 2026-11-14
 
 - Migrate office-desk availability/uptime and TrueNAS Server Monitoring to Rust exporter metrics, preserving the live layouts and MEMORY BETA placeholder.

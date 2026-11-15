@@ -1,6 +1,6 @@
 # Current project status
 
-Release 0.8.3, Steel Ferret, follows documentation checkpoint 3ac2903. Root VERSION is the release authority.
+Release 0.8.4, Steel Ferret, follows documentation checkpoint 3ac2903. Root VERSION is the release authority.
 
 ## Implemented and evidenced
 
@@ -27,7 +27,7 @@ System/realtime default false. Default polls are 60 seconds; API timeout 10 seco
 3. **Least privilege and deployment credentials.** Effective selected reads succeeded; Readonly Admin assignment is operator-reported. Minimum effective roles, denial of writes and eventual Linux secret/CA ownership/rotation are not independently established. No write probes or role changes are implicit.
 4. **Intermittent process-test reliability.** Existing configuration/process tests have occasionally failed with ConnectionReset/early exit then passed in isolation/full reruns. Latest milestone passed; root cause remains unresolved. Investigate without weakening assertions or adding unexplained retries.
 5. **Final candidate CI/security.** Hosted GitHub CI has not run. Execute exact final candidate Rust 1.88/stable, container/hardening, dependency/image gates and appropriate opt-in profiles; refresh security evidence when justified. Medium/low findings remain tracked in dated reports. Production-representative soaks can refine resource confidence; samples are not hard bounds.
-6. **Monitoring artifacts and rollout.** Operator-authorized Linux installation is complete for image 0.8.0. Both production dashboards and the published n8n daily report now use Rust telemetry. Graphite passed a reversible post-stop collection/query check before its container and scrape job were removed; its standalone Compose definition is archived and rollback backups retained. See [retirement evidence](graphite-retirement.md). Formal combined-daemon acceptance and reviewed alert artifacts remain open. The authorized Mac stack remains separate. Further live changes require matching authorization.
+6. **Monitoring artifacts and rollout.** Operator-authorized Linux installation is complete for image 0.8.0. Both production dashboards and the published n8n daily report now use Rust telemetry. Graphite passed a reversible post-stop collection/query check before its container and scrape job were removed; its standalone Compose definition is archived and rollback backups retained. The operator subsequently disabled NAS-side Graphite sending in the UI; follow-up Rust readiness, collector and dashboard-query checks passed. NAS configuration state is operator-reported. See [retirement evidence](graphite-retirement.md). Formal combined-daemon acceptance and reviewed alert artifacts remain open. The authorized Mac stack remains separate. Further live changes require matching authorization.
 7. **Later scope.** P1 disks/inventory/reliable temperature/health, services and alerts follow P0 acceptance. P2 applications/tasks/VMs follow stable P0/P1. Arbitrary API discovery/recursive flattening is outside scope.
 
 ## Evidence and reading map

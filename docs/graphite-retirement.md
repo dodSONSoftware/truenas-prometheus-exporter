@@ -35,10 +35,23 @@ Graphite was stopped reversibly first. At approximately 98 seconds after the bas
 
 Before container removal: `docker start graphite-exporter` restores the bridge. After removal, restore the backed-up standalone Compose definition to its original path and run that project's service only. Restore Prometheus configuration contents in place from the backup, validate with promtool and reload; do not recreate the whole observability stack. Restore dashboard queries through Grafana version history and the report's three parameters from the before artifact only if reverting the migration too; publish that report rollback separately. Preserve unrelated later configuration changes when using backups.
 
-NAS-side legacy Graphite reporting remains unchanged and may continue attempting delivery to port 9109. Disabling it requires separate authorization for a NAS administrative change. Historical Prometheus data remains until normal retention; no TSDB deletion, image prune or volume deletion is needed. An unused Graphite datasource can remain configured without making the Rust dashboards depend on it.
+The operator subsequently authorized disabling NAS-side legacy Graphite reporting and reported clearing Enable and saving the existing entry in the TrueNAS UI on November 14, 2026. No administrative credential or role was changed by Codex. The disabled configuration is retained for rollback. This configuration state is operator-reported; the follow-up checks below independently verify Rust telemetry after the change. Historical Prometheus data remains until normal retention; no TSDB deletion, image prune or volume deletion is needed. An unused Graphite datasource can remain configured without making the Rust dashboards depend on it.
 
 Independent raw numerical verification, ARC source zeros/chart algorithms, formal combined-daemon recovery/minimum-role acceptance, hosted CI and the intermittent process-test root cause remain open. The installed Linux image remains 0.8.0; repository release 0.8.3 records dashboard/operations changes and does not redeploy exporter code. The sampled separate-cgroup 63.30 MiB observation is not a kernel peak or universal guarantee.
 
 ## Repository validation
 
 The first full check encountered the known intermittent process failure in malformed_notification_stops_session_without_logging_its_payload (exporter exited prematurely). Its isolated run passed; a subsequent full scripts/check.sh passed formatting, strict Clippy, 83 Rust tests and 18 Python tests. Four sustained cases remained ignored. The 21 isolated n8n tests passed with `node scripts/tests/test_n8n_evidence.cjs`. The pinned linux/amd64 container build passed in Docker Desktop context desktop-linux. No test assertions were relaxed and no long profile was rerun.
+
+
+## NAS-side disable follow-up — release 0.8.4
+
+Pinned TS-25.04.2.6 source confirms that reporting.exporters.update accepts an enabled-only patch and restarts Netdata. The available dedicated exporter credential remains read-only. The operator used Reporting → Exporters in the NAS UI to disable and save the old Graphite entry; Codex did not perform a NAS write or independently read that administrative configuration.
+
+After the operator confirmed saving, the Linux Rust exporter was healthy with zero restarts, no OOM kill, and HTTP200 from both healthz and readyz. Prometheus scrape up was 1. All six collectors (pools, system, cpu, memory, network, arc) reported success with fresh snapshot ages. Both saved dashboards were re-fetched and contained no legacy TrueNAS Graphite queries. All 12 NAS panels, representing seven distinct expressions, returned one finite live value each: connected status, uptime, CPU, memory, tank allocation, enp42s0 RX+TX and ARC size. MEMORY BETA remained unconfigured. No screenshot/render verification was performed.
+
+The Graphite container and active scrape job remained absent. Prometheus still had 21 targets, with only the same pre-existing Metric Simulator and two Windows exporters down. This is a bounded operational check, not independent numerical accuracy or formal induced-failure/recovery acceptance.
+
+A second observation approximately 108 seconds after the initial follow-up showed strictly newer last-success timestamps for all six collectors, each still successful. System/pool snapshot ages were approximately 15 seconds and realtime group ages approximately two seconds, demonstrating continued collection rather than retained pre-change values. scripts/check.sh passed formatting, strict Clippy, 83 Rust tests and 18 Python tests; four sustained cases remained ignored.
+
+The pinned linux/amd64 image build passed using local Docker Desktop context desktop-linux. No runtime deployment was performed for this documentation release.
